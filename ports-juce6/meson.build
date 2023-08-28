@@ -2,14 +2,9 @@
 
 if linux_embed
     plugins = [
-        'vitalium',
-        'swankyamp',
     ]
 else
     plugins = [
-        'chow',
-        'vitalium',
-        'swankyamp',
     ]
 endif
 
