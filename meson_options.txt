@@ -12,7 +12,7 @@ option('lto-optimizations',
 
 option('sse-optimizations',
     type: 'boolean',
-    value: true,
+    value: false,
     description: 'Enable SSE optimizations',
 )
 
