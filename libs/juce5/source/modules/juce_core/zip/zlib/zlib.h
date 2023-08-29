@@ -1344,7 +1344,9 @@ ZEXTERN int ZEXPORT inflateBackInit_ OF((z_streamp strm, int windowBits,
 
 
 #if !defined(ZUTIL_H) && !defined(NO_DUMMY_DECL)
-    struct internal_state {int dummy;}; /* hack for buggy compilers */
+// This causes a link failure in GCC 8.3.0 (ARM version), and according to
+// the latest changelog for zlib is no longer needed, so just remove it.
+//    struct internal_state {int dummy;}; /* hack for buggy compilers */
 #endif
 
 ZEXTERN const char   * ZEXPORT zError           OF((int));
