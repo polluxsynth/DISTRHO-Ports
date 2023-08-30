@@ -24,7 +24,7 @@
 	==============================================================================
  */
 #pragma once
-#include "ObxdOscillatorB.h"
+#include "OscillatorB.h"
 #include "AdsrEnvelope.h"
 #include "Filter.h"
 #include "Decimator.h"
@@ -50,7 +50,7 @@ public:
 
 	AdsrEnvelope env;
 	AdsrEnvelope fenv;
-	ObxdOscillatorB osc;
+	OscillatorB osc;
 	Filter flt;
 
 	Random ng;

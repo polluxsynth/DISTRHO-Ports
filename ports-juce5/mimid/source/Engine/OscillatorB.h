@@ -1,10 +1,12 @@
 /*
 	==============================================================================
-	This file is part of Obxd synthesizer.
+	This file is part of the MiMi-d synthesizer,
+	originally from Obxd synthesizer.
 
 	Copyright © 2013-2014 Filatov Vadim
-	
-	Contact author via email :
+	Copyright 2023 Ricard Wanderlof
+
+	Contact original author via email :
 	justdat_@_e1.ru
 
 	This file may be licensed under the terms of of the
@@ -32,7 +34,7 @@
 #include "PulseOsc.h"
 #include "TriangleOsc.h"
 
-class ObxdOscillatorB
+class OscillatorB
 {
 private:
 	float SampleRate;
@@ -93,7 +95,7 @@ public:
 	float xmod;
 
 
-	ObxdOscillatorB() : 
+	OscillatorB() :
 		n(Samples*2),
 		hsam(Samples),
 		o1s(),o2s(),
@@ -129,7 +131,7 @@ public:
 		//syncFracd =  new DelayLine(hsam);
 		//cvd = new DelayLine(hsam);
 	}
-	~ObxdOscillatorB()
+	~OscillatorB()
 	{
 		//delete del1;
 		//delete del2;
