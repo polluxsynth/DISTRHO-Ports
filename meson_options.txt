@@ -30,13 +30,13 @@ option('build-lv2',
 
 option('build-vst2',
     type: 'boolean',
-    value: true,
+    value: false,
     description: 'Build VST2 plugin variants',
 )
 
 option('build-vst3',
     type: 'boolean',
-    value: true,
+    value: false,
     description: 'Build VST3 plugin variants',
 )
 
