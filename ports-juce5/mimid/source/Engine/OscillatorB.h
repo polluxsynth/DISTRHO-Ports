@@ -75,7 +75,7 @@ public:
 	float totalDetune;
 
 	float osc2Det;
-	float pulseWidth;
+	float osc1pw,osc2pw;
 	float pw1,pw2;
 
 
@@ -119,7 +119,7 @@ public:
 		osc1Saw=osc2Saw=osc1Pul=osc2Pul=false;
 		osc2Det = 0;
 		notePlaying = 30;
-		pulseWidth = 0;
+		osc1pw = osc2pw = 0;
 		o1mx=o2mx=0;
 		x1=wn.nextFloat();
 		x2=wn.nextFloat();
@@ -173,7 +173,7 @@ public:
 		x1+=fs;
 		hsfrac = 0;
 		float osc1mix=0.0f;
-		float pwcalc =jlimit<float>(0.1f,1.0f,(pulseWidth + pw1)*0.5f + 0.5f);
+		float pwcalc =jlimit<float>(0.1f,1.0f,(osc1pw + pw1)*0.5f + 0.5f);
 
 		if(osc1Pul)
 			o1p.processMaster(x1,fs,pwcalc,pw1w);
@@ -212,7 +212,7 @@ public:
 
 		fs = jmin(pitch2 * (sampleRateInv),0.45f);
 
-		pwcalc = jlimit<float>(0.1f,1.0f,(pulseWidth + pw2)*0.5f + 0.5f);
+		pwcalc = jlimit<float>(0.1f,1.0f,(osc2pw + pw2)*0.5f + 0.5f);
 
 		float osc2mix=0.0f;
 

@@ -83,8 +83,8 @@ void ObxdAudioProcessor::setParameter (int index, float newValue)
 	case PW_ENV_BOTH:
 		synth.processPwEnvBoth(newValue);
 		break;
-	case PW_OSC2_OFS:
-		synth.processPwOfs(newValue);
+	case OSC2PW:
+		synth.processOsc2PulseWidth(newValue);
 		break;
 	case ENV_PITCH_BOTH:
 		synth.processPitchModBoth(newValue);
@@ -227,8 +227,8 @@ void ObxdAudioProcessor::setParameter (int index, float newValue)
 	case OSC2MIX:
 		synth.processOsc2Mix(newValue);
 		break;
-	case PW:
-		synth.processPulseWidth(newValue);
+	case OSC1PW:
+		synth.processOsc1PulseWidth(newValue);
 		break;
 	case OSC1Saw:
 		synth.processOsc1Saw(newValue);
@@ -326,8 +326,8 @@ const String ObxdAudioProcessor::getParameterName (int index)
 		return S("EnvPitchBoth");
 	case FENV_INVERT:
 		return S("FenvInvert");
-	case PW_OSC2_OFS:
-		return S("PwOfs");
+	case OSC2PW:
+		return S("Osc2PW");
 	case LEVEL_DIF:
 		return S("LevelDif");
 	case PW_ENV_BOTH:
@@ -440,8 +440,8 @@ const String ObxdAudioProcessor::getParameterName (int index)
 		return S("Unison");
 	case FLT_KF:
 		return S("FilterKeyFollow");
-	case PW:
-		return S("PulseWidth");
+	case OSC1PW:
+		return S("Osc1PW");
 	case OSC2Saw:
 		return S("Osc2Saw");
 	case OSC1Saw:

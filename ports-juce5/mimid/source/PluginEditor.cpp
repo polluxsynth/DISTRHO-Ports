@@ -206,7 +206,7 @@ void ObxdAudioProcessorEditor::rebuildComponents()
 		volumeKnob = addNormalKnob(56,77,ownerFilter,VOLUME,"Volume",0.4);
 		portamentoKnob = addNormalKnob(188,77,ownerFilter,PORTAMENTO,"Portamento",0);
 		osc1PitchKnob = addNormalKnob(593,77,ownerFilter,OSC1P,"Osc1Pitch",0);
-		pulseWidthKnob = addNormalKnob(691,77,ownerFilter,PW,"PW",0);
+		pulseWidthKnob = addNormalKnob(691,77,ownerFilter,OSC1PW,"Osc1PW",0);
 		osc2PitchKnob = addNormalKnob(788,77,ownerFilter,OSC2P,"Osc2Pitch",0);
 
 		osc1MixKnob = addNormalKnob(597,237,ownerFilter,OSC1MIX,"Osc1",1);
@@ -318,7 +318,7 @@ void ObxdAudioProcessorEditor::rebuildComponents()
 		volumeKnob = addNormalKnobClassic(53,120,ownerFilter,VOLUME,"Volume",0.4);
 		portamentoKnob = addNormalKnobClassic(175,241,ownerFilter,PORTAMENTO,"Portamento",0);
 		osc1PitchKnob = addNormalKnobClassic(271,40,ownerFilter,OSC1P,"Osc1Pitch",0);
-		pulseWidthKnob = addNormalKnobClassic(334,40,ownerFilter,PW,"PW",0);
+		pulseWidthKnob = addNormalKnobClassic(334,40,ownerFilter,OSC1PW,"PW",0);
 		osc2PitchKnob = addNormalKnobClassic(397,40,ownerFilter,OSC2P,"Osc2Pitch",0);
 
 		osc1MixKnob = addNormalKnobClassic(490,40,ownerFilter,OSC1MIX,"Osc1",1);
@@ -481,7 +481,7 @@ void ObxdAudioProcessorEditor::sliderValueChanged (Slider* c)
 		handleSParam(osc2DetuneKnob,OSC2_DET)
 		handleSParam(portamentoKnob,PORTAMENTO)
 		handleSParam(filterEnvelopeAmtKnob,ENVELOPE_AMT)
-		handleSParam(pulseWidthKnob,PW)
+		handleSParam(pulseWidthKnob,OSC1PW)
 		handleSParam(xmodKnob,XMOD)
 		handleSParam(multimodeKnob,MULTIMODE)
 
@@ -561,7 +561,7 @@ void ObxdAudioProcessorEditor::changeListenerCallback (ChangeBroadcaster* source
 		rn(osc2DetuneKnob,OSC2_DET)
 		rn(portamentoKnob,PORTAMENTO)
 		rn(filterEnvelopeAmtKnob,ENVELOPE_AMT)
-		rn(pulseWidthKnob,PW)
+		rn(pulseWidthKnob,OSC1PW)
 		rn(xmodKnob,XMOD)
 		rn(multimodeKnob,MULTIMODE)
 		rn(brightnessKnob,BRIGHTNESS)
