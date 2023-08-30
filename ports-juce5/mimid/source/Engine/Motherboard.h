@@ -1,10 +1,12 @@
 /*
   ==============================================================================
-  This file is part of Obxd synthesizer.
+  This file is part of the MiMi-d synthesizer,
+  originally from Obxd synthesizer.
 
-  Copyright � 2013-2014 Filatov Vadim
-	
-  Contact author via email :
+  Copyright © 2013-2014 Filatov Vadim
+  Copyright 2023 Ricard Wanderlof
+
+  Contact original author via email :
   justdat_@_e1.ru
 
   This file may be licensed under the terms of of the
@@ -50,7 +52,7 @@ public:
 	float Volume;
 	const static int MAX_VOICES=8;
 	float pannings[MAX_VOICES];
-	ObxdVoice voices[MAX_VOICES];
+	Voice voices[MAX_VOICES];
 	bool uni;
 	bool Oversample;
 
@@ -75,7 +77,7 @@ public:
 		uni = false;
 		wasUni = false;
 		Volume=0;
-	//	voices = new ObxdVoice* [MAX_VOICES];
+	//	voices = new Voice* [MAX_VOICES];
 	//	pannings = new float[MAX_VOICES];
 		totalvc = MAX_VOICES;
 		vq = VoiceQueue(MAX_VOICES,voices);
@@ -124,7 +126,7 @@ public:
 	{
 		for(int i = 0 ; i < MAX_VOICES;i++)
 		{
-			ObxdVoice* p = vq.getNext();
+			Voice* p = vq.getNext();
 			p->sustOn();
 		}
 	}
@@ -132,7 +134,7 @@ public:
 	{
 		for(int i = 0 ; i < MAX_VOICES;i++)
 		{
-			ObxdVoice* p = vq.getNext();
+			Voice* p = vq.getNext();
 			p->sustOff();
 		}
 	}
@@ -150,7 +152,7 @@ public:
 				int minmidi = 129;
 				for(int i = 0 ; i < totalvc; i++)
 				{
-					ObxdVoice* p = vq.getNext();
+					Voice* p = vq.getNext();
 					if(p->midiIndx < minmidi && p->Active)
 					{
 						minmidi = p->midiIndx;
@@ -164,7 +166,7 @@ public:
 				{
 					for(int i = 0 ; i < totalvc;i++)
 					{
-						ObxdVoice* p = vq.getNext();
+						Voice* p = vq.getNext();
 						if(p->midiIndx > noteNo && p->Active)
 						{
 							awaitingkeys[p->midiIndx] = true;
@@ -182,7 +184,7 @@ public:
 			{
 				for(int i = 0 ; i < totalvc; i++)
 				{
-					ObxdVoice* p = vq.getNext();
+					Voice* p = vq.getNext();
 					if(p->Active)
 					{
 						awaitingkeys[p->midiIndx] = true;
@@ -200,7 +202,7 @@ public:
 		{
 			for (int i = 0; i < totalvc && !processed; i++)
 			{
-				ObxdVoice* p = vq.getNext();
+				Voice* p = vq.getNext();
 				if (!p->Active)
 				{
 					p->NoteOn(noteNo,velocity);
@@ -215,10 +217,10 @@ public:
 			if(!asPlayedMode)
 			{
 				int maxmidi = 0;
-				ObxdVoice* highestVoiceAvalible = NULL;
+				Voice* highestVoiceAvalible = NULL;
 				for(int i = 0 ; i < totalvc; i++)
 				{
-					ObxdVoice* p = vq.getNext();
+					Voice* p = vq.getNext();
 					if(p->midiIndx > maxmidi)
 					{
 						maxmidi = p->midiIndx;
@@ -238,10 +240,10 @@ public:
 			else
 			{
 				int minPriority = INT_MAX;
-				ObxdVoice* minPriorityVoice = NULL;
+				Voice* minPriorityVoice = NULL;
 				for(int i = 0 ; i < totalvc; i++)
 				{
-					ObxdVoice* p = vq.getNext();
+					Voice* p = vq.getNext();
 					if(priorities[p->midiIndx] <minPriority)
 					{
 						minPriority = priorities[p->midiIndx];
@@ -284,7 +286,7 @@ public:
 		{
 			for(int i = 0 ; i < totalvc; i++)
 			{
-				ObxdVoice* p = vq.getNext();
+				Voice* p = vq.getNext();
 				if((p->midiIndx == noteNo) && (p->Active))
 				{
 					p->NoteOn(reallocKey,-0.5);
@@ -298,7 +300,7 @@ public:
 		{
 			for (int i = 0; i < totalvc; i++)
 			{
-				ObxdVoice* n = vq.getNext();
+				Voice* n = vq.getNext();
 				if (n->midiIndx==noteNo && n->Active)
 				{
 					n->NoteOff();
@@ -328,7 +330,7 @@ public:
 		}
 		Oversample = over;
 	}
-	inline float processSynthVoice(ObxdVoice& b,float lfoIn,float vibIn )
+	inline float processSynthVoice(Voice& b,float lfoIn,float vibIn )
 	{
 		if(economyMode)
 			b.checkAdsrState();

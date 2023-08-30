@@ -22,7 +22,7 @@
 	==============================================================================
  */
 #pragma once
-#include "ObxdVoice.h"
+#include "Voice.h"
 #include "ParamsEnum.h"
 const int PROGRAMCOUNT = 128;
 class ObxdBank
