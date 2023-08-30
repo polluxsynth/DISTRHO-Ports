@@ -22,11 +22,11 @@
 	==============================================================================
  */
 #pragma once
-#include "ObxdVoice.h"
+#include "Voice.h"
 class VoiceQueue
 {
 private:
-	ObxdVoice* voices;
+	Voice* voices;
 	int idx,total;
 public:
 	VoiceQueue()
@@ -35,12 +35,12 @@ public:
 		idx = 0;
 		total = 0;
 	}
-	VoiceQueue(int voiceCount,ObxdVoice* voicesReference)
+	VoiceQueue(int voiceCount,Voice* voicesReference)
 	{
 		voices = voicesReference;
 		idx = 0;total = voiceCount;
 	}
-	inline ObxdVoice* getNext()
+	inline Voice* getNext()
 	{
 		idx = idx + 1;
 		idx %=total;

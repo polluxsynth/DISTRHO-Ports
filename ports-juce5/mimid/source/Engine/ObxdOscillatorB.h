@@ -23,7 +23,7 @@
  */
 #pragma once
 
-#include "ObxdVoice.h"
+#include "Voice.h"
 #include "SynthEngine.h"
 #include "AudioUtils.h"
 #include "BlepData.h"

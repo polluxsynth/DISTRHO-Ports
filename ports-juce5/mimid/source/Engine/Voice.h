@@ -1,10 +1,12 @@
 /*
 	==============================================================================
-	This file is part of Obxd synthesizer.
+	This file is part of the MiMi-d synthesizer,
+	originally from Obxd synthesizer.
 
 	Copyright © 2013-2014 Filatov Vadim
-	
-	Contact author via email :
+	Copyright 2023 Ricard Wanderlof
+
+	Contact original author via email :
 	justdat_@_e1.ru
 
 	This file may be licensed under the terms of of the
@@ -27,7 +29,7 @@
 #include "Filter.h"
 #include "Decimator.h"
 
-class ObxdVoice
+class Voice
 {
 private:
 	float SampleRate;
@@ -41,7 +43,7 @@ private:
 
 	bool hq;
 
-	//JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ObxdVoice)
+	//JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Voice)
 public:
 	bool sustainHold;
 	//bool resetAdsrsOnAttack;
@@ -117,7 +119,7 @@ public:
 	int legatoMode;
 	float briHold;
 
-	ObxdVoice()
+	Voice()
 	{
 		hq = false;
 		selfOscPush = false;
@@ -160,7 +162,7 @@ public:
 	//	lenvd=new DelayLine(Samples*2);
 	//	fenvd=new DelayLine(Samples*2);
 	}
-	~ObxdVoice()
+	~Voice()
 	{
 	//	delete lenvd;
 	//	delete fenvd;

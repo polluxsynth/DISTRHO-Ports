@@ -1,10 +1,12 @@
 /*
 	==============================================================================
-	This file is part of Obxd synthesizer.
+	This file is part of the MiMi-d synthesizer,
+	originally from Obxd synthesizer.
 
 	Copyright © 2013-2014 Filatov Vadim
+	Copyright 2023 Ricard Wanderlof
 
-	Contact author via email :
+	Contact original author via email :
 	justdat_@_e1.ru
 
 	This file may be licensed under the terms of of the
@@ -22,7 +24,7 @@
 	==============================================================================
  */
 #pragma once
-#include "ObxdVoice.h"
+#include "Voice.h"
 #include "ParamsEnum.h"
 class ObxdParams
 {
