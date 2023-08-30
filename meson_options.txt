@@ -18,7 +18,7 @@ option('sse-optimizations',
 
 option('linux-embed',
     type: 'boolean',
-    value: false,
+    value: true,
     description: 'DSP-only plugin builds, without editor/GUI',
 )
 
