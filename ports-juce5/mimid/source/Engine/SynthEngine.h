@@ -330,20 +330,17 @@ public:
 			synth.voices[i].osc.totalDetune = logsc(param,0.001,0.90);
 		}
 	}
-	void processPulseWidth(float param)
+	void processOsc1PulseWidth(float param)
 	{
-		for(int i = 0 ; i < synth.MAX_VOICES;i++)
-		{
-			synth.voices[i].osc.pulseWidth = linsc(param,0.0,0.95);
-		}
+		ForEachVoice (osc.osc1pw=linsc(param,0.0,0.95));
 	}
 	void processPwEnv(float param)
 	{
 		ForEachVoice (pwenvmod=linsc(param,0,0.85));
 	}
-	void processPwOfs(float param)
+	void processOsc2PulseWidth(float param)
 	{
-		ForEachVoice(pwOfs = linsc(param,0,0.75));
+		ForEachVoice(osc.osc2pw = linsc(param,0.0,0.95));
 	}
 	void processPwEnvBoth(float param)
 	{

@@ -103,7 +103,6 @@ public:
 	float envpitchmod;
 	float pwenvmod;
 
-	float pwOfs;
 	bool pwEnvBoth;
 	bool pitchModBoth;
 
@@ -124,7 +123,6 @@ public:
 		hq = false;
 		selfOscPush = false;
 		pitchModBoth = false;
-		pwOfs = 0 ;
 		invertFenv = false;
 		pwEnvBoth = false;
 		ng = Random(Random::getSystemRandom().nextInt64());
@@ -199,7 +197,7 @@ public:
 
 		//PW modulation
 		osc.pw1 = (lfopw1?(lfoIn * lfoa2):0) + (pwEnvBoth?(pwenvmod * envm) : 0);
-		osc.pw2 = (lfopw2?(lfoIn * lfoa2):0) + pwenvmod * envm + pwOfs;
+		osc.pw2 = (lfopw2?(lfoIn * lfoa2):0) + pwenvmod * envm;
 
 		//Pitch modulation
 		osc.pto1 =   (!pitchWheelOsc2Only? (pitchWheel*pitchWheelAmt):0 ) + ( lfoo1?(lfoIn * lfoa1):0) + (pitchModBoth?(envpitchmod * envm):0) + lfoVibratoIn;
