@@ -30,7 +30,7 @@
 #include "Engine/SynthEngine.h"
 //#include <stack>
 #include "Engine/midiMap.h"
-#include "Engine/ObxdBank.h"
+#include "Engine/Bank.h"
 
 //==============================================================================
 const int fxbVersionNum = 1;
@@ -181,7 +181,7 @@ public:
 	File getCurrentBankFile() const;
 
 	//==============================================================================
-	const ObxdBank& getPrograms() const { return programs; }
+	const Bank& getPrograms() const { return programs; }
 
 	//==============================================================================
 	File getDocumentFolder() const;
@@ -201,7 +201,7 @@ private:
 	int midiEventPos;
 
 	SynthEngine synth;
-	ObxdBank programs;
+	Bank programs;
 
 	String currentSkin;
 	String currentBank;

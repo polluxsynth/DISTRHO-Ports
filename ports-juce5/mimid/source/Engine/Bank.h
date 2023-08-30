@@ -1,10 +1,12 @@
 /*
 	==============================================================================
-	This file is part of Obxd synthesizer.
+	This file is part of the MiMi-d synthesizer,
+	originally from Obxd synthesizer.
 
-	Copyright © 2013-2014 Filatov Vadim
-	
-	Contact author via email :
+	Copyright Â© 2013-2014 Filatov Vadim
+	Copyright 2023 Ricard Wanderlof
+
+	Contact original author via email :
 	justdat_@_e1.ru
 
 	This file may be licensed under the terms of of the
@@ -25,13 +27,13 @@
 #include "Voice.h"
 #include "ParamsEnum.h"
 const int PROGRAMCOUNT = 128;
-class ObxdBank
+class Bank
 {
 public:
 	ObxdParams programs[PROGRAMCOUNT];
 	ObxdParams* currentProgramPtr;
 	int currentProgram;
-	ObxdBank()
+	Bank()
 	{
 		currentProgram=0;
 		currentProgramPtr = programs+currentProgram;
