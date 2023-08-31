@@ -25,7 +25,7 @@
  */
 #pragma once
 #include "Voice.h"
-enum ObxdParameters
+enum Parameters
 {
 	UNDEFINED,
 	UNUSED_1,
