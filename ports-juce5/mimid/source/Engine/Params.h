@@ -26,12 +26,12 @@
 #pragma once
 #include "Voice.h"
 #include "ParamsEnum.h"
-class ObxdParams
+class Params
 {
 public:
 	float values[PARAM_COUNT];
 	String name;
-	ObxdParams()
+	Params()
 	{
 		name = "Default";
 		//values = new float[PARAM_COUNT];
@@ -73,9 +73,9 @@ public:
 		values[PORTADER]=0.3;
 		values[UDET]=0.2;
 	}
-	~ObxdParams()
+	~Params()
 	{
 		//delete values;
 	}
-	//JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(ObxdParams)
+	//JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(Params)
 };

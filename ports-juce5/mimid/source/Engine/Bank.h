@@ -30,8 +30,8 @@ const int PROGRAMCOUNT = 128;
 class Bank
 {
 public:
-	ObxdParams programs[PROGRAMCOUNT];
-	ObxdParams* currentProgramPtr;
+	Params programs[PROGRAMCOUNT];
+	Params* currentProgramPtr;
 	int currentProgram;
 	Bank()
 	{
