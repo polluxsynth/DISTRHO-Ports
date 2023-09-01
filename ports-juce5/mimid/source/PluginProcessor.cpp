@@ -229,17 +229,11 @@ void MimidAudioProcessor::setParameter (int index, float newValue)
 	case OSC1PW:
 		synth.processOsc1PulseWidth(newValue);
 		break;
-	case OSC1Saw:
-		synth.processOsc1Saw(newValue);
+	case OSC1WAVE:
+		synth.processOsc1Wave(newValue);
 		break;
-	case OSC2Saw:
-		synth.processOsc2Saw(newValue);
-		break;
-	case OSC1Pul:
-		synth.processOsc1Pulse(newValue);
-		break;
-	case OSC2Pul:
-		synth.processOsc2Pulse(newValue);
+	case OSC2WAVE:
+		synth.processOsc2Wave(newValue);
 		break;
 	case VOLUME:
 		synth.processVolume(newValue);
@@ -441,14 +435,18 @@ const String MimidAudioProcessor::getParameterName (int index)
 		return S("FilterKeyFollow");
 	case OSC1PW:
 		return S("Osc1PW");
-	case OSC2Saw:
-		return S("Osc2Saw");
-	case OSC1Saw:
-		return S("Osc1Saw");
-	case OSC1Pul:
-		return S("Osc1Pulse");
-	case OSC2Pul:
-		return S("Osc2Pulse");
+	case OSC2Saw_NOTUSED:
+		return S("Osc2Saw_NOTUSED");
+	case OSC1Saw_NOTUSED:
+		return S("Osc1Saw_NOTUSED");
+	case OSC1Pul_NOTUSED:
+		return S("Osc1Pulse_NOTUSED");
+	case OSC2Pul_NOTUSED:
+		return S("Osc2Pulse_NOTUSED");
+	case OSC1WAVE:
+		return S("Osc1Wave");
+	case OSC2WAVE:
+		return S("Osc2Wave");
 	case VOLUME:
 		return S("Volume");
 	case UDET:
