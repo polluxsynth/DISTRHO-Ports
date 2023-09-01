@@ -245,11 +245,11 @@ void ObxdAudioProcessorEditor::rebuildComponents()
 		lfoPwm2Button = addNormalTooglableButton(504,252,ownerFilter,LFOPW2,"Osc2");
 
 		hardSyncButton = addNormalTooglableButton(730,162,ownerFilter,OSC2HS,"Sync");
-		osc1SawButton = addNormalTooglableButton(587,162,ownerFilter,OSC1Saw,"S");
-		osc2SawButton = addNormalTooglableButton(782,162,ownerFilter,OSC2Saw,"S");
+		osc1SawButton = addNormalTooglableButton(587,162,ownerFilter,OSC1Saw_NOTUSED,"S");
+		osc2SawButton = addNormalTooglableButton(782,162,ownerFilter,OSC2Saw_NOTUSED,"S");
 
-		osc1PulButton = addNormalTooglableButton(632,162,ownerFilter,OSC1Pul,"P");
-		osc2PulButton = addNormalTooglableButton(827,162,ownerFilter,OSC2Pul,"P");
+		osc1PulButton = addNormalTooglableButton(632,162,ownerFilter,OSC1Pul_NOTUSED,"P");
+		osc2PulButton = addNormalTooglableButton(827,162,ownerFilter,OSC2Pul_NOTUSED,"P");
 
 		pitchQuantButton =  addNormalTooglableButton(684,162,ownerFilter,OSCQuantize,"Step");
 
@@ -357,11 +357,11 @@ void ObxdAudioProcessorEditor::rebuildComponents()
 		lfoPwm2Button = addNormalTooglableButtonClassic(714,323,ownerFilter,LFOPW2,"Osc2");
 
 		hardSyncButton = addNormalTooglableButtonClassic(282,178,ownerFilter,OSC2HS,"Sync");
-		osc1SawButton = addNormalTooglableButtonClassic(265,114,ownerFilter,OSC1Saw,"S");
-		osc2SawButton = addNormalTooglableButtonClassic(394,114,ownerFilter,OSC2Saw,"S");
+		osc1SawButton = addNormalTooglableButtonClassic(265,114,ownerFilter,OSC1Saw_NOTUSED,"S");
+		osc2SawButton = addNormalTooglableButtonClassic(394,114,ownerFilter,OSC2Saw_NOTUSED,"S");
 
-		osc1PulButton = addNormalTooglableButtonClassic(296,114,ownerFilter,OSC1Pul,"P");
-		osc2PulButton = addNormalTooglableButtonClassic(425,114,ownerFilter,OSC2Pul,"P");
+		osc1PulButton = addNormalTooglableButtonClassic(296,114,ownerFilter,OSC1Pul_NOTUSED,"P");
+		osc2PulButton = addNormalTooglableButtonClassic(425,114,ownerFilter,OSC2Pul_NOTUSED,"P");
 
 		pitchQuantButton =  addNormalTooglableButtonClassic(407,178,ownerFilter,OSCQuantize,"Step");
 
@@ -429,10 +429,10 @@ void ObxdAudioProcessorEditor::buttonClicked(Button * b)
 #define bp(T) {flt->setParameterNotifyingHost(T,tb->getValue());}
 #define handleBParam(K,T)  if (tb == K) {bp(T)} else
 	handleBParam(hardSyncButton,OSC2HS)
-		handleBParam(osc1SawButton,OSC1Saw)
-		handleBParam(osc2SawButton,OSC2Saw)
-		handleBParam(osc1PulButton,OSC1Pul)
-		handleBParam(osc2PulButton,OSC2Pul)
+		handleBParam(osc1SawButton,OSC1Saw_NOTUSED)
+		handleBParam(osc2SawButton,OSC2Saw_NOTUSED)
+		handleBParam(osc1PulButton,OSC1Pul_NOTUSED)
+		handleBParam(osc2PulButton,OSC2Pul_NOTUSED)
 		handleBParam(filterKeyFollowButton,FLT_KF)
 		handleBParam(pitchQuantButton,OSCQuantize)
 		handleBParam(unisonButton,UNISON)
@@ -591,10 +591,10 @@ void ObxdAudioProcessorEditor::changeListenerCallback (ChangeBroadcaster* source
 		rn(veloFltEnvKnob,VFLTENV)
 		//buttons
 		rn(hardSyncButton,OSC2HS)
-		rn(osc1SawButton,OSC1Saw)
-		rn(osc2SawButton,OSC2Saw)
-		rn(osc1PulButton,OSC1Pul)
-		rn(osc2PulButton,OSC2Pul)
+		rn(osc1SawButton,OSC1Saw_NOTUSED)
+		rn(osc2SawButton,OSC2Saw_NOTUSED)
+		rn(osc1PulButton,OSC1Pul_NOTUSED)
+		rn(osc2PulButton,OSC2Pul_NOTUSED)
 
 		rn(filterKeyFollowButton,FLT_KF)
 		rn(pitchQuantButton,OSCQuantize)

@@ -86,9 +86,8 @@ public:
 	float pto1,pto2;
 
 
-	//osc pitches
-	float osc1Saw,osc2Saw,
-		osc1Pul,osc2Pul;
+	//osc waveshapes
+	float osc1Saw,osc2Saw, osc1Pul,osc2Pul, osc1Tri, osc2Tri;
 
 	float osc1p,osc2p;
 	bool hardSync;
@@ -177,9 +176,9 @@ public:
 
 		if(osc1Pul)
 			o1p.processMaster(x1,fs,pwcalc,pw1w);
-		if(osc1Saw)
+		else if(osc1Saw)
 			o1s.processMaster(x1,fs);
-		else if(!osc1Pul)
+		else if(osc1Tri)
 			o1t.processMaster(x1,fs);
 
 		if(x1 >= 1.0f)
@@ -199,10 +198,10 @@ public:
 		hsfrac = syncFracd.feedReturn(hsfrac);
 
 		if(osc1Pul)
-			osc1mix += o1p.getValue(x1,pwcalc) + o1p.aliasReduction();
-		if(osc1Saw)
-			osc1mix += o1s.getValue(x1) + o1s.aliasReduction();
-		else if(!osc1Pul)
+			osc1mix = o1p.getValue(x1,pwcalc) + o1p.aliasReduction();
+		else if(osc1Saw)
+			osc1mix = o1s.getValue(x1) + o1s.aliasReduction();
+		else if(osc1Tri)
 			osc1mix = o1t.getValue(x1) + o1t.aliasReduction();
 		//Pitch control needs additional delay buffer to compensate
 		//This will give us less aliasing on xmod
@@ -220,9 +219,9 @@ public:
 
 		if(osc2Pul)
 			o2p.processSlave(x2,fs,hsr,hsfrac,pwcalc,pw2w);
-		if(osc2Saw)
+		else if(osc2Saw)
 			o2s.processSlave(x2,fs,hsr,hsfrac);
-		else if(!osc2Pul)
+		else if(osc2Tri)
 			o2t.processSlave(x2,fs,hsr,hsfrac);
 
 
@@ -242,10 +241,10 @@ public:
 		osc1mix = xmodd.feedReturn(osc1mix);
 
 		if(osc2Pul)
-			osc2mix += o2p.getValue(x2,pwcalc) + o2p.aliasReduction();
-		if(osc2Saw)
-			osc2mix += o2s.getValue(x2) + o2s.aliasReduction();
-		else if(!osc2Pul)
+			osc2mix = o2p.getValue(x2,pwcalc) + o2p.aliasReduction();
+		else if(osc2Saw)
+			osc2mix = o2s.getValue(x2) + o2s.aliasReduction();
+		else if(osc2Tri)
 			osc2mix = o2t.getValue(x2) + o2t.aliasReduction();
 
 		//mixing
