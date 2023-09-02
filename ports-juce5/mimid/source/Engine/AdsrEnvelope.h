@@ -67,28 +67,28 @@ public:
 	{
 		ua = atk;
 		attack = atk*uf;
-		if(state == 1)
+		if (state == 1)
 			coef = (float)((log(0.001) - log(1.3)) / (SampleRate * (atk) / 1000));
 	}
 	void setDecay(float dec)
 	{
 		ud = dec;
 		decay = dec*uf;
-		if(state == 2)
+		if (state == 2)
 			coef = (float)((log(jmin(sustain + 0.0001,0.99)) - log(1.0)) / (SampleRate * (dec) / 1000));
 	}
 	void setSustain(float sust)
 	{
 		us = sust;
 		sustain = sust;
-		if(state == 2)
+		if (state == 2)
 			coef = (float)((log(jmin(sustain + 0.0001,0.99)) - log(1.0)) / (SampleRate * (decay) / 1000));
 	}
 	void setRelease(float rel)
 	{
 		ur = rel;
 		release = rel*uf;
-		if(state == 4)
+		if (state == 4)
 			coef = (float)((log(0.00001) - log(Value + 0.0001)) / (SampleRate * (rel) / 1000));
 	}
 	void triggerAttack()
@@ -99,7 +99,7 @@ public:
 	}
 	void triggerRelease()
 	{
-		if(state!=4)
+		if (state!=4)
 			coef = (float)((log(0.00001) - log(Value+0.0001)) / (SampleRate * (release) / 1000));
 		state = 4;
 	}
@@ -120,20 +120,14 @@ public:
 				goto dec;
 			}
 			else
-			{
 				Value = Value - (1-Value)*(coef);
-			}
 			break;
 		case 2:
 dec:
 			if (Value - sustain < 10e-6)
-			{
 				state = 3;
-			}
 			else
-			{
 				Value =Value + Value * coef;
-			}
 			break;
 		case 3:
 			Value = jmin(sustain, 0.9f);
@@ -150,5 +144,4 @@ dec:
 		}
 		return Value;
 	}
-
 };
