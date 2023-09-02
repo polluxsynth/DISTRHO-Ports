@@ -28,13 +28,13 @@
 class AdsrEnvelope
 {
 private:
-	    float Value;
-        float attack, decay, sustain, release;
-		float ua,ud,us,ur;
-        float coef;
-        int state;//1 - attack 2- decay 3 - sustain 4 - release 5-silence
-		float SampleRate;
-		float uf;
+	float Value;
+	float attack, decay, sustain, release;
+	float ua,ud,us,ur;
+	float coef;
+	int state;//1 - attack 2- decay 3 - sustain 4 - release 5-silence
+	float SampleRate;
+	float uf;
 public:
 	AdsrEnvelope()
 	{
@@ -92,61 +92,63 @@ public:
 			coef = (float)((log(0.00001) - log(Value + 0.0001)) / (SampleRate * (rel) / 1000));
 	}
 	void triggerAttack()
-        {
-            state = 1;
-            //Value = Value +0.00001f;
-            coef = (float)((log(0.001) - log(1.3)) / (SampleRate * (attack)/1000 ));
-        }
-    void triggerRelease()
-        {
-			if(state!=4)
-            coef = (float)((log(0.00001) - log(Value+0.0001)) / (SampleRate * (release) / 1000));
-            state = 4;
-        }
+	{
+		state = 1;
+		//Value = Value +0.00001f;
+		coef = (float)((log(0.001) - log(1.3)) / (SampleRate * (attack)/1000 ));
+	}
+	void triggerRelease()
+	{
+		if(state!=4)
+			coef = (float)((log(0.00001) - log(Value+0.0001)) / (SampleRate * (release) / 1000));
+		state = 4;
+	}
 	inline bool isActive()
 	{
 		return state!=5;
 	}
 	inline float processSample()
-        {
-            switch (state)
-            {
-                case 1:
-                    if (Value - 1  > -0.1)
-                    {
-                        Value = jmin(Value, 0.99f);
-                        state = 2;
-                        coef = (float)((log(jmin(sustain + 0.0001, 0.99)) - log(1.0)) / (SampleRate * (decay) / 1000));
-						goto dec;
-                    }
-					else
-					{
-                        Value = Value - (1-Value)*(coef);
-					}
-					break;
-                case 2:
-					dec:
-                    if (Value - sustain < 10e-6)
-                    {
-                        state = 3;
-                    }
-					else
-					{
-                        Value =Value + Value * coef;
-					}
-                    break;
-                case 3: Value = jmin(sustain, 0.9f);
-                    break;
-                case 4:
-                    if (Value > 20e-6)
-                        Value = Value + Value * coef + dc;
-					else state = 5;
-                    break;
-                case 5:
-                    Value = 0.0f;
-                    break;
-            }
-			return Value;
-        }
+	{
+		switch (state)
+		{
+		case 1:
+			if (Value - 1  > -0.1)
+			{
+				Value = jmin(Value, 0.99f);
+				state = 2;
+				coef = (float)((log(jmin(sustain + 0.0001, 0.99)) - log(1.0)) / (SampleRate * (decay) / 1000));
+				goto dec;
+			}
+			else
+			{
+				Value = Value - (1-Value)*(coef);
+			}
+			break;
+		case 2:
+dec:
+			if (Value - sustain < 10e-6)
+			{
+				state = 3;
+			}
+			else
+			{
+				Value =Value + Value * coef;
+			}
+			break;
+		case 3:
+			Value = jmin(sustain, 0.9f);
+			break;
+		case 4:
+			if (Value > 20e-6)
+				Value = Value + Value * coef + dc;
+			else
+				state = 5;
+			break;
+		case 5:
+			Value = 0.0f;
+			break;
+		}
+		return Value;
+	}
 
 };
