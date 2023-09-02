@@ -32,7 +32,7 @@ private:
 	float attack, decay, sustain, release;
 	float ua,ud,us,ur;
 	float coef;
-	int state;//1 - attack 2- decay 3 - sustain 4 - release 5-silence
+	enum { ATK, DEC, SUS, REL, OFF } state;
 	float SampleRate;
 	float uf;
 public:
@@ -43,13 +43,13 @@ public:
 		attack=decay=sustain=release=0.0001;
 		ua=ud=us=ur=0.0001;
 		coef = 0;
-		state = 5;
+		state = OFF;
 		SampleRate = 44000;
 	}
 	void ResetEnvelopeState()
 	{
 		Value = 0.0;
-		state = 5;
+		state = OFF;
 	}
 	void setSampleRate(float sr)
 	{
@@ -67,78 +67,78 @@ public:
 	{
 		ua = atk;
 		attack = atk*uf;
-		if (state == 1)
+		if (state == ATK)
 			coef = (float)((log(0.001) - log(1.3)) / (SampleRate * (atk) / 1000));
 	}
 	void setDecay(float dec)
 	{
 		ud = dec;
 		decay = dec*uf;
-		if (state == 2)
+		if (state == DEC)
 			coef = (float)((log(jmin(sustain + 0.0001,0.99)) - log(1.0)) / (SampleRate * (dec) / 1000));
 	}
 	void setSustain(float sust)
 	{
 		us = sust;
 		sustain = sust;
-		if (state == 2)
+		if (state == DEC)
 			coef = (float)((log(jmin(sustain + 0.0001,0.99)) - log(1.0)) / (SampleRate * (decay) / 1000));
 	}
 	void setRelease(float rel)
 	{
 		ur = rel;
 		release = rel*uf;
-		if (state == 4)
+		if (state == REL)
 			coef = (float)((log(0.00001) - log(Value + 0.0001)) / (SampleRate * (rel) / 1000));
 	}
 	void triggerAttack()
 	{
-		state = 1;
+		state = ATK;
 		//Value = Value +0.00001f;
 		coef = (float)((log(0.001) - log(1.3)) / (SampleRate * (attack)/1000 ));
 	}
 	void triggerRelease()
 	{
-		if (state!=4)
+		if (state != REL)
 			coef = (float)((log(0.00001) - log(Value+0.0001)) / (SampleRate * (release) / 1000));
-		state = 4;
+		state = REL;
 	}
 	inline bool isActive()
 	{
-		return state!=5;
+		return state != OFF;
 	}
 	inline float processSample()
 	{
 		switch (state)
 		{
-		case 1:
+		case ATK:
 			if (Value - 1  > -0.1)
 			{
 				Value = jmin(Value, 0.99f);
-				state = 2;
+				state = DEC;
 				coef = (float)((log(jmin(sustain + 0.0001, 0.99)) - log(1.0)) / (SampleRate * (decay) / 1000));
 				goto dec;
 			}
 			else
 				Value = Value - (1-Value)*(coef);
 			break;
-		case 2:
+		case DEC:
 dec:
 			if (Value - sustain < 10e-6)
-				state = 3;
+				state = SUS;
 			else
 				Value =Value + Value * coef;
 			break;
-		case 3:
+		case SUS:
 			Value = jmin(sustain, 0.9f);
 			break;
-		case 4:
+		case REL:
 			if (Value > 20e-6)
 				Value = Value + Value * coef + dc;
 			else
-				state = 5;
+				state = OFF;
 			break;
-		case 5:
+		case OFF:
 			Value = 0.0f;
 			break;
 		}
