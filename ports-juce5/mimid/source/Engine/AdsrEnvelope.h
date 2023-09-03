@@ -29,10 +29,12 @@ class AdsrEnvelope
 {
 private:
 	float Value;
-	float attack, decay, sustain, release; // saved parameter values with deriverence
-	float ua,ud,us,ur; // saved parameter values
+	float attack, decay, sustain, sustainTime, release; // saved parameter values with deriverence
+	bool adsrMode;
+	float ua,ud,us,ur; // saved parameter values (not for sustain)
 	float coef;
 	enum { ATK, DEC, SUS, REL, OFF } state;
+	bool sustainLevelDirectControl;
 	float SampleRate;
 	float uf;
 
@@ -53,11 +55,13 @@ public:
 	{
 		uf = 1;
 		Value = 0.0;
-		attack=decay=sustain=release=0.0001;
+		attack=decay=sustain=sustainTime=release=0.0001;
 		ua=ud=us=ur=0.0001;
 		coef = 0;
 		state = OFF;
 		SampleRate = 44000;
+		adsrMode = true;
+		sustainLevelDirectControl = true;
 	}
 	void ResetEnvelopeState()
 	{
@@ -73,8 +77,12 @@ public:
 		uf = der;
 		setAttack(ua);
 		setDecay(ud);
-		setSustain(us);
+		setSustainTime(us);
 		setRelease(ur);
+	}
+	void setAdsr(bool adsr)
+	{
+		adsrMode = adsr;
 	}
 	void setAttack(float atk)
 	{
@@ -90,12 +98,20 @@ public:
 		if (state == DEC)
 			coef = coef_dec(dec, sustain);
 	}
-	void setSustain(float sust)
+	void setSustain(float sus)
+	{
+		sustain = sus;
+		if (state == DEC)
+			coef = coef_dec(decay, sus);
+		else if (state == SUS && sustainLevelDirectControl)
+			Value = jmin(sustain, 0.9f);
+	}
+	void setSustainTime(float sust)
 	{
 		us = sust;
-		sustain = sust;
-		if (state == DEC)
-			coef = coef_dec(decay, sust);
+		sustainTime = sust*uf;
+		if (state == SUS)
+			coef = coef_rel(sust);
 	}
 	void setRelease(float rel)
 	{
@@ -109,6 +125,7 @@ public:
 		state = ATK;
 		//Value = Value +0.00001f;
 		coef = coef_atk(attack);
+		sustainLevelDirectControl = true;
 	}
 	void triggerRelease()
 	{
@@ -138,12 +155,30 @@ public:
 		case DEC:
 dec:
 			if (Value - sustain < 10e-6)
+			{
+				Value = jmin(sustain, 0.9f); // TODO? ok?
 				state = SUS;
+				if (!adsrMode)
+				{
+					coef = coef_rel(sustainTime);
+					goto sus;
+				}
+			}
 			else
-				Value =Value - Value * coef;
+				Value = Value - Value * coef;
 			break;
 		case SUS:
-			Value = jmin(sustain, 0.9f);
+sus:
+			if (!adsrMode) // Decay down to zero
+			{
+				// Once we have entered into the decaying part
+				// of the sustain phase, the sustain level
+				// parameter no longer has any effect (until
+				// the envelope is retriggered).
+				sustainLevelDirectControl = false;
+				if (Value > 20e-6)
+					Value = Value - Value * coef + dc;
+			}
 			break;
 		case REL:
 			if (Value > 20e-6)
