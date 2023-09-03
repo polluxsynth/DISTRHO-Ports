@@ -38,15 +38,15 @@ private:
 
 	inline float coef_atk(float timeparam)
 	{
-		return (float)((log(0.001) - log(1.3)) / (SampleRate * (timeparam)/1000 ));
+		return (float)((log(1.3) - log(0.001)) / (SampleRate * (timeparam)/1000 ));
 	}
 	inline float coef_dec(float timeparam, float suslvl)
 	{
-		return (float)((log(jmin(suslvl + 0.0001,0.99)) - log(1.0)) / (SampleRate * (timeparam) / 1000));
+		return (float)(log(1.0) - (log(jmin(suslvl + 0.0001,0.99))) / (SampleRate * (timeparam) / 1000));
 	}
 	inline float coef_rel(float timeparam)
 	{
-		return (float)((log(0.00001) - log(Value+0.0001)) / (SampleRate * (timeparam) / 1000));
+		return (float)((log(Value+0.0001) - log(0.00001)) / (SampleRate * (timeparam) / 1000));
 	}
 public:
 	AdsrEnvelope()
@@ -133,21 +133,21 @@ public:
 				goto dec;
 			}
 			else
-				Value = Value - (1-Value)*(coef);
+				Value = Value + (1-Value)*(coef);
 			break;
 		case DEC:
 dec:
 			if (Value - sustain < 10e-6)
 				state = SUS;
 			else
-				Value =Value + Value * coef;
+				Value =Value - Value * coef;
 			break;
 		case SUS:
 			Value = jmin(sustain, 0.9f);
 			break;
 		case REL:
 			if (Value > 20e-6)
-				Value = Value + Value * coef + dc;
+				Value = Value - Value * coef + dc;
 			else
 				state = OFF;
 			break;
