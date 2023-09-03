@@ -29,12 +29,25 @@ class AdsrEnvelope
 {
 private:
 	float Value;
-	float attack, decay, sustain, release;
-	float ua,ud,us,ur;
+	float attack, decay, sustain, release; // saved parameter values with deriverence
+	float ua,ud,us,ur; // saved parameter values
 	float coef;
 	enum { ATK, DEC, SUS, REL, OFF } state;
 	float SampleRate;
 	float uf;
+
+	inline float coef_atk(float timeparam)
+	{
+		return (float)((log(0.001) - log(1.3)) / (SampleRate * (timeparam)/1000 ));
+	}
+	inline float coef_dec(float timeparam, float suslvl)
+	{
+		return (float)((log(jmin(suslvl + 0.0001,0.99)) - log(1.0)) / (SampleRate * (timeparam) / 1000));
+	}
+	inline float coef_rel(float timeparam)
+	{
+		return (float)((log(0.00001) - log(Value+0.0001)) / (SampleRate * (timeparam) / 1000));
+	}
 public:
 	AdsrEnvelope()
 	{
@@ -68,39 +81,39 @@ public:
 		ua = atk;
 		attack = atk*uf;
 		if (state == ATK)
-			coef = (float)((log(0.001) - log(1.3)) / (SampleRate * (atk) / 1000));
+			coef = coef_atk(atk);
 	}
 	void setDecay(float dec)
 	{
 		ud = dec;
 		decay = dec*uf;
 		if (state == DEC)
-			coef = (float)((log(jmin(sustain + 0.0001,0.99)) - log(1.0)) / (SampleRate * (dec) / 1000));
+			coef = coef_dec(dec, sustain);
 	}
 	void setSustain(float sust)
 	{
 		us = sust;
 		sustain = sust;
 		if (state == DEC)
-			coef = (float)((log(jmin(sustain + 0.0001,0.99)) - log(1.0)) / (SampleRate * (decay) / 1000));
+			coef = coef_dec(decay, sust);
 	}
 	void setRelease(float rel)
 	{
 		ur = rel;
 		release = rel*uf;
 		if (state == REL)
-			coef = (float)((log(0.00001) - log(Value + 0.0001)) / (SampleRate * (rel) / 1000));
+			coef = coef_rel(rel);
 	}
 	void triggerAttack()
 	{
 		state = ATK;
 		//Value = Value +0.00001f;
-		coef = (float)((log(0.001) - log(1.3)) / (SampleRate * (attack)/1000 ));
+		coef = coef_atk(attack);
 	}
 	void triggerRelease()
 	{
 		if (state != REL)
-			coef = (float)((log(0.00001) - log(Value+0.0001)) / (SampleRate * (release) / 1000));
+			coef = coef_rel(release);
 		state = REL;
 	}
 	inline bool isActive()
@@ -116,7 +129,7 @@ public:
 			{
 				Value = jmin(Value, 0.99f);
 				state = DEC;
-				coef = (float)((log(jmin(sustain + 0.0001, 0.99)) - log(1.0)) / (SampleRate * (decay) / 1000));
+				coef = coef_dec(decay, sustain);
 				goto dec;
 			}
 			else
