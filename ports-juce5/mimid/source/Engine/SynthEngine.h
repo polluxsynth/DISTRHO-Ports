@@ -523,6 +523,15 @@ public:
 			synth.voices[i].env.setDecay(logsc(param,4,60000,900));
 		}
 	}
+	void processLoudnessEnvelopeSustainTime(float param)
+	{
+		for(int i = 0 ; i < synth.MAX_VOICES;i++)
+		{
+			synth.voices[i].env.setSustainTime(logsc(param,4,60000,900));
+			// When time is set to 1.0, sustain time is infinite
+			synth.voices[i].env.setAdsr(param > 0.991);
+		}
+	}
 	void processLoudnessEnvelopeRelease(float param)
 	{
 		for(int i = 0 ; i < synth.MAX_VOICES;i++)
@@ -549,6 +558,15 @@ public:
 		for(int i = 0 ; i < synth.MAX_VOICES;i++)
 		{
 			synth.voices[i].fenv.setDecay(logsc(param,1,60000,900));
+		}
+	}
+	void processFilterEnvelopeSustainTime(float param)
+	{
+		for(int i = 0 ; i < synth.MAX_VOICES;i++)
+		{
+			synth.voices[i].fenv.setSustainTime(logsc(param,1,60000,900));
+			// When time is set to 1.0, sustain time is infinite
+			synth.voices[i].fenv.setAdsr(param > 0.991);
 		}
 	}
 	void processFilterEnvelopeRelease(float param)

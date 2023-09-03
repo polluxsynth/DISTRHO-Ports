@@ -25,7 +25,7 @@
  */
 #pragma once
 #include "OscillatorB.h"
-#include "AdsrEnvelope.h"
+#include "AdssrEnvelope.h"
 #include "Filter.h"
 #include "Decimator.h"
 
@@ -46,10 +46,10 @@ private:
 	//JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Voice)
 public:
 	bool sustainHold;
-	//bool resetAdsrsOnAttack;
+	//bool resetAdssrsOnAttack;
 
-	AdsrEnvelope env;
-	AdsrEnvelope fenv;
+	AdssrEnvelope env;
+	AdssrEnvelope fenv;
 	OscillatorB osc;
 	Filter flt;
 
@@ -254,7 +254,7 @@ public:
 		sampleRateInv = 1 / sr;
 		brightCoef = tan(jmin(briHold,flt.SampleRate*0.5f-10)* (juce::float_Pi) * flt.sampleRateInv);
 	}
-	void checkAdsrState()
+	void checkAdssrState()
 	{
 		shouldProcessed = env.isActive();
 	}

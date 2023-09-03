@@ -263,6 +263,9 @@ void ObxdAudioProcessor::setParameter (int index, float newValue)
 	case LSUS:
 		synth.processLoudnessEnvelopeSustain(newValue);
 		break;
+	case LSUST:
+		synth.processLoudnessEnvelopeSustainTime(newValue);
+		break;
 	case LREL:
 		synth.processLoudnessEnvelopeRelease(newValue);
 		break;
@@ -274,6 +277,9 @@ void ObxdAudioProcessor::setParameter (int index, float newValue)
 		break;
 	case FSUS:
 		synth.processFilterEnvelopeSustain(newValue);
+		break;
+	case FSUST:
+		synth.processFilterEnvelopeSustainTime(newValue);
 		break;
 	case FREL:
 		synth.processFilterEnvelopeRelease(newValue);
@@ -466,6 +472,8 @@ const String ObxdAudioProcessor::getParameterName (int index)
 		return S("Decay");
 	case LSUS:
 		return S("Sustain");
+	case LSUST:
+		return S("SustainTime");
 	case LREL:
 		return S("Release");
 	case FATK:
@@ -474,6 +482,8 @@ const String ObxdAudioProcessor::getParameterName (int index)
 		return S("FilterDecay");
 	case FSUS:
 		return S("FilterSustain");
+	case FSUST:
+		return S("FilterSustainTime");
 	case FREL:
 		return S("FilterRelease");
 	}
