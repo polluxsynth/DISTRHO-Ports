@@ -333,7 +333,7 @@ public:
 	inline float processSynthVoice(Voice& b,float lfoIn,float vibIn )
 	{
 		if(economyMode)
-			b.checkAdsrState();
+			b.checkAdssrState();
 		if(b.shouldProcessed||(!economyMode))
 		{
 				b.lfoIn=lfoIn;

@@ -25,7 +25,7 @@
  */
 #pragma once
 #include "Voice.h"
-class AdsrEnvelope
+class AdssrEnvelope
 {
 private:
 	float Value;
@@ -51,7 +51,7 @@ private:
 		return (float)((log(Value+0.0001) - log(0.00001)) / (SampleRate * (timeparam) / 1000));
 	}
 public:
-	AdsrEnvelope()
+	AdssrEnvelope()
 	{
 		uf = 1;
 		Value = 0.0;
