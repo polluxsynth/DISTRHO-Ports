@@ -216,11 +216,6 @@ public:
 			synth.voices[i].fltKF = param;
 		}
 	}
-	void processSelfOscPush(float param)
-	{
-		ForEachVoice(selfOscPush = param>0.5);
-		ForEachVoice(flt.selfOscPush = param>0.5);
-	}
 	void processUnison(float param)
 	{
 		synth.uni = param>0.5f;
@@ -467,12 +462,19 @@ public:
 	{
 		ForEachVoice(cutoff=param);
 	}
-	void processBandpassSw(float param)
+	void processFilterType(float param)
 	{
+		int intparam = roundToInt(param*3);
+		// 0 => fourpole, response sets slope 6..24 dB/octave
+		// 1 => SVF: response sets LP - BP - HP
+		// 2 => SVF w/ self osc: response sets LP -BP -HP
+		// 3 => SVF: response sets LP - notch - HP
 		for(int i = 0 ; i < synth.MAX_VOICES;i++)
 		{
-			//synth.voices[i].cutoff = logsc(param,60,19000,30);
-			synth.voices[i].flt.bandPassSw = param>0.5;
+			synth.voices[i].fourpole = intparam == 0;
+			synth.voices[i].flt.bandPassSw = intparam == 1 || intparam == 2;
+			synth.voices[i].selfOscPush = intparam == 2;
+			synth.voices[i].flt.selfOscPush = intparam == 2;
 		}
 	}
 	void processResonance(float param)
@@ -482,20 +484,12 @@ public:
 			synth.voices[i].flt.setResonance(0.991-logsc(1-param,0,0.991,40));
 		}
 	}
-	void processFourPole(float param)
+	void processResponse(float param)
 	{
 		for(int i = 0 ; i < synth.MAX_VOICES;i++)
 		{
 			//synth.voices[i].flt ;
-			synth.voices[i].fourpole = param>0.5;
-		}
-	}
-	void processMultimode(float param)
-	{
-		for(int i = 0 ; i < synth.MAX_VOICES;i++)
-		{
-			//synth.voices[i].flt ;
-			synth.voices[i].flt.setMultimode(linsc(param,0,1));
+			synth.voices[i].flt.setResponse(linsc(param,0,1));
 		}
 	}
 	void processOversampling(float param)

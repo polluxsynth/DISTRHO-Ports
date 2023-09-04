@@ -76,9 +76,6 @@ void MimidAudioProcessor::setParameter (int index, float newValue)
 	programs.currentProgramPtr->values[index] = newValue;
 	switch(index)
 	{
-	case SELF_OSC_PUSH:
-		synth.processSelfOscPush(newValue);
-		break;
 	case PW_ENV_BOTH:
 		synth.processPwEnvBoth(newValue);
 		break;
@@ -115,9 +112,6 @@ void MimidAudioProcessor::setParameter (int index, float newValue)
 	case BENDLFORATE:
 		synth.procModWheelFrequency(newValue);
 		break;
-	case FOURPOLE:
-		synth.processFourPole(newValue);
-		break;
 	case LEGATOMODE:
 		synth.processLegatoMode(newValue);
 		break;
@@ -130,11 +124,11 @@ void MimidAudioProcessor::setParameter (int index, float newValue)
 	case VOICE_COUNT:
 		synth.setVoiceCount(newValue);
 		break;
-	case BANDPASS:
-		synth.processBandpassSw(newValue);
-		break;
 	case FILTER_WARM:
 		synth.processOversampling(newValue);
+		break;
+	case FILTER_TYPE:
+		synth.processFilterType(newValue);
 		break;
 	case BENDOSC2:
 		synth.procPitchWheelOsc2Only(newValue);
@@ -154,8 +148,8 @@ void MimidAudioProcessor::setParameter (int index, float newValue)
 	case BRIGHTNESS:
 		synth.processBrightness(newValue);
 		break;
-	case MULTIMODE:
-		synth.processMultimode(newValue);
+	case RESPONSE:
+		synth.processResponse(newValue);
 		break;
 	case LFOFREQ:
 		synth.processLfoFrequency(newValue);
@@ -319,8 +313,8 @@ const String MimidAudioProcessor::getParameterName (int index)
 {
 	switch(index)
 	{
-	case SELF_OSC_PUSH:
-		return S("SelfOscPush");
+	case SELF_OSC_PUSH_NOTUSED:
+		return S("SelfOscPush_NOTUSED");
 	case ENV_PITCH_BOTH:
 		return S("EnvPitchBoth");
 	case FENV_INVERT:
@@ -349,8 +343,8 @@ const String MimidAudioProcessor::getParameterName (int index)
 		return S("AsPlayedAllocation");
 	case BENDLFORATE:
 		return S("VibratoRate");
-	case FOURPOLE:
-		return S("FourPole");
+	case FOURPOLE_NOTUSED:
+		return S("FourPole_NOTUSED");
 	case LEGATOMODE:
 		return S("LegatoMode");
 	case ENVPITCH:
@@ -359,10 +353,12 @@ const String MimidAudioProcessor::getParameterName (int index)
 		return S("PitchQuant");
 	case VOICE_COUNT:
 		return S("VoiceCount");
-	case BANDPASS:
-		return S("BandpassBlend");
+	case BANDPASS_NOTUSED:
+		return S("BandpassBlend_NOTUSED");
 	case FILTER_WARM:
 		return S("Filter_Warm");
+	case FILTER_TYPE:
+		return S("FilterType");
 	case BENDRANGE:
 		return S("BendRange");
 	case BENDOSC2:
@@ -379,8 +375,8 @@ const String MimidAudioProcessor::getParameterName (int index)
 		return S("Osc1Mix");
 	case OSC2MIX:
 		return S("Osc2Mix");
-	case MULTIMODE:
-		return S("Multimode");
+	case RESPONSE:
+		return S("Response");
 	case LFOSHWAVE:
 		return S("LfoSampleHoldWave");
 	case LFOSINWAVE:
