@@ -201,7 +201,7 @@ void ObxdAudioProcessorEditor::rebuildComponents()
 		cutoffKnob = addNormalKnob(893,77,ownerFilter,CUTOFF,"Cutoff",0.4);
 		resonanceKnob = addNormalKnob(990,77,ownerFilter,RESONANCE,"Resonance",0);
 		filterEnvelopeAmtKnob = addNormalKnob(1088,77,ownerFilter,ENVELOPE_AMT,"Envelope",0);
-		multimodeKnob = addNormalKnob(990,167,ownerFilter,MULTIMODE,"Multimode",0.5);
+		multimodeKnob = addNormalKnob(990,167,ownerFilter,RESPONSE,"Response",0.5);
 
 		volumeKnob = addNormalKnob(56,77,ownerFilter,VOLUME,"Volume",0.4);
 		portamentoKnob = addNormalKnob(188,77,ownerFilter,PORTAMENTO,"Portamento",0);
@@ -253,8 +253,8 @@ void ObxdAudioProcessorEditor::rebuildComponents()
 
 		pitchQuantButton =  addNormalTooglableButton(684,162,ownerFilter,OSCQuantize,"Step");
 
-		filterBPBlendButton = addNormalTooglableButton(1082,162,ownerFilter,BANDPASS,"Bp");
-		fourPoleButton = addNormalTooglableButton(1127,162,ownerFilter,FOURPOLE,"24");
+		filterBPBlendButton = addNormalTooglableButton(1082,162,ownerFilter,BANDPASS_NOTUSED,"Bp");
+		fourPoleButton = addNormalTooglableButton(1127,162,ownerFilter,FOURPOLE_NOTUSED,"24");
 		filterHQButton = addNormalTooglableButton(932,162,ownerFilter,FILTER_WARM,"HQ");
 
 		filterKeyFollowButton =  addNormalTooglableButton(887,162,ownerFilter,FLT_KF,"Key");
@@ -313,7 +313,7 @@ void ObxdAudioProcessorEditor::rebuildComponents()
 		cutoffKnob = addNormalKnobClassic(577,40,ownerFilter,CUTOFF,"Cutoff",0.4);
 		resonanceKnob = addNormalKnobClassic(638,40,ownerFilter,RESONANCE,"Resonance",0);
 		filterEnvelopeAmtKnob = addNormalKnobClassic(699,40,ownerFilter,ENVELOPE_AMT,"Envelope",0);
-		multimodeKnob = addTinyKnobClassic(643,106,ownerFilter,MULTIMODE,"Multimode",0.5);
+		multimodeKnob = addTinyKnobClassic(643,106,ownerFilter,RESPONSE,"Response",0.5);
 
 		volumeKnob = addNormalKnobClassic(53,120,ownerFilter,VOLUME,"Volume",0.4);
 		portamentoKnob = addNormalKnobClassic(175,241,ownerFilter,PORTAMENTO,"Portamento",0);
@@ -365,8 +365,8 @@ void ObxdAudioProcessorEditor::rebuildComponents()
 
 		pitchQuantButton =  addNormalTooglableButtonClassic(407,178,ownerFilter,OSCQuantize,"Step");
 
-		filterBPBlendButton = addNormalTooglableButtonClassic(697,110,ownerFilter,BANDPASS,"Bp");
-		fourPoleButton = addNormalTooglableButtonClassic(728,110,ownerFilter,FOURPOLE,"24");
+		filterBPBlendButton = addNormalTooglableButtonClassic(697,110,ownerFilter,BANDPASS_NOTUSED,"Bp");
+		fourPoleButton = addNormalTooglableButtonClassic(728,110,ownerFilter,FOURPOLE_NOTUSED,"24");
 		filterHQButton = addNormalTooglableButtonClassic(604,110,ownerFilter,FILTER_WARM,"HQ");
 
 		filterKeyFollowButton =  addNormalTooglableButtonClassic(573,110,ownerFilter,FLT_KF,"Key");
@@ -437,7 +437,7 @@ void ObxdAudioProcessorEditor::buttonClicked(Button * b)
 		handleBParam(pitchQuantButton,OSCQuantize)
 		handleBParam(unisonButton,UNISON)
 		handleBParam(filterHQButton,FILTER_WARM)
-		handleBParam(filterBPBlendButton,BANDPASS)
+		handleBParam(filterBPBlendButton,BANDPASS_NOTUSED)
 
 		handleBParam(lfoSinButton,LFOSINWAVE)
 		handleBParam(lfoSquareButton,LFOSQUAREWAVE)
@@ -450,7 +450,7 @@ void ObxdAudioProcessorEditor::buttonClicked(Button * b)
 		handleBParam(lfoPwm2Button,LFOPW2)
 		handleBParam(bendOsc2OnlyButton,BENDOSC2)
 		handleBParam(bendRangeButton,BENDRANGE)
-		handleBParam(fourPoleButton,FOURPOLE)
+		handleBParam(fourPoleButton,FOURPOLE_NOTUSED)
 		handleBParam(asPlayedAllocButton,ASPLAYEDALLOCATION)
 	{};
 
@@ -483,7 +483,7 @@ void ObxdAudioProcessorEditor::sliderValueChanged (Slider* c)
 		handleSParam(filterEnvelopeAmtKnob,ENVELOPE_AMT)
 		handleSParam(pulseWidthKnob,OSC1PW)
 		handleSParam(xmodKnob,XMOD)
-		handleSParam(multimodeKnob,MULTIMODE)
+		handleSParam(multimodeKnob,RESPONSE)
 
 		handleSParam(attackKnob,LATK)
 		handleSParam(decayKnob,LDEC)
@@ -563,7 +563,7 @@ void ObxdAudioProcessorEditor::changeListenerCallback (ChangeBroadcaster* source
 		rn(filterEnvelopeAmtKnob,ENVELOPE_AMT)
 		rn(pulseWidthKnob,OSC1PW)
 		rn(xmodKnob,XMOD)
-		rn(multimodeKnob,MULTIMODE)
+		rn(multimodeKnob,RESPONSE)
 		rn(brightnessKnob,BRIGHTNESS)
 		rn(envPitchModKnob,ENVPITCH)
 
@@ -605,7 +605,7 @@ void ObxdAudioProcessorEditor::changeListenerCallback (ChangeBroadcaster* source
 		rn(portamentoDetuneKnob,PORTADER)
 
 		rn(filterHQButton,FILTER_WARM)
-		rn(filterBPBlendButton,BANDPASS)
+		rn(filterBPBlendButton,BANDPASS_NOTUSED)
 		rn(lfoSinButton,LFOSINWAVE)
 		rn(lfoSquareButton,LFOSQUAREWAVE)
 		rn(lfoSHButton,LFOSHWAVE)
@@ -618,7 +618,7 @@ void ObxdAudioProcessorEditor::changeListenerCallback (ChangeBroadcaster* source
 		rn(lfoFilterButton,LFOFILTER)
 		rn(lfoPwm1Button,LFOPW1)
 		rn(lfoPwm2Button,LFOPW2)
-		rn(fourPoleButton,FOURPOLE)
+		rn(fourPoleButton,FOURPOLE_NOTUSED)
 
 		rn(transposeKnob,OCTAVE)
 

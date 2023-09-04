@@ -57,7 +57,7 @@ public:
 		R=1;
 		R24=0;
 	}
-	void setMultimode(float m)
+	void setResponse(float m)
 	{
 		mm = m;
 		mmch = (int)(mm * 3);
