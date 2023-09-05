@@ -85,7 +85,6 @@ public:
 	float nmx;
 	float pto1,pto2;
 
-
 	//osc waveshapes
 	float osc1Saw,osc2Saw, osc1Pul,osc2Pul, osc1Tri, osc2Tri;
 
@@ -163,7 +162,7 @@ public:
 		SampleRate = sr;
 		sampleRateInv = 1.0f / SampleRate;
 	}
-	inline float ProcessSample()
+	inline void ProcessSample(float &audioOutput, float &modOutput)
 	{
 		float noiseGen = wn.nextFloat()-0.5;
 		pitch1 = getPitch(dirt * noiseGen + notePlaying + (quantizeCw?((int)(osc1p)):osc1p)+ pto1 + tune + oct+totalDetune*osc1Factor);
@@ -204,6 +203,7 @@ public:
 			osc1mix = o1s.getValue(x1) + o1s.aliasReduction();
 		else if(osc1Tri)
 			osc1mix = o1t.getValue(x1) + o1t.aliasReduction();
+
 		//Pitch control needs additional delay buffer to compensate
 		//This will give us less aliasing on xmod
 		//Hard sync gate signal delayed too
@@ -250,6 +250,7 @@ public:
 
 		//mixing
 		float res =o1mx*osc1mix + o2mx *osc2mix + (noiseGen)*(nmx*1.3 + 0.0006);
-		return res*3;
+		audioOutput = res*3;
+		modOutput = osc1mix;
 	}
 };

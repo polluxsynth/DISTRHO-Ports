@@ -156,6 +156,9 @@ void ObxdAudioProcessor::setParameter (int index, float newValue)
 	case BRIGHTNESS:
 		synth.processBrightness(newValue);
 		break;
+	case OSC1FLTMOD:
+		synth.processOsc1FltMod(newValue);
+		break;
 	case RESPONSE:
 		synth.processResponse(newValue);
 		break;
@@ -489,6 +492,8 @@ const String ObxdAudioProcessor::getParameterName (int index)
 		return S("FilterSustainTime");
 	case FREL:
 		return S("FilterRelease");
+	case OSC1FLTMOD:
+		return S("Osc1FilterMod");
 	}
 	return String();
 }

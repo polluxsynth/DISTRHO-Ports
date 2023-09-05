@@ -97,5 +97,6 @@ enum Parameters
 	FREL,
 	LREL,
 	FILTER_TYPE,
+	OSC1FLTMOD,
 	PARAM_COUNT,
 };
