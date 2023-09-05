@@ -1,11 +1,13 @@
 /*
 	==============================================================================
-	This file is part of Obxd synthesizer.
+        This file is part of the MiMi-d synthesizer,
+        originally from Obxd synthesizer.
 
-	Copyright © 2013-2014 Filatov Vadim
-	
-	Contact author via email :
-	justdat_@_e1.ru
+        Copyright © 2013-2014 Filatov Vadim
+        Copyright 2023 Ricard Wanderlof
+
+        Contact original author via email :
+        justdat_@_e1.ru
 
 	This file may be licensed under the terms of of the
 	GNU General Public License Version 2 (the ``GPL'').
@@ -51,6 +53,12 @@ inline static float getPitch(float index)
 	//
  // return lut[mi] + (lut[mi+1] - lut[mi]) * ofs;
 };
+
+// Go from freq in Hz to note number
+inline static float getNote(float freq)
+{
+	return log(freq / 440) / log(2) * 12;
+}
 
 inline static float tptlpupw(float & state , float inp , float cutoff , float srInv)
 {

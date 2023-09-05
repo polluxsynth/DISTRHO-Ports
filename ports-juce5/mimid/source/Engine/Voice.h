@@ -41,6 +41,12 @@ private:
 	float d1,d2;
 	float c1,c2;
 
+	// offset to get apparent zero cutoff frequency shift with oscmod
+	const float oscmod_offset = 0.20;
+	// maximum peak of oscmod waveform w/ offset applied
+	const float oscmod_maxpeak = 0.5 - oscmod_offset;
+	const float oscmod_maxpeak_inv = oscmod_maxpeak ? 1/oscmod_maxpeak:0;
+
 	//JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Voice)
 public:
 	bool sustainHold;
@@ -71,6 +77,7 @@ public:
 	float levelDetuneAmt;
 
 	float brightCoef;
+	float osc1FltMod;
 
 	int midiIndx;
 
@@ -115,6 +122,8 @@ public:
 	int legatoMode;
 	float briHold;
 
+	bool oscmodEnable; // Oscillator modulation output enabled
+
 	float unused1, unused2; // TODO: remove
 
 	Voice()
@@ -132,6 +141,7 @@ public:
 		fourpole = false;
 		legatoMode = 0;
 		brightCoef =briHold= 1;
+		osc1FltMod = 0;
 		envpitchmod = 0;
 		pwenvmod = 0;
 		oscpsw = 0;
@@ -156,6 +166,7 @@ public:
 		PortaDetune =Random::getSystemRandom().nextFloat()-0.5;
 	//	lenvd=new DelayLine(Samples*2);
 	//	fenvd=new DelayLine(Samples*2);
+		oscmodEnable = false;
 		unused1=unused2=0; // TODO: Remove
 	}
 	~Voice()
@@ -165,8 +176,11 @@ public:
 	}
 	inline float ProcessSample()
 	{
+		float oscps, oscmod;
+
 		//portamento on osc input voltage
 		//implements rc circuit
+		// Midi note 81 is A5 (880 Hz), so ptNote == 0 => 880 Hz
 		float ptNote  =tptlpupw(prtst, midiIndx-81, porta * (1+PortaDetune*PortaDetuneAmt),sampleRateInv);
 		osc.notePlaying = ptNote;
 		//both envelopes and filter cv need a delay equal to osc internal delay
@@ -175,23 +189,6 @@ public:
 		float envm = fenv.processSample() * (1 - (1-velocityValue)*vflt);
 		if(invertFenv)
 			envm = -envm;
-		//filter exp cutoff calculation
-		float cutoffcalc = jmin(
-			getPitch(
-			(lfof?lfoDelayed*lfoa1:0)+
-			cutoff+
-			FltDetune*FltDetAmt+
-			fenvamt*fenvd.feedReturn(envm)+
-			-45 + (fltKF*(ptNote+40))
-			)
-			//noisy filter cutoff
-			+(ng.nextFloat()-0.5f)*3.5f
-			, (flt.SampleRate*0.5f-120.0f));//for numerical stability purposes
-
-		//limit our max cutoff on self osc to prevent alising
-		if(selfOscPush)
-			cutoffcalc = jmin(cutoffcalc,19000.0f);
-
 
 		//PW modulation
 		osc.pw1 = (lfopw1?(lfoIn * lfoa2):0) + (pwEnvBoth?(pwenvmod * envm) : 0);
@@ -206,13 +203,64 @@ public:
 		//variable sort magic - upsample trick
 		float envVal = lenvd.feedReturn(env.processSample() * (1 - (1-velocityValue)*vamp));
 
-		float oscps = osc.ProcessSample() * (1 - levelDetuneAmt*levelDetune);
+		osc.ProcessSample(oscps, oscmod);
 
-
+		oscps *= 1 - levelDetuneAmt*levelDetune;
 		oscps = oscps - tptlpupw(c1,oscps,12,sampleRateInv);
+
+		//filter exp cutoff calculation
+		//needs to be done after we've gotten oscmod
+		// ptNote+40 => F2 = 87.31 Hz is base note for filter tracking
+		float cutoffnote =
+			(lfof?lfoDelayed*lfoa1:0)+
+			cutoff+
+			FltDetune*FltDetAmt+
+			fenvamt*fenvd.feedReturn(envm)+
+			-45 + (fltKF*(ptNote+40));
+		if (oscmodEnable) {
+			// Alias limiting for oscillator filter modulation:
+			// When the positive peak of the mod signal would cause
+			// the filter frequency to go above ~22 kHz, scale down
+			// the mod amount accordingly.
+			// This gives a seamless transition from the mod value
+			// set by osc1FltMod down to zero as the filter
+			// frequency is increased. The effectiveness of this
+			// mod routing is rather diminished at high filter
+			// frequency settings anyway.
+			// Note that we only limit the modulation amount, the
+			// filter frequency without modulation is not limited
+			// at this time.
+			static const float maxfltfreq = 22000;
+			static const float maxallowednote = getNote(maxfltfreq);
+			// maxcutoff = cutoff freq at +ve peak of mod wave
+			// (without considering oscmod_offset, which gives
+			// us a bit of extra margin, as the final offset is
+			// in fact negative).
+			float maxcutoff = cutoffnote + oscmod_maxpeak * osc1FltMod;
+			float osc1FltModTmp = osc1FltMod;
+			if (cutoffnote > maxallowednote)
+				// outside range; disable modulation
+				osc1FltModTmp = 0;
+			else if (maxcutoff > maxallowednote)
+				// limit osc1FltMod to keep under max allowed.
+				// note: divide by peak of mod signal.
+				osc1FltModTmp = (maxallowednote - cutoffnote) *
+						oscmod_maxpeak_inv;
+			cutoffnote += (oscmod-oscmod_offset) * osc1FltModTmp;
+		}
+		float cutoffcalc = jmin(
+			getPitch(cutoffnote)
+			//noisy filter cutoff
+			+(ng.nextFloat()-0.5f)*3.5f
+			, (flt.SampleRate*0.5f-120.0f));//for numerical stability purposes
+		//limit our max cutoff on self osc to prevent alising
+		//TODO: higher limit when oversample enabled?
+		if(selfOscPush)
+			cutoffcalc = jmin(cutoffcalc,19000.0f);
 
 		float x1 = oscps;
 		x1 = tptpc(d2,x1,brightCoef);
+		//TODO: filter oscmod as well to reduce aliasing?
 		if(fourpole)
 			x1 = flt.Apply4Pole(x1,(cutoffcalc)); 
 		else
