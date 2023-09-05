@@ -114,8 +114,8 @@ public:
 	{
 		sampleRate = sr;
 		sampleRateInv = 1 / sampleRate;
-		mlfo.setSamlpeRate(sr);
-		vibratoLfo.setSamlpeRate(sr);
+		mlfo.setSampleRate(sr);
+		vibratoLfo.setSampleRate(sr);
 		for(int i = 0 ; i < MAX_VOICES;++i)
 		{
 			voices[i].setSampleRate(sr);
@@ -312,13 +312,13 @@ public:
 	{
 		if(over==true)
 		{
-			mlfo.setSamlpeRate(sampleRate*2);
-			vibratoLfo.setSamlpeRate(sampleRate*2);
+			mlfo.setSampleRate(sampleRate*2);
+			vibratoLfo.setSampleRate(sampleRate*2);
 		}
 		else
 		{
-			mlfo.setSamlpeRate(sampleRate);
-			vibratoLfo.setSamlpeRate(sampleRate);
+			mlfo.setSampleRate(sampleRate);
+			vibratoLfo.setSampleRate(sampleRate);
 		}
 		for(int i = 0 ; i < MAX_VOICES;i++)
 		{

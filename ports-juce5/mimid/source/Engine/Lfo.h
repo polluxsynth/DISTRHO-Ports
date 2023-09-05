@@ -85,7 +85,7 @@ public:
                 Res+=sh;
 			return tptlpupw(s1, Res,3000,SampleRateInv);
 	}
-	void setSamlpeRate(float sr)
+	void setSampleRate(float sr)
 	{
 		SampleRate=sr;
 		SampleRateInv = 1 / SampleRate;
