@@ -124,7 +124,7 @@ void MimidAudioProcessor::setParameter (int index, float newValue)
 	case VOICE_COUNT:
 		synth.setVoiceCount(newValue);
 		break;
-	case FILTER_WARM:
+	case OVERSAMPLE:
 		synth.processOversampling(newValue);
 		break;
 	case FILTER_TYPE:
@@ -355,8 +355,8 @@ const String MimidAudioProcessor::getParameterName (int index)
 		return S("VoiceCount");
 	case BANDPASS_NOTUSED:
 		return S("BandpassBlend_NOTUSED");
-	case FILTER_WARM:
-		return S("Filter_Warm");
+	case OVERSAMPLE:
+		return S("Oversample");
 	case FILTER_TYPE:
 		return S("FilterType");
 	case BENDRANGE:
