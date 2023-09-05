@@ -41,8 +41,6 @@ private:
 	float d1,d2;
 	float c1,c2;
 
-	bool hq;
-
 	//JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Voice)
 public:
 	bool sustainHold;
@@ -97,7 +95,6 @@ public:
 	bool lfoo1,lfoo2,lfof;
 	bool lfopw1,lfopw2;
 
-	bool Oversample;
 	bool selfOscPush;
 
 	float envpitchmod;
@@ -120,7 +117,6 @@ public:
 
 	Voice()
 	{
-		hq = false;
 		selfOscPush = false;
 		pitchModBoth = false;
 		invertFenv = false;
@@ -138,7 +134,6 @@ public:
 		pwenvmod = 0;
 		oscpsw = 0;
 		cutoffwas = envelopewas=0;
-		Oversample= false;
 		c1=c2=d1=d2=0;
 		pitchWheel=pitchWheelAmt=0;
 		lfoIn=0;
