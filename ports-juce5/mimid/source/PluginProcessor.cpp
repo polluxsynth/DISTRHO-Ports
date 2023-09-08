@@ -103,6 +103,13 @@ void MimidAudioProcessor::setParameter (int index, float newValue)
 	case VAMPENV:
 		synth.procAmpVelocityAmount(newValue);
 		break;
+	// TODO: Remove
+	case UNUSED_1:
+		synth.procUnused1(newValue);
+		break;
+	case UNUSED_2:
+		synth.procUnused2(newValue);
+		break;
 	case VFLTENV:
 		synth.procFltVelocityAmount(newValue);
 		break;

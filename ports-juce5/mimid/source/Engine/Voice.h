@@ -115,6 +115,8 @@ public:
 	int legatoMode;
 	float briHold;
 
+	float unused1, unused2; // TODO: remove
+
 	Voice()
 	{
 		selfOscPush = false;
@@ -154,6 +156,7 @@ public:
 		PortaDetune =Random::getSystemRandom().nextFloat()-0.5;
 	//	lenvd=new DelayLine(Samples*2);
 	//	fenvd=new DelayLine(Samples*2);
+		unused1=unused2=0; // TODO: Remove
 	}
 	~Voice()
 	{

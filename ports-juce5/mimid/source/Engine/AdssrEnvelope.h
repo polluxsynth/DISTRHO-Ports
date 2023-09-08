@@ -51,6 +51,9 @@ private:
 		return (float)((log(Value+0.0001) - log(0.00001)) / (SampleRate * (timeparam) / 1000));
 	}
 public:
+	float unused1; // TODO: remove
+	float unused2; // TODO: remove
+
 	AdssrEnvelope()
 	{
 		uf = 1;

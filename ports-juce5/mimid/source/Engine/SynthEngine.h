@@ -39,6 +39,8 @@ private:
 	ParamSmoother pitchWheelSmoother;
 	ParamSmoother modWheelSmoother;
 	float sampleRate;
+	// TODO Remove unused1,2:
+	float unused1, unused2;
 	//JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (SynthEngine)
 public:
 	SynthEngine():
@@ -124,6 +126,26 @@ public:
 			synth.voices[i].expr;\
 		}\
 
+	// TODO: Remove
+	void procUnused1(float val)
+	{
+		unused1=val;
+		ForEachVoice(unused1=val);
+		ForEachVoice(osc.unused1=val);
+		ForEachVoice(flt.unused1=val);
+		ForEachVoice(env.unused1=val);
+		ForEachVoice(fenv.unused1=val);
+	}
+	// TODO: Remove
+	void procUnused2(float val)
+	{
+		unused2=val;
+		ForEachVoice(unused2=val);
+		ForEachVoice(osc.unused2=val);
+		ForEachVoice(flt.unused2=val);
+		ForEachVoice(env.unused2=val);
+		ForEachVoice(fenv.unused2=val);
+	}
 	void procAmpVelocityAmount(float val)
 	{
 		for(int i = 0 ; i < synth.MAX_VOICES;i++)
