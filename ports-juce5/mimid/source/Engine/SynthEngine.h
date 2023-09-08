@@ -124,6 +124,20 @@ public:
 			synth.voices[i].expr;\
 		}\
 
+	// TODO: Remove
+	void procUnused1(float val)
+	{
+		ForEachVoice(unused1=val);
+		ForEachVoice(osc.unused1=val);
+		ForEachVoice(flt.unused1=val);
+	}
+	// TODO: Remove
+	void procUnused2(float val)
+	{
+		ForEachVoice(unused2=val);
+		ForEachVoice(osc.unused2=val);
+		ForEachVoice(flt.unused2=val);
+	}
 	void procAmpVelocityAmount(float val)
 	{
 		for(int i = 0 ; i < synth.MAX_VOICES;i++)

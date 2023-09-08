@@ -93,6 +93,7 @@ public:
 	bool hardSync;
 	float xmod;
 
+	float unused1, unused2; //TODO remove
 
 	OscillatorB() :
 		n(Samples*2),

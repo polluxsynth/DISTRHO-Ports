@@ -44,6 +44,7 @@ public:
 	bool bandPassSw;
 	float mm;
 	bool selfOscPush;
+	float unused1, unused2;
 	Filter()
 	{
 		selfOscPush = false;
@@ -56,6 +57,8 @@ public:
 		rcor24Inv = 1 / rcor24;
 		R=1;
 		R24=0;
+		unused1=1;
+		unused2=1;
 	}
 	void setResponse(float m)
 	{
