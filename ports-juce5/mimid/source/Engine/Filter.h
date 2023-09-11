@@ -32,7 +32,7 @@ private:
 	float s1,s2,s3,s4;
 	float R;
 	float R24;
-	float rcor,rcorInv;
+	float rcorInv;
 	float rcor24,rcor24Inv;
 
 	//24 db multimode
@@ -52,8 +52,6 @@ public:
 		s1=s2=s3=s4=0;
 		SampleRate = 44000;
 		sampleRateInv = 1 / SampleRate;
-		rcor =500.0 / 44000;
-		rcorInv = 1 / rcor;
 		rcor24 = 970.0 / 44000;
 		rcor24Inv = 1 / rcor24;
 		R=1;
@@ -70,9 +68,7 @@ public:
 		SampleRate = sr;
 		sampleRateInv = 1/SampleRate;
 		float rcrate =sqrt((44000/SampleRate));
-		rcor = (500.0 / 44000)*rcrate;
 		rcor24 = (970.0 / 44000)*rcrate;
-		rcorInv = 1 / rcor;
 		rcor24Inv = 1 / rcor24;
 	}
 	inline void setResonance(float res)
