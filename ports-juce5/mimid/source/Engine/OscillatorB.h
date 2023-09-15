@@ -91,6 +91,7 @@ public:
 	float osc1p,osc2p;
 	bool hardSync;
 	float xmod;
+	bool osc1modout;
 
 	float unused1, unused2; //TODO remove
 
@@ -173,7 +174,6 @@ public:
 		hsfrac = 0;
 		float osc1mix=0.0f;
 		float pwcalc =jlimit<float>(0.1f,1.0f,(osc1pw + pw1)*0.5f + 0.5f);
-
 		if(osc1Pul)
 			o1p.processMaster(x1,fs,pwcalc,pw1w);
 		else if(osc1Saw)
@@ -208,7 +208,9 @@ public:
 		//This will give us less aliasing on xmod
 		//Hard sync gate signal delayed too
 		noiseGen = wn.nextFloat()-0.5;
-		pitch2 = getPitch(cvd.feedReturn(dirt *noiseGen + notePlaying + osc2Det + (quantizeCw?((int)(osc2p)):osc2p) + pto2+ osc1mix *xmod + tune + oct +totalDetune*osc2Factor));
+		// Offset on osc1mix * xmod is to get zero pitch shift at
+		// max xmod
+		pitch2 = getPitch(cvd.feedReturn(dirt *noiseGen + notePlaying + osc2Det + (quantizeCw?((int)(osc2p)):osc2p) + pto2+ (osc1modout?osc1mix-0.0569:0)*xmod + tune + oct +totalDetune*osc2Factor));
 
 		fs = jmin(pitch2 * (sampleRateInv),0.45f);
 
