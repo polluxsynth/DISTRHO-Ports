@@ -233,9 +233,9 @@ void ObxdAudioProcessorEditor::rebuildComponents()
 		lfoAmt1Knob = addNormalKnob(390,77,ownerFilter,LFO1AMT,"Pitch",0);
 		lfoAmt2Knob = addNormalKnob(488,77,ownerFilter,LFO2AMT,"PWM",0);
 
-		lfoSinButton = addNormalTooglableButton(309,162,ownerFilter,LFOSINWAVE,"Sin");
-		lfoSquareButton = addNormalTooglableButton(309,252,ownerFilter,LFOSQUAREWAVE,"SQ");
-		lfoSHButton = addNormalTooglableButton(309,335,ownerFilter,LFOSHWAVE,"S&H");
+		//lfoSinButton = addNormalTooglableButton(309,162,ownerFilter,LFOSINWAVE,"Sin");
+		//lfoSquareButton = addNormalTooglableButton(309,252,ownerFilter,LFOSQUAREWAVE,"SQ");
+		//lfoSHButton = addNormalTooglableButton(309,335,ownerFilter,LFOSHWAVE,"S&H");
 
 		lfoOsc1Button = addNormalTooglableButton(406,162,ownerFilter,LFOOSC1,"Osc1");
 		lfoOsc2Button = addNormalTooglableButton(406,252,ownerFilter,LFOOSC2,"Osc2");
@@ -345,9 +345,9 @@ void ObxdAudioProcessorEditor::rebuildComponents()
 		lfoAmt1Knob = addNormalKnobClassic(640,207,ownerFilter,LFO1AMT,"Pitch",0);
 		lfoAmt2Knob = addNormalKnobClassic(704,207,ownerFilter,LFO2AMT,"PWM",0);
 
-		lfoSinButton = addNormalTooglableButtonClassic(587,269,ownerFilter,LFOSINWAVE,"Sin");
-		lfoSquareButton = addNormalTooglableButtonClassic(587,323,ownerFilter,LFOSQUAREWAVE,"SQ");
-		lfoSHButton = addNormalTooglableButtonClassic(587,378,ownerFilter,LFOSHWAVE,"S&H");
+		//lfoSinButton = addNormalTooglableButtonClassic(587,269,ownerFilter,LFOSINWAVE,"Sin");
+		//lfoSquareButton = addNormalTooglableButtonClassic(587,323,ownerFilter,LFOSQUAREWAVE,"SQ");
+		//lfoSHButton = addNormalTooglableButtonClassic(587,378,ownerFilter,LFOSHWAVE_UNUSED,"S&H");
 
 		lfoOsc1Button = addNormalTooglableButtonClassic(651,269,ownerFilter,LFOOSC1,"Osc1");
 		lfoOsc2Button = addNormalTooglableButtonClassic(651,323,ownerFilter,LFOOSC2,"Osc2");
@@ -439,9 +439,9 @@ void ObxdAudioProcessorEditor::buttonClicked(Button * b)
 		handleBParam(filterHQButton,OVERSAMPLE)
 		handleBParam(filterBPBlendButton,BANDPASS_NOTUSED)
 
-		handleBParam(lfoSinButton,LFOSINWAVE)
-		handleBParam(lfoSquareButton,LFOSQUAREWAVE)
-		handleBParam(lfoSHButton,LFOSHWAVE)
+		//handleBParam(lfoSinButton,LFOSINWAVE)
+		//handleBParam(lfoSquareButton,LFOSQUAREWAVE)
+		//handleBParam(lfoSHButton,LFOSHWAVE)
 
 		handleBParam(lfoOsc1Button,LFOOSC1)
 		handleBParam(lfoOsc2Button,LFOOSC2)
@@ -606,9 +606,9 @@ void ObxdAudioProcessorEditor::changeListenerCallback (ChangeBroadcaster* source
 
 		rn(filterHQButton,OVERSAMPLE)
 		rn(filterBPBlendButton,BANDPASS_NOTUSED)
-		rn(lfoSinButton,LFOSINWAVE)
-		rn(lfoSquareButton,LFOSQUAREWAVE)
-		rn(lfoSHButton,LFOSHWAVE)
+		//rn(lfoSinButton,LFOSINWAVE)
+		//rn(lfoSquareButton,LFOSQUAREWAVE)
+		//rn(lfoSHButton,LFOSHWAVE)
 
 		rn(bendOsc2OnlyButton,BENDOSC2)
 		rn(bendRangeButton,BENDRANGE)

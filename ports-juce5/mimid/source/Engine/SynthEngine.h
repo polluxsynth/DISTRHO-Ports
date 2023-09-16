@@ -250,38 +250,13 @@ public:
 		synth.mlfo.setRawParam(param);
 		synth.mlfo.setFrequency(logsc(param,0,50,120));
 	}
-	void processLfoSine(float param)
+	void processLfo1Wave(float param)
 	{
-		if(param>0.5)
-		{
-			synth.mlfo.waveForm |=1;
-		}
-		else
-		{
-			synth.mlfo.waveForm&=~1;
-		}
+		synth.mlfo.waveForm =  roundToInt(param*5);
 	}
-	void processLfoSquare(float param)
+	void processLfo2Wave(float param)
 	{
-		if(param>0.5)
-		{
-			synth.mlfo.waveForm |=2;
-		}
-		else
-		{
-			synth.mlfo.waveForm&=~2;
-		}
-	}
-	void processLfoSH(float param)
-	{
-		if(param>0.5)
-		{
-			synth.mlfo.waveForm |=4;
-		}
-		else
-		{
-			synth.mlfo.waveForm&=~4;
-		}
+		synth.vibratoLfo.waveForm =  roundToInt(param*5);
 	}
 	void processLfoAmt1(float param)
 	{
