@@ -170,14 +170,13 @@ void MimidAudioProcessor::setParameter (int index, float newValue)
 	case LFO2AMT:
 		synth.processLfoAmt2(newValue);
 		break;
-	case LFOSINWAVE:
-		synth.processLfoSine(newValue);
+	case LFO1WAVE:
+		synth.processLfo1Wave(newValue);
 		break;
-	case LFOSQUAREWAVE:
-		synth.processLfoSquare(newValue);
+	case LFO2WAVE:
+		synth.processLfo2Wave(newValue);
 		break;
-	case LFOSHWAVE:
-		synth.processLfoSH(newValue);
+	case LFOSHWAVE_UNUSED:
 		break;
 	case LFOFILTER:
 		synth.processLfoFilter(newValue);
@@ -387,12 +386,12 @@ const String MimidAudioProcessor::getParameterName (int index)
 		return S("Osc2Mix");
 	case RESPONSE:
 		return S("Response");
-	case LFOSHWAVE:
+	case LFO1WAVE:
+		return S("Lfo1Wave");
+	case LFO2WAVE:
+		return S("Lfo2Wave");
+	case LFOSHWAVE_UNUSED:
 		return S("LfoSampleHoldWave");
-	case LFOSINWAVE:
-		return S("LfoSineWave");
-	case LFOSQUAREWAVE:
-		return S("LfoSquareWave");
 	case LFO1AMT:
 		return S("LfoAmount1");
 	case LFO2AMT:

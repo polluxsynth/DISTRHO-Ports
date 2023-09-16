@@ -1,11 +1,13 @@
 /*
 	==============================================================================
-	This file is part of Obxd synthesizer.
+        This file is part of the MiMi-d synthesizer,
+        originally from Obxd synthesizer.
 
-	Copyright © 2013-2014 Filatov Vadim
-	
-	Contact author via email :
-	justdat_@_e1.ru
+        Copyright © 2013-2014 Filatov Vadim
+        Copyright 2023 Ricard Wanderlof
+
+        Contact original author via email :
+        justdat_@_e1.ru
 
 	This file may be licensed under the terms of of the
 	GNU General Public License Version 2 (the ``GPL'').
@@ -26,8 +28,8 @@
 class Lfo
 {
 private:
-	float phase;
-	float s, sq, sh;
+	float phase; // 0 -> 1
+	float sh; // peak +1/-1
 	float s1;
     Random rg;
 	float SampleRate;
@@ -52,7 +54,7 @@ public:
 		s1=0;
 		Frequency=1;
 		phase=0;
-		s=sq=sh=0;
+		sh=0;
 		rg=Random();
 	}
 	void setSynced()
@@ -71,19 +73,30 @@ public:
 		{
 			phaseInc = (bpm/60.0)*syncRate;
 			phase = phaseInc*quaters;
-			phase = (fmod(phase,1)*float_Pi*2-float_Pi);
+			phase = (fmod(phase,1)*2-1);
 		}
 	}
 	inline float getVal()
 	{
-		 float Res = 0;
-            if((waveForm &1) !=0 )
-                Res+=s;
-            if((waveForm&2)!=0)
-                Res+=sq;
-            if((waveForm&4)!=0)
-                Res+=sh;
-			return tptlpupw(s1, Res,3000,SampleRateInv);
+		float Res = 0;
+		switch (waveForm)
+		// OFF - TRI - SQU - SAWU - SAWD - S/H
+		{
+			case 0: break;
+			case 1: Res = phase < 0.25 ? 4 * phase :
+				      phase < 0.75 ? 2 - 4 * phase :
+					             4 * phase - 4;
+				break;
+			case 2: Res = phase < 0.5 ? 1 : -1;
+				break;
+			case 3: Res = phase * 2 - 1;
+				break;
+			case 4: Res = 1 - 2 * phase;
+				break;
+			case 5: Res = sh;
+				break;
+		}
+		return tptlpupw(s1, Res,3000,SampleRateInv);
 	}
 	void setSampleRate(float sr)
 	{
@@ -92,12 +105,10 @@ public:
 	}
 	inline void update()
 	{
-		phase+=((phaseInc * float_Pi*2 * SampleRateInv));
-		sq = (phase>0?1:-1);
-		s = sin(phase);
-		if(phase > float_Pi)
+		phase+=((phaseInc * SampleRateInv));
+		if(phase > 1)
 		{
-			phase-=2*float_Pi;
+			phase-=1;
 			sh = rg.nextFloat()*2-1;
 		}
 
