@@ -237,12 +237,12 @@ void ObxdAudioProcessorEditor::rebuildComponents()
 		//lfoSquareButton = addNormalTooglableButton(309,252,ownerFilter,LFOSQUAREWAVE,"SQ");
 		//lfoSHButton = addNormalTooglableButton(309,335,ownerFilter,LFOSHWAVE,"S&H");
 
-		lfoOsc1Button = addNormalTooglableButton(406,162,ownerFilter,LFOOSC1,"Osc1");
-		lfoOsc2Button = addNormalTooglableButton(406,252,ownerFilter,LFOOSC2,"Osc2");
-		lfoFilterButton = addNormalTooglableButton(406,335,ownerFilter,LFOFILTER,"Filt");
+		//lfoOsc1Button = addNormalTooglableButton(406,162,ownerFilter,LFOOSC1,"Osc1");
+		//lfoOsc2Button = addNormalTooglableButton(406,252,ownerFilter,LFOOSC2,"Osc2");
+		//lfoFilterButton = addNormalTooglableButton(406,335,ownerFilter,LFOFILTER,"Filt");
 
-		lfoPwm1Button = addNormalTooglableButton(504,162,ownerFilter,LFOPW1,"Osc1");
-		lfoPwm2Button = addNormalTooglableButton(504,252,ownerFilter,LFOPW2,"Osc2");
+		//lfoPwm1Button = addNormalTooglableButton(504,162,ownerFilter,LFOPW1,"Osc1");
+		//lfoPwm2Button = addNormalTooglableButton(504,252,ownerFilter,LFOPW2,"Osc2");
 
 		hardSyncButton = addNormalTooglableButton(730,162,ownerFilter,OSC2HS,"Sync");
 		osc1SawButton = addNormalTooglableButton(587,162,ownerFilter,OSC1Saw_NOTUSED,"S");
@@ -349,12 +349,12 @@ void ObxdAudioProcessorEditor::rebuildComponents()
 		//lfoSquareButton = addNormalTooglableButtonClassic(587,323,ownerFilter,LFOSQUAREWAVE,"SQ");
 		//lfoSHButton = addNormalTooglableButtonClassic(587,378,ownerFilter,LFOSHWAVE_UNUSED,"S&H");
 
-		lfoOsc1Button = addNormalTooglableButtonClassic(651,269,ownerFilter,LFOOSC1,"Osc1");
-		lfoOsc2Button = addNormalTooglableButtonClassic(651,323,ownerFilter,LFOOSC2,"Osc2");
-		lfoFilterButton = addNormalTooglableButtonClassic(651,378,ownerFilter,LFOFILTER,"Filt");
+		//lfoOsc1Button = addNormalTooglableButtonClassic(651,269,ownerFilter,LFOOSC1,"Osc1");
+		//lfoOsc2Button = addNormalTooglableButtonClassic(651,323,ownerFilter,LFOOSC2,"Osc2");
+		//lfoFilterButton = addNormalTooglableButtonClassic(651,378,ownerFilter,LFOFILTER,"Filt");
 
-		lfoPwm1Button = addNormalTooglableButtonClassic(714,269,ownerFilter,LFOPW1,"Osc1");
-		lfoPwm2Button = addNormalTooglableButtonClassic(714,323,ownerFilter,LFOPW2,"Osc2");
+		//lfoPwm1Button = addNormalTooglableButtonClassic(714,269,ownerFilter,LFOPW1,"Osc1");
+		//lfoPwm2Button = addNormalTooglableButtonClassic(714,323,ownerFilter,LFOPW2,"Osc2");
 
 		hardSyncButton = addNormalTooglableButtonClassic(282,178,ownerFilter,OSC2HS,"Sync");
 		osc1SawButton = addNormalTooglableButtonClassic(265,114,ownerFilter,OSC1Saw_NOTUSED,"S");
@@ -443,11 +443,11 @@ void ObxdAudioProcessorEditor::buttonClicked(Button * b)
 		//handleBParam(lfoSquareButton,LFOSQUAREWAVE)
 		//handleBParam(lfoSHButton,LFOSHWAVE)
 
-		handleBParam(lfoOsc1Button,LFOOSC1)
-		handleBParam(lfoOsc2Button,LFOOSC2)
-		handleBParam(lfoFilterButton,LFOFILTER)
-		handleBParam(lfoPwm1Button,LFOPW1)
-		handleBParam(lfoPwm2Button,LFOPW2)
+		//handleBParam(lfoOsc1Button,LFOOSC1)
+		//handleBParam(lfoOsc2Button,LFOOSC2)
+		//handleBParam(lfoFilterButton,LFOFILTER)
+		//handleBParam(lfoPwm1Button,LFOPW1)
+		//handleBParam(lfoPwm2Button,LFOPW2)
 		handleBParam(bendOsc2OnlyButton,BENDOSC2)
 		handleBParam(bendRangeButton,BENDRANGE)
 		handleBParam(fourPoleButton,FOURPOLE_NOTUSED)
@@ -613,11 +613,11 @@ void ObxdAudioProcessorEditor::changeListenerCallback (ChangeBroadcaster* source
 		rn(bendOsc2OnlyButton,BENDOSC2)
 		rn(bendRangeButton,BENDRANGE)
 
-		rn(lfoOsc1Button,LFOOSC1)
-		rn(lfoOsc2Button,LFOOSC2)
-		rn(lfoFilterButton,LFOFILTER)
-		rn(lfoPwm1Button,LFOPW1)
-		rn(lfoPwm2Button,LFOPW2)
+		//rn(lfoOsc1Button,LFOOSC1)
+		//rn(lfoOsc2Button,LFOOSC2)
+		//rn(lfoFilterButton,LFOFILTER)
+		//rn(lfoPwm1Button,LFOPW1)
+		//rn(lfoPwm2Button,LFOPW2)
 		rn(fourPoleButton,FOURPOLE_NOTUSED)
 
 		rn(transposeKnob,OCTAVE)
