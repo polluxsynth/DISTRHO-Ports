@@ -273,35 +273,57 @@ public:
 			synth.voices[i].lfoa1 = logsc(logsc(param,0,1,60),0,60,10);
 		}
 	}
-	void processLfoOsc1(float param)
+	void processLfo1Dest(float param)
 	{
+		int intparam = roundToInt(param*7);
+		// off, osc1, osc1+2, osc2, pw1, pw1+2, pw2, filt
+		// 0    1     2       3     4    5      6    7
+		bool lfoo1 = intparam == 1 || intparam == 2;
+		bool lfoo2 = intparam == 2 || intparam == 3;
+		bool lfopw1 = intparam == 4 || intparam == 5;
+		bool lfopw2 = intparam == 5 || intparam == 6;
+		bool lfofilt = intparam == 7;
 		for(int i = 0 ; i < synth.MAX_VOICES;i++)
 		{
-			synth.voices[i].lfoo1 = param>0.5;
+			synth.voices[i].lfoo1 = lfoo1;
+			synth.voices[i].lfoo2 = lfoo2;
+			synth.voices[i].lfopw1 = lfopw1;
+			synth.voices[i].lfopw2 = lfopw2;
+			synth.voices[i].lfof = lfofilt;
 		}
 	}
-	void processLfoOsc2(float param)
+	void processLfo2Dest(float param)
 	{
+#if 0// TODO: Implement
+		int intparam = roundToInt(param*7);
+		// off, osc1, osc1+2, osc2, pw1, pw1+2, pw2, filt
+		// 0    1     2       3     4    5      6    7
+		bool lfoo1 = intparam == 1 || intparam == 2;
+		bool lfoo2 = intparam == 2 || intparam == 3;
+		bool lfopw1 = intparam == 4 || intparam == 5;
+		bool lfoow2 = intparam == 5 || intparam == 6;
+		bool lfofilt = intparam == 7;
 		for(int i = 0 ; i < synth.MAX_VOICES;i++)
 		{
-			synth.voices[i].lfoo2 = param>0.5;
+			// TODO: Add mod routing for lfo2
 		}
+#endif
 	}
-	void processLfoFilter(float param)
+	void processLfoFilter_unused(float param)
 	{
 		for(int i = 0 ; i < synth.MAX_VOICES;i++)
 		{
 			synth.voices[i].lfof = param>0.5;
 		}
 	}
-	void processLfoPw1(float param)
+	void processLfoPw1_unused(float param)
 	{
 		for(int i = 0 ; i < synth.MAX_VOICES;i++)
 		{
 			synth.voices[i].lfopw1 = param>0.5;
 		}
 	}
-	void processLfoPw2(float param)
+	void processLfoPw2_unused(float param)
 	{
 		for(int i = 0 ; i < synth.MAX_VOICES;i++)
 		{

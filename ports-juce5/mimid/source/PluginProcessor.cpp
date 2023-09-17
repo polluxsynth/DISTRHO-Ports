@@ -178,20 +178,20 @@ void MimidAudioProcessor::setParameter (int index, float newValue)
 		break;
 	case LFOSHWAVE_UNUSED:
 		break;
-	case LFOFILTER:
-		synth.processLfoFilter(newValue);
+	case LFOFILTER_UNUSED:
+		synth.processLfoFilter_unused(newValue);
 		break;
-	case LFOOSC1:
-		synth.processLfoOsc1(newValue);
+	case LFO1DEST:
+		synth.processLfo1Dest(newValue);
 		break;
-	case LFOOSC2:
-		synth.processLfoOsc2(newValue);
+	case LFO2DEST:
+		synth.processLfo2Dest(newValue);
 		break;
-	case LFOPW1:
-		synth.processLfoPw1(newValue);
+	case LFOPW1_UNUSED:
+		synth.processLfoPw1_unused(newValue);
 		break;
-	case LFOPW2:
-		synth.processLfoPw2(newValue);
+	case LFOPW2_UNUSED:
+		synth.processLfoPw2_unused(newValue);
 		break;
 	case PORTADER:
 		synth.processPortamentoDetune(newValue);
@@ -396,17 +396,17 @@ const String MimidAudioProcessor::getParameterName (int index)
 		return S("LfoAmount1");
 	case LFO2AMT:
 		return S("LfoAmount2");
-	case LFOFILTER:
+	case LFOFILTER_UNUSED:
 		return S("LfoFilter");
-	case LFOOSC1:
-		return S("LfoOsc1");
-	case LFOOSC2:
-		return S("LfoOsc2");
+	case LFO1DEST:
+		return S("Lfo1Dest");
+	case LFO2DEST:
+		return S("Lfo2Dest");
 	case LFO1FREQ:
 		return S("Lfo1Frequency");
-	case LFOPW1:
+	case LFOPW1_UNUSED:
 		return S("LfoPw1");
-	case LFOPW2:
+	case LFOPW2_UNUSED:
 		return S("LfoPw2");
 	case PORTADER:
 		return S("PortamentoDetune");
