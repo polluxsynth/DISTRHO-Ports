@@ -55,7 +55,7 @@ public:
 		values[OSC2MIX]=1;
 		values[OSC1WAVE]=0.25;
 		values[OSC2WAVE]=0.25;
-		values[BENDLFORATE]=0.6;
+		values[LFO2FREQ]=0.6;
 
 //		values[FILTER_DRIVE]= 0.01;
 		values[PAN1]=0.5;

@@ -117,7 +117,7 @@ void ObxdAudioProcessor::setParameter (int index, float newValue)
 	case ASPLAYEDALLOCATION:
 		synth.procAsPlayedAlloc(newValue);
 		break;
-	case BENDLFORATE:
+	case LFO2FREQ:
 		synth.procModWheelFrequency(newValue);
 		break;
 	case LEGATOMODE:
@@ -162,7 +162,7 @@ void ObxdAudioProcessor::setParameter (int index, float newValue)
 	case RESPONSE:
 		synth.processResponse(newValue);
 		break;
-	case LFOFREQ:
+	case LFO1FREQ:
 		synth.processLfoFrequency(newValue);
 		break;
 	case LFO1AMT:
@@ -351,8 +351,8 @@ const String ObxdAudioProcessor::getParameterName (int index)
 		return S("VFltFactor");
 	case ASPLAYEDALLOCATION:
 		return S("AsPlayedAllocation");
-	case BENDLFORATE:
-		return S("VibratoRate");
+	case LFO2FREQ:
+		return S("Lfo2Frequency");
 	case FOURPOLE_NOTUSED:
 		return S("FourPole_NOTUSED");
 	case LEGATOMODE:
@@ -403,8 +403,8 @@ const String ObxdAudioProcessor::getParameterName (int index)
 		return S("LfoOsc1");
 	case LFOOSC2:
 		return S("LfoOsc2");
-	case LFOFREQ:
-		return S("LfoFrequency");
+	case LFO1FREQ:
+		return S("Lfo1Frequency");
 	case LFOPW1:
 		return S("LfoPw1");
 	case LFOPW2:

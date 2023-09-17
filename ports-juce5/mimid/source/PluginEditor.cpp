@@ -229,7 +229,7 @@ void ObxdAudioProcessorEditor::rebuildComponents()
 		fsustainKnob = addNormalKnob(1309,75,ownerFilter,FSUS,"Sus",1);
 		freleaseKnob = addNormalKnob(1373,75,ownerFilter,FREL,"Rel",0);
 
-		lfoFrequencyKnob = addNormalKnob(293,77,ownerFilter,LFOFREQ,"Freq",0);
+		lfoFrequencyKnob = addNormalKnob(293,77,ownerFilter,LFO1FREQ,"Freq",0);
 		lfoAmt1Knob = addNormalKnob(390,77,ownerFilter,LFO1AMT,"Pitch",0);
 		lfoAmt2Knob = addNormalKnob(488,77,ownerFilter,LFO2AMT,"PWM",0);
 
@@ -265,7 +265,7 @@ void ObxdAudioProcessorEditor::rebuildComponents()
 
 		voiceDetuneKnob =addNormalKnob(188,252,ownerFilter,UDET,"VoiceDet",0);
 
-		bendLfoRateKnob = addTinyKnob(928,300,ownerFilter,BENDLFORATE,"ModRate",0.4);
+		bendLfoRateKnob = addTinyKnob(928,300,ownerFilter,LFO2FREQ,"ModRate",0.4);
 		veloFltEnvKnob = addTinyKnob(1013,300,ownerFilter,VFLTENV,"VFE",0);
 		veloAmpEnvKnob = addTinyKnob(1111,300,ownerFilter,VAMPENV,"VAE",0);
 
@@ -341,7 +341,7 @@ void ObxdAudioProcessorEditor::rebuildComponents()
 		fsustainKnob = addNormalKnobClassic(916,40,ownerFilter,FSUS,"Sus",1);
 		freleaseKnob = addNormalKnobClassic(980,40,ownerFilter,FREL,"Rel",0);
 
-		lfoFrequencyKnob = addNormalKnobClassic(576,207,ownerFilter,LFOFREQ,"Freq",0);
+		lfoFrequencyKnob = addNormalKnobClassic(576,207,ownerFilter,LFO1FREQ,"Freq",0);
 		lfoAmt1Knob = addNormalKnobClassic(640,207,ownerFilter,LFO1AMT,"Pitch",0);
 		lfoAmt2Knob = addNormalKnobClassic(704,207,ownerFilter,LFO2AMT,"PWM",0);
 
@@ -396,7 +396,7 @@ void ObxdAudioProcessorEditor::rebuildComponents()
 		envelopeDetuneKnob = addTinyKnobClassic(963,240,ownerFilter,ENVDER,"Env",0.2);
 		portamentoDetuneKnob = addTinyKnobClassic(890,240,ownerFilter,PORTADER,"Port",0.2);
 
-		bendLfoRateKnob = addNormalKnobClassic(364,345,ownerFilter,BENDLFORATE,"ModRate",0.4);
+		bendLfoRateKnob = addNormalKnobClassic(364,345,ownerFilter,LFO2FREQ,"ModRate",0.4);
 
 		voiceSwitch = addNormalButtonListClassic(172,321,38,ownerFilter,VOICE_COUNT,"VoiceCount",ImageCache::getFromFile(skinFolder.getChildFile("voices.png")));
 		voiceSwitch ->addChoise("1");
@@ -504,7 +504,7 @@ void ObxdAudioProcessorEditor::sliderValueChanged (Slider* c)
 		handleSParam(envelopeDetuneKnob,ENVDER)
 		handleSParam(portamentoDetuneKnob,PORTADER)
 
-		handleSParam(lfoFrequencyKnob,LFOFREQ)
+		handleSParam(lfoFrequencyKnob,LFO1FREQ)
 		handleSParam(lfoAmt1Knob,LFO1AMT)
 		handleSParam(lfoAmt2Knob,LFO2AMT)
 
@@ -521,7 +521,7 @@ void ObxdAudioProcessorEditor::sliderValueChanged (Slider* c)
 		handleSParam(brightnessKnob,BRIGHTNESS)
 		handleSParam(envPitchModKnob,ENVPITCH)
 
-		handleSParam(bendLfoRateKnob,BENDLFORATE)
+		handleSParam(bendLfoRateKnob,LFO2FREQ)
 		handleSParam(veloAmpEnvKnob,VAMPENV)
 		handleSParam(veloFltEnvKnob,VFLTENV)
 		handleSParam(transposeKnob,OCTAVE)
@@ -582,11 +582,11 @@ void ObxdAudioProcessorEditor::changeListenerCallback (ChangeBroadcaster* source
 		rn(noiseMixKnob,NOISEMIX)
 		rn(voiceDetuneKnob,UDET)
 
-		rn(lfoFrequencyKnob,LFOFREQ)
+		rn(lfoFrequencyKnob,LFO1FREQ)
 		rn(lfoAmt1Knob,LFO1AMT)
 		rn(lfoAmt2Knob,LFO2AMT)
 		rn(tuneKnob,TUNE)
-		rn(bendLfoRateKnob,BENDLFORATE)
+		rn(bendLfoRateKnob,LFO2FREQ)
 		rn(veloAmpEnvKnob,VAMPENV)
 		rn(veloFltEnvKnob,VFLTENV)
 		//buttons
