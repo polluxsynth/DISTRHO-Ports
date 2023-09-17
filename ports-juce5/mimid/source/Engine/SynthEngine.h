@@ -95,7 +95,7 @@ public:
 	{
 		synth.sustainOff();
 	}
-	void procLfoSync(float val)
+	void procLfo1Sync(float val)
 	{
 		if(val > 0.5)
 			synth.mlfo.setSynced();
