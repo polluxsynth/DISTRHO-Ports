@@ -26,7 +26,6 @@
 #include "AdsrEnvelope.h"
 #include "Filter.h"
 #include "Decimator.h"
-#include "APInterpolator.h"
 
 class ObxdVoice
 {
@@ -114,13 +113,11 @@ public:
 
 	DelayLine<Samples*2> lenvd,fenvd,lfod;
 
-	ApInterpolator ap;
 	float oscpsw;
 	int legatoMode;
 	float briHold;
 
-	ObxdVoice() 
-		: ap()
+	ObxdVoice()
 	{
 		hq = false;
 		selfOscPush = false;
