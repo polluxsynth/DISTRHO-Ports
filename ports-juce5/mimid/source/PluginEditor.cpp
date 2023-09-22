@@ -281,7 +281,7 @@ void ObxdAudioProcessorEditor::rebuildComponents()
 
 		bendOsc2OnlyButton = addNormalTooglableButton(228,335,ownerFilter,BENDOSC2,"Osc2");
 		bendRangeButton = addNormalTooglableButton(183,335,ownerFilter,BENDRANGE,"12");
-		asPlayedAllocButton = addNormalTooglableButton(25,162,ownerFilter,ASPLAYEDALLOCATION,"APA");
+		asPlayedAllocButton = addNormalTooglableButton(25,162,ownerFilter,ASPLAYEDALLOCATION_NOTUSED,"APA");
 
 		filterDetuneKnob = addTinyKnob(1228,300,ownerFilter,FILTERDER,"Flt",0.2);
 		portamentoDetuneKnob = addTinyKnob(1291,300,ownerFilter,PORTADER,"Port",0.2);
@@ -298,12 +298,12 @@ void ObxdAudioProcessorEditor::rebuildComponents()
 		voiceSwitch ->addChoise("8");
 		voiceSwitch ->setValue(ownerFilter->getParameter(VOICE_COUNT),dontSendNotification);
 
-		legatoSwitch = addNormalButtonList(25,338,65,ownerFilter,LEGATOMODE,"Legato",ImageCache::getFromMemory(BinaryData::legato_png,BinaryData::legato_pngSize));
+		legatoSwitch = addNormalButtonList(25,338,65,ownerFilter,LEGATOMODE_NOTUSED,"Legato",ImageCache::getFromMemory(BinaryData::legato_png,BinaryData::legato_pngSize));
 		legatoSwitch ->addChoise("Keep All");
 		legatoSwitch ->addChoise("Keep Filter Envelope");
 		legatoSwitch ->addChoise("Keep Amplitude Envelope");
 		legatoSwitch ->addChoise("Retrig");
-		legatoSwitch ->setValue(ownerFilter->getParameter(LEGATOMODE),dontSendNotification);
+		legatoSwitch ->setValue(ownerFilter->getParameter(LEGATOMODE_NOTUSED),dontSendNotification);
 	}
 	else
 	{
@@ -390,7 +390,7 @@ void ObxdAudioProcessorEditor::rebuildComponents()
 
 		bendOsc2OnlyButton = addNormalTooglableButtonClassic(321,354,ownerFilter,BENDOSC2,"Osc2");
 		bendRangeButton = addNormalTooglableButtonClassic(267,354,ownerFilter,BENDRANGE,"12");
-		asPlayedAllocButton = addNormalTooglableButtonClassic(65,372,ownerFilter,ASPLAYEDALLOCATION,"APA");
+		asPlayedAllocButton = addNormalTooglableButtonClassic(65,372,ownerFilter,ASPLAYEDALLOCATION_NOTUSED,"APA");
 
 		filterDetuneKnob = addTinyKnobClassic(817,240,ownerFilter,FILTERDER,"Flt",0.2);
 		envelopeDetuneKnob = addTinyKnobClassic(963,240,ownerFilter,ENVDER,"Env",0.2);
@@ -409,12 +409,12 @@ void ObxdAudioProcessorEditor::rebuildComponents()
 		voiceSwitch ->addChoise("8");
 		voiceSwitch ->setValue(ownerFilter->getParameter(VOICE_COUNT),dontSendNotification);
 
-		legatoSwitch = addNormalButtonListClassic(65,321,95,ownerFilter,LEGATOMODE,"Legato",ImageCache::getFromFile(skinFolder.getChildFile("legato.png")));
+		legatoSwitch = addNormalButtonListClassic(65,321,95,ownerFilter,LEGATOMODE_NOTUSED,"Legato",ImageCache::getFromFile(skinFolder.getChildFile("legato.png")));
 		legatoSwitch ->addChoise("Keep all");
 		legatoSwitch ->addChoise("Keep fenv");
 		legatoSwitch ->addChoise("Keep aenv");
 		legatoSwitch ->addChoise("Retrig");
-		legatoSwitch ->setValue(ownerFilter->getParameter(LEGATOMODE),dontSendNotification);
+		legatoSwitch ->setValue(ownerFilter->getParameter(LEGATOMODE_NOTUSED),dontSendNotification);
 	}
 
 	ownerFilter->addChangeListener(this);
@@ -451,7 +451,7 @@ void ObxdAudioProcessorEditor::buttonClicked(Button * b)
 		handleBParam(bendOsc2OnlyButton,BENDOSC2)
 		handleBParam(bendRangeButton,BENDRANGE)
 		handleBParam(fourPoleButton,FOURPOLE_NOTUSED)
-		handleBParam(asPlayedAllocButton,ASPLAYEDALLOCATION)
+		handleBParam(asPlayedAllocButton,ASPLAYEDALLOCATION_NOTUSED)
 	{};
 
 }
@@ -463,7 +463,7 @@ void ObxdAudioProcessorEditor::comboBoxChanged (ComboBox* cb)
 	#define cp(T) {flt->setParameterNotifyingHost(T,bl->getValue());}
 #define handleCParam(K,T)  if (bl == K) {cp(T)} else
 	handleCParam(voiceSwitch,VOICE_COUNT)
-		handleCParam(legatoSwitch,LEGATOMODE)
+		handleCParam(legatoSwitch,LEGATOMODE_NOTUSED)
 	{};
 }
 
@@ -632,8 +632,8 @@ void ObxdAudioProcessorEditor::changeListenerCallback (ChangeBroadcaster* source
 		rn(pan8Knob,PAN8)
 
 		rn(voiceSwitch,VOICE_COUNT)
-		rn(legatoSwitch,LEGATOMODE)
-		rn(asPlayedAllocButton,ASPLAYEDALLOCATION)
+		rn(legatoSwitch,LEGATOMODE_NOTUSED)
+		rn(asPlayedAllocButton,ASPLAYEDALLOCATION_NOTUSED)
 }
 
 void ObxdAudioProcessorEditor::mouseUp(const MouseEvent& e)

@@ -35,12 +35,12 @@ enum Parameters
 	OCTAVE,
 	BENDRANGE,
 	BENDOSC2,
-	LEGATOMODE,
+	LEGATOMODE_NOTUSED,
 	LFO2FREQ,
 	VFLTENV,
 	VAMPENV,
 
-	ASPLAYEDALLOCATION,
+	ASPLAYEDALLOCATION_NOTUSED,
 	PORTAMENTO,
 	UNISON,		
 	UDET,
@@ -99,5 +99,13 @@ enum Parameters
 	LREL,
 	FILTER_TYPE,
 	OSC1FLTMOD,
+
+	ASGN_RSZ,	// ReSet to Zero (lowest) voice (default cyclic)
+	ASGN_MEM,	// Prefer assign to voice previously with same note
+	ASGN_ROB,	// Rob a playing voice if no unplaying available
+			// two modes: oldest (O) and next-to-lowest (NL)
+	ASGN_RES,	// Restore mode: Store notes until voice available
+	ASGN_STRG,	// Single trig: behavior during rob and restore
+
 	PARAM_COUNT,
 };

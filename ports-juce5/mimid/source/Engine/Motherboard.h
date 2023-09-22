@@ -25,14 +25,16 @@
 */
 #pragma once
 #include <climits>
-#include "VoiceQueue.h"
+#include "VoiceAllocator.h"
 #include "SynthEngine.h"
 #include "Lfo.h"
 
 class Motherboard
 {
+public:
+	const static int MAX_VOICES=8;
 private:
-	VoiceQueue vq;
+	Voice *voiceList[MAX_VOICES];
 	int totalvc;
 	bool wasUni;
 	bool awaitingkeys[129];
@@ -50,10 +52,9 @@ public:
 	bool vibratoEnabled;
 
 	float Volume;
-	const static int MAX_VOICES=8;
 	float pannings[MAX_VOICES];
 	Voice voices[MAX_VOICES];
-	bool uni;
+	VoiceAllocator<MAX_VOICES> voiceAlloc;
 	bool Oversample;
 
 	bool economyMode;
@@ -74,15 +75,16 @@ public:
 		mlfo= Lfo();
 		vibratoLfo=Lfo();
 		vibratoLfo.waveForm = 1;
-		uni = false;
 		wasUni = false;
 		Volume=0;
 	//	voices = new Voice* [MAX_VOICES];
 	//	pannings = new float[MAX_VOICES];
 		totalvc = MAX_VOICES;
-		vq = VoiceQueue(MAX_VOICES,voices);
+		voiceAlloc.init(MAX_VOICES,voiceList);
 		for(int i = 0 ; i < MAX_VOICES;++i)
 		{
+			voices[i].voiceNumber = i;
+			voiceList[i] = &voices[i];
 			pannings[i]= 0.5;
 		}
 	}
@@ -102,13 +104,8 @@ public:
 			voices[i].NoteOff();
 			voices[i].ResetEnvelope();
 		}
-		vq.reInit(count);
+		voiceAlloc.init(count, voiceList);
 		totalvc = count;
-	}
-	void unisonOn()
-	{
-		//for(int i = 0 ; i < 110;i++)
-		//	awaitingkeys[i] = false;
 	}
 	void setSampleRate(float sr)
 	{
@@ -125,188 +122,12 @@ public:
 	void sustainOn()
 	{
 		for(int i = 0 ; i < MAX_VOICES;i++)
-		{
-			Voice* p = vq.getNext();
-			p->sustOn();
-		}
+			voices[i].sustOn();
 	}
 	void sustainOff()
 	{
 		for(int i = 0 ; i < MAX_VOICES;i++)
-		{
-			Voice* p = vq.getNext();
-			p->sustOff();
-		}
-	}
-	void setNoteOn(int noteNo,float velocity)
-	{
-		asPlayedCounter++;
-		priorities[noteNo] = asPlayedCounter;
-		bool processed=false;
-		if (wasUni != uni)
-			unisonOn();
-		if (uni)
-		{
-			if(!asPlayedMode)
-			{
-				int minmidi = 129;
-				for(int i = 0 ; i < totalvc; i++)
-				{
-					Voice* p = vq.getNext();
-					if(p->midiIndx < minmidi && p->Active)
-					{
-						minmidi = p->midiIndx;
-					}
-				}
-				if(minmidi < noteNo)
-				{
-					awaitingkeys[noteNo] = true;
-				}
-				else
-				{
-					for(int i = 0 ; i < totalvc;i++)
-					{
-						Voice* p = vq.getNext();
-						if(p->midiIndx > noteNo && p->Active)
-						{
-							awaitingkeys[p->midiIndx] = true;
-							p->NoteOn(noteNo,-0.5);
-						}
-						else
-						{
-							p->NoteOn(noteNo,velocity);
-						}
-					}
-				}
-				processed = true;
-			}
-			else
-			{
-				for(int i = 0 ; i < totalvc; i++)
-				{
-					Voice* p = vq.getNext();
-					if(p->Active)
-					{
-						awaitingkeys[p->midiIndx] = true;
-											p->NoteOn(noteNo,-0.5);
-					}
-					else
-					{
-					p->NoteOn(noteNo,velocity);
-					}
-				}
-				processed = true;
-			}
-		}
-		else
-		{
-			for (int i = 0; i < totalvc && !processed; i++)
-			{
-				Voice* p = vq.getNext();
-				if (!p->Active)
-				{
-					p->NoteOn(noteNo,velocity);
-					processed = true;
-				}
-			}
-		}
-		// if voice steal occured
-		if(!processed)
-		{
-			//
-			if(!asPlayedMode)
-			{
-				int maxmidi = 0;
-				Voice* highestVoiceAvalible = NULL;
-				for(int i = 0 ; i < totalvc; i++)
-				{
-					Voice* p = vq.getNext();
-					if(p->midiIndx > maxmidi)
-					{
-						maxmidi = p->midiIndx;
-						highestVoiceAvalible = p;
-					}
-				}
-				if(maxmidi < noteNo)
-				{
-					awaitingkeys[noteNo] = true;
-				}
-				else
-				{
-					highestVoiceAvalible->NoteOn(noteNo,-0.5);
-					awaitingkeys[maxmidi] = true;
-				}
-			}
-			else
-			{
-				int minPriority = INT_MAX;
-				Voice* minPriorityVoice = NULL;
-				for(int i = 0 ; i < totalvc; i++)
-				{
-					Voice* p = vq.getNext();
-					if(priorities[p->midiIndx] <minPriority)
-					{
-						minPriority = priorities[p->midiIndx];
-						minPriorityVoice = p;
-					}
-				}
-				awaitingkeys[minPriorityVoice->midiIndx] = true;
-				minPriorityVoice->NoteOn(noteNo,-0.5);
-			}
-		}
-		wasUni = uni;
-	}
-
-	void setNoteOff(int noteNo)
-	{
-		awaitingkeys[noteNo] = false;
-		int reallocKey = 0;
-		//Voice release case
-		if(!asPlayedMode)
-		{
-			while(reallocKey < 129 &&(!awaitingkeys[reallocKey]))
-			{
-				reallocKey++;
-			}
-		}
-		else
-		{
-			reallocKey = 129;
-			int maxPriority = INT_MIN;
-			for(int i = 0 ; i < 129;i++)
-			{
-				if(awaitingkeys[i] && (maxPriority < priorities[i]))
-				{
-					reallocKey = i;
-					maxPriority = priorities[i];
-				}
-			}
-		}
-		if(reallocKey !=129)
-		{
-			for(int i = 0 ; i < totalvc; i++)
-			{
-				Voice* p = vq.getNext();
-				if((p->midiIndx == noteNo) && (p->Active))
-				{
-					p->NoteOn(reallocKey,-0.5);
-					awaitingkeys[reallocKey] = false;
-				}
-
-			}
-		}
-		else
-		//No realloc
-		{
-			for (int i = 0; i < totalvc; i++)
-			{
-				Voice* n = vq.getNext();
-				if (n->midiIndx==noteNo && n->Active)
-				{
-					n->NoteOff();
-				}
-			}
-		}
+			voices[i].sustOff();
 	}
 	void SetOversample(bool over)
 	{

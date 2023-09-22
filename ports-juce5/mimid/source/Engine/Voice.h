@@ -119,10 +119,11 @@ public:
 	DelayLine<Samples*2> lenvd,fenvd,lfod;
 
 	float oscpsw;
-	int legatoMode;
 	float briHold;
 
 	bool oscmodEnable; // Oscillator modulation output enabled
+
+	int voiceNumber; // Handy to have in the voice itself
 
 	float unused1, unused2; // TODO: remove
 
@@ -139,7 +140,6 @@ public:
 		velocityValue=0;
 		lfoVibratoIn=0;
 		fourpole = false;
-		legatoMode = 0;
 		brightCoef =briHold= 1;
 		osc1FltMod = 0;
 		envpitchmod = 0;
@@ -167,6 +167,7 @@ public:
 	//	lenvd=new DelayLine(Samples*2);
 	//	fenvd=new DelayLine(Samples*2);
 		oscmodEnable = false;
+		voiceNumber = 0; // Until someone else says something else
 		unused1=unused2=0; // TODO: Remove
 	}
 	~Voice()
@@ -309,7 +310,7 @@ public:
 		env.ResetEnvelopeState();
 		fenv.ResetEnvelopeState();
 	}
-	void NoteOn(int mididx,float velocity)
+	void NoteOn(int mididx,float velocity,bool multiTrig)
 	{
 		if(!shouldProcessed)
 		{
@@ -323,10 +324,10 @@ public:
 		if(velocity!=-0.5)
 			velocityValue = velocity;
 		midiIndx = mididx;
-		if((!Active)||(legatoMode&1))
+		if(!Active || multiTrig) {
 			env.triggerAttack();
-		if((!Active)||(legatoMode&2))
 			fenv.triggerAttack();
+		}
 		Active = true;
 	}
 	void NoteOff()

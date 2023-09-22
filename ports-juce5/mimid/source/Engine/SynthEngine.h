@@ -102,17 +102,41 @@ public:
 		else
 			synth.mlfo.setUnsynced();
 	}
-	void procAsPlayedAlloc(float val)
+	void procKeyAsgnRsz(float val)
 	{
-		synth.asPlayedMode = val > 0.5;
+		synth.voiceAlloc.rsz = val > 0.5;
+	}
+	void procKeyAsgnMem(float val)
+	{
+		synth.voiceAlloc.mem = val > 0.5;
+	}
+	void procKeyAsgnRob(float val)
+	{
+		int intval = roundToInt(val*2);
+		synth.voiceAlloc.rob_oldest = intval == 1;
+		synth.voiceAlloc.rob_next_to_lowest = intval == 2;
+	}
+	void procKeyAsgnRes(float val)
+	{
+		synth.voiceAlloc.restore = val > 0.5;
+	}
+	void procKeyAsgnStrg(float val)
+	{
+		int intval = roundToInt(val*2);
+		synth.voiceAlloc.strgNoteOff = intval == 1 || intval == 2;
+		synth.voiceAlloc.strgNoteOn = intval == 2;
+	}
+	void processUnison(float param)
+	{
+		synth.voiceAlloc.uni = param>0.5f;
 	}
 	void procNoteOn(int noteNo,float velocity)
 	{
-		synth.setNoteOn(noteNo,velocity);
+		synth.voiceAlloc.setNoteOn(noteNo,velocity);
 	}
 	void procNoteOff(int noteNo)
 	{
-		synth.setNoteOff(noteNo);
+		synth.voiceAlloc.setNoteOff(noteNo);
 	}
 	void procEconomyMode(float val)
 	{
@@ -209,13 +233,6 @@ public:
 			synth.voices[i].osc.tune = param*2-1;
 		}
 	}
-	void processLegatoMode(float param)
-	{
-		for(int i = 0 ; i < synth.MAX_VOICES;i++)
-		{
-			synth.voices[i].legatoMode = roundToInt(param*3 + 1) -1;
-		}
-	}
 	void processOctave(float param)
 	{
 		for(int i = 0 ; i < synth.MAX_VOICES;i++)
@@ -229,10 +246,6 @@ public:
 		{
 			synth.voices[i].fltKF = param;
 		}
-	}
-	void processUnison(float param)
-	{
-		synth.uni = param>0.5f;
 	}
 	void processPortamento(float param)
 	{
