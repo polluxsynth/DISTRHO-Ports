@@ -113,14 +113,12 @@ void MimidAudioProcessor::setParameter (int index, float newValue)
 	case VFLTENV:
 		synth.procFltVelocityAmount(newValue);
 		break;
-	case ASPLAYEDALLOCATION:
-		synth.procAsPlayedAlloc(newValue);
+	case ASPLAYEDALLOCATION_NOTUSED:
 		break;
 	case LFO2FREQ:
 		synth.procModWheelFrequency(newValue);
 		break;
-	case LEGATOMODE:
-		synth.processLegatoMode(newValue);
+	case LEGATOMODE_NOTUSED:
 		break;
 	case ENVPITCH:
 		synth.processEnvelopeToPitch(newValue);
@@ -286,6 +284,21 @@ void MimidAudioProcessor::setParameter (int index, float newValue)
 	case FREL:
 		synth.processFilterEnvelopeRelease(newValue);
 		break;
+	case ASGN_RSZ:
+		synth.procKeyAsgnRsz(newValue);
+		break;
+	case ASGN_MEM:
+		synth.procKeyAsgnMem(newValue);
+		break;
+	case ASGN_ROB:
+		synth.procKeyAsgnRob(newValue);
+		break;
+	case ASGN_RES:
+		synth.procKeyAsgnRes(newValue);
+		break;
+	case ASGN_STRG:
+		synth.procKeyAsgnStrg(newValue);
+		break;
 	case PAN1:
 		synth.processPan(newValue,1);
 		break;
@@ -348,14 +361,14 @@ const String MimidAudioProcessor::getParameterName (int index)
 		return S("VAmpFactor");
 	case VFLTENV:
 		return S("VFltFactor");
-	case ASPLAYEDALLOCATION:
-		return S("AsPlayedAllocation");
+	case ASPLAYEDALLOCATION_NOTUSED:
+		return S("AsPlayedAllocation_NOTUSED");
 	case LFO2FREQ:
 		return S("Lfo2Frequency");
 	case FOURPOLE_NOTUSED:
 		return S("FourPole_NOTUSED");
-	case LEGATOMODE:
-		return S("LegatoMode");
+	case LEGATOMODE_NOTUSED:
+		return S("LegatoMode_NOTUSED");
 	case ENVPITCH:
 		return S("EnvelopeToPitch");
 	case OSCQuantize:
@@ -414,6 +427,16 @@ const String MimidAudioProcessor::getParameterName (int index)
 		return S("FilterDetune");
 	case ENVDER:
 		return S("EnvelopeDetune");
+	case ASGN_RSZ:
+		return S("KeyAssignRsz");
+	case ASGN_MEM:
+		return S("KeyAssignMem");
+	case ASGN_ROB:
+		return S("KeyAssignRob");
+	case ASGN_RES:
+		return S("KeyAssignRes");
+	case ASGN_STRG:
+		return S("KeyAssignStrg");
 	case PAN1:
 		return S("Pan1");
 	case PAN2:
