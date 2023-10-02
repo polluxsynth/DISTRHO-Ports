@@ -36,38 +36,38 @@ private:
 	float SampleRateInv;
 
 	float syncRate;
-	bool synced;
+	bool clockSynced;
 
 public:
 	float Frequency;
 	float phaseInc;
-	float frUnsc;//frequency value without sync
-	float rawParam;
+	float frequency;//frequency value without sync
+	float rawFrequency;
 	int waveForm;
 	Lfo()
 	{
 		phaseInc = 0;
-		frUnsc=0;
+		frequency=0;
 		syncRate = 1;
-		rawParam=0;
-		synced = false;
+		rawFrequency=0;
+		clockSynced = false;
 		s1=0;
 		Frequency=1;
 		phase=0;
 		sh=0;
 		rg=Random();
 	}
-	void setSynced(bool enable)
+	void setClockSync(bool enable)
 	{
-		synced = enable;
-		if (synced)
-			recalcRate(rawParam);
+		clockSynced = enable;
+		if (clockSynced)
+			recalcRate(rawFrequency);
 		else
-			phaseInc = frUnsc;
+			phaseInc = frequency;
 	}
 	void hostSyncRetrigger(float bpm,float quaters)
 	{
-		if(synced)
+		if(clockSynced)
 		{
 			phaseInc = (bpm/60.0)*syncRate;
 			phase = phaseInc*quaters;
@@ -113,14 +113,14 @@ public:
 	}
 	void setFrequency(float val)
 	{
-		frUnsc = val;
-		if(!synced)
+		frequency = val;
+		if(!clockSynced)
 			phaseInc = val;
 	}
-	void setRawParam(float param)//used for synced rate changes
+	void setRawFrequency(float param)//used for clock synced rate changes
 	{
-		rawParam = param;
-		if(synced)
+		rawFrequency = param;
+		if(clockSynced)
 		{
 			recalcRate(param);
 		}

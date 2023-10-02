@@ -104,11 +104,7 @@ public:
 		sampleRate = sr;
 		sampleRateInv = 1 / sampleRate;
 		for(int i = 0 ; i < MAX_VOICES;++i)
-		{
 			voices[i].setSampleRate(sr);
-			voices[i].mLfo.setSampleRate(sr);
-			voices[i].vibratoLfo.setSampleRate(sr);
-		}
 		SetOversample(Oversample);
 	}
 	void sustainOn()
@@ -126,15 +122,10 @@ public:
 		for(int i = 0 ; i < MAX_VOICES;i++)
 		{
 			voices[i].setHQ(over);
-			if(over) {
+			if(over)
 				voices[i].setSampleRate(sampleRate*2);
-				voices[i].mLfo.setSampleRate(sampleRate*2);
-				voices[i].vibratoLfo.setSampleRate(sampleRate*2);
-			} else {
+			else
 				voices[i].setSampleRate(sampleRate);
-				voices[i].mLfo.setSampleRate(sampleRate);
-				voices[i].vibratoLfo.setSampleRate(sampleRate);
-			}
 		}
 		Oversample = over;
 	}
@@ -144,8 +135,8 @@ public:
 			voice.checkAdssrState();
 		// Always update LFOs to keep them in phase even if voice
 		// is not playing.
-		voice.mLfo.update();
-		voice.vibratoLfo.update();
+		voice.lfo1.update();
+		voice.lfo2.update();
 		if(voice.shouldProcessed||(!economyMode))
 		{
 			return voice.ProcessSample();
