@@ -72,8 +72,6 @@ public:
 		}
 		vibratoAmount = 0;
 		Oversample=false;
-		mlfo= Lfo();
-		vibratoLfo=Lfo();
 		vibratoLfo.waveForm = 1;
 		wasUni = false;
 		Volume=0;
