@@ -54,7 +54,10 @@ public:
 	}
 	void setPlayHead(float bpm,float retrPos)
 	{
-		synth.mlfo.hostSyncRetrigger(bpm,retrPos);
+		for(int i = 0 ; i < synth.MAX_VOICES;i++)
+		{
+			synth.voices[i].mLfo.hostSyncRetrigger(bpm,retrPos);
+		}
 	}
 	void setSampleRate(float sr)
 	{
@@ -97,10 +100,10 @@ public:
 	}
 	void procLfo1Sync(float val)
 	{
-		if(val > 0.5)
-			synth.mlfo.setSynced();
-		else
-			synth.mlfo.setUnsynced();
+		for(int i = 0 ; i < Motherboard::MAX_VOICES;i++)
+		{
+			synth.voices[i].mLfo.setSynced(val > 0.5);
+		}
 	}
 	void procKeyAsgnRsz(float val)
 	{
@@ -182,12 +185,18 @@ public:
 	}
 	void procModWheelSmoothed(float val)
 	{
-		synth.vibratoAmount = val;
+		for(int i = 0 ; i < synth.MAX_VOICES;i++)
+		{
+			synth.voices[i].vibratoAmount = val;
+		}
 	}
 	void procModWheelFrequency(float val)
 	{
-		synth.vibratoLfo.setFrequency (logsc(val,3,10));
-		synth.vibratoEnabled = val>0.05;
+		for(int i = 0 ; i < synth.MAX_VOICES;i++)
+		{
+			synth.voices[i].vibratoLfo.setFrequency (logsc(val,3,10));
+			synth.voices[i].vibratoEnabled = val>0.05;
+		}
 	}
 	void procPitchWheel(float val)
 	{
@@ -260,16 +269,25 @@ public:
 	}
 	void processLfoFrequency(float param)
 	{
-		synth.mlfo.setRawParam(param);
-		synth.mlfo.setFrequency(logsc(param,0,50,120));
+		for(int i = 0 ; i < synth.MAX_VOICES;i++)
+		{
+			synth.voices[i].mLfo.setRawParam(param);
+			synth.voices[i].mLfo.setFrequency(logsc(param,0,50,120));
+		}
 	}
 	void processLfo1Wave(float param)
 	{
-		synth.mlfo.waveForm =  roundToInt(param*5);
+		for(int i = 0 ; i < synth.MAX_VOICES;i++)
+		{
+			synth.voices[i].mLfo.waveForm =  roundToInt(param*5);
+		}
 	}
 	void processLfo2Wave(float param)
 	{
-		synth.vibratoLfo.waveForm =  roundToInt(param*5);
+		for(int i = 0 ; i < synth.MAX_VOICES;i++)
+		{
+			synth.voices[i].vibratoLfo.waveForm =  roundToInt(param*5);
+		}
 	}
 	void processLfoAmt1(float param)
 	{

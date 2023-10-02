@@ -26,6 +26,7 @@
 #pragma once
 #include "OscillatorB.h"
 #include "AdssrEnvelope.h"
+#include "Lfo.h"
 #include "Filter.h"
 #include "Decimator.h"
 
@@ -54,6 +55,8 @@ public:
 
 	AdssrEnvelope env;
 	AdssrEnvelope fenv;
+	Lfo mLfo;
+	Lfo vibratoLfo;
 	OscillatorB osc;
 	Filter flt;
 
@@ -89,10 +92,10 @@ public:
 	float porta;
 	float prtst;
 
-	float cutoffwas,envelopewas;
+	float vibratoAmount;
+	bool vibratoEnabled;
 
-	float lfoIn;
-	float lfoVibratoIn;
+	float cutoffwas,envelopewas;
 
 	float pitchWheel;
 	float pitchWheelAmt;
@@ -138,7 +141,6 @@ public:
 		shouldProcessed = false;
 		vamp=vflt=0;
 		velocityValue=0;
-		lfoVibratoIn=0;
 		fourpole = false;
 		brightCoef =briHold= 1;
 		osc1FltMod = 0;
@@ -148,7 +150,6 @@ public:
 		cutoffwas = envelopewas=0;
 		c1=c2=d1=d2=0;
 		pitchWheel=pitchWheelAmt=0;
-		lfoIn=0;
 		PortaDetuneAmt=0;
 		FltDetAmt=0;
 		levelDetuneAmt=0;
@@ -167,6 +168,7 @@ public:
 	//	lenvd=new DelayLine(Samples*2);
 	//	fenvd=new DelayLine(Samples*2);
 		oscmodEnable = false;
+		vibratoLfo.waveForm = 1; // Triangle
 		voiceNumber = 0; // Until someone else says something else
 		unused1=unused2=0; // TODO: Remove
 	}
@@ -178,6 +180,12 @@ public:
 	inline float ProcessSample()
 	{
 		float oscps, oscmod;
+		float lfoIn, lfoVibratoIn;
+
+		mLfo.update();
+		vibratoLfo.update();
+		lfoIn = mLfo.getVal();
+		lfoVibratoIn = vibratoEnabled?(vibratoLfo.getVal() * vibratoAmount):0;
 
 		//portamento on osc input voltage
 		//implements rc circuit
