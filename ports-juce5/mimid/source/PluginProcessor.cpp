@@ -164,10 +164,10 @@ void ObxdAudioProcessor::setParameter (int index, float newValue)
 		synth.processLfoFrequency(newValue);
 		break;
 	case LFO1AMT:
-		synth.processLfoAmt1(newValue);
+		synth.processLfo1Amt(newValue);
 		break;
 	case LFO2AMT:
-		synth.processLfoAmt2(newValue);
+		synth.processLfo2Amt(newValue);
 		break;
 	case LFO1WAVE:
 		synth.processLfo1Wave(newValue);

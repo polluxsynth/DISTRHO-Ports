@@ -55,8 +55,8 @@ public:
 
 	AdssrEnvelope env;
 	AdssrEnvelope fenv;
-	Lfo mLfo;
-	Lfo vibratoLfo;
+	Lfo lfo1;
+	Lfo lfo2;
 	OscillatorB osc;
 	Filter flt;
 
@@ -101,9 +101,11 @@ public:
 	float pitchWheelAmt;
 	bool pitchWheelOsc2Only;
 
-	float lfoa1,lfoa2;
-	bool lfoo1,lfoo2,lfof;
-	bool lfopw1,lfopw2;
+	float lfo1a,lfo2a;
+	bool lfo1o1,lfo1o2,lfo1f;
+	bool lfo1pw1,lfo1pw2;
+	bool lfo2o1,lfo2o2,lfo2f;
+	bool lfo2pw1,lfo2pw2;
 
 	bool selfOscPush;
 
@@ -119,7 +121,7 @@ public:
 	bool fourpole;
 
 
-	DelayLine<Samples*2> lenvd,fenvd,lfod;
+	DelayLine<Samples*2> lenvd,fenvd,lfo1d;
 
 	float oscpsw;
 	float briHold;
@@ -168,7 +170,7 @@ public:
 	//	lenvd=new DelayLine(Samples*2);
 	//	fenvd=new DelayLine(Samples*2);
 		oscmodEnable = false;
-		vibratoLfo.waveForm = 1; // Triangle
+		lfo2.waveForm = 1; // Triangle
 		voiceNumber = 0; // Until someone else says something else
 		unused1=unused2=0; // TODO: Remove
 	}
@@ -180,10 +182,10 @@ public:
 	inline float ProcessSample()
 	{
 		float oscps, oscmod;
-		float lfoIn, lfoVibratoIn;
+		float lfo1In, lfo2In;
 
-		lfoIn = mLfo.getVal();
-		lfoVibratoIn = vibratoEnabled?(vibratoLfo.getVal() * vibratoAmount):0;
+		lfo1In = lfo1.getVal();
+		lfo2In = vibratoEnabled?(lfo2.getVal() * vibratoAmount):0;
 
 		//portamento on osc input voltage
 		//implements rc circuit
@@ -191,19 +193,19 @@ public:
 		float ptNote  =tptlpupw(prtst, midiIndx-81, porta * (1+PortaDetune*PortaDetuneAmt),sampleRateInv);
 		osc.notePlaying = ptNote;
 		//both envelopes and filter cv need a delay equal to osc internal delay
-		float lfoDelayed = lfod.feedReturn(lfoIn);
+		float lfo1Delayed = lfo1d.feedReturn(lfo1In);
 		//filter envelope undelayed
 		float envm = fenv.processSample() * (1 - (1-velocityValue)*vflt);
 		if(invertFenv)
 			envm = -envm;
 
 		//PW modulation
-		osc.pw1 = (lfopw1?(lfoIn * lfoa2):0) + (pwEnvBoth?(pwenvmod * envm) : 0);
-		osc.pw2 = (lfopw2?(lfoIn * lfoa2):0) + pwenvmod * envm;
+		osc.pw1 = (lfo1pw1?(lfo1In * lfo1a):0) + (pwEnvBoth?(pwenvmod * envm) : 0);
+		osc.pw2 = (lfo1pw2?(lfo1In * lfo1a):0) + pwenvmod * envm;
 
 		//Pitch modulation
-		osc.pto1 =   (!pitchWheelOsc2Only? (pitchWheel*pitchWheelAmt):0 ) + ( lfoo1?(lfoIn * lfoa1):0) + (pitchModBoth?(envpitchmod * envm):0) + lfoVibratoIn;
-		osc.pto2 =  (pitchWheel *pitchWheelAmt) + (lfoo2?lfoIn*lfoa1:0) + (envpitchmod * envm) + lfoVibratoIn;
+		osc.pto1 =   (!pitchWheelOsc2Only? (pitchWheel*pitchWheelAmt):0 ) + ( lfo1o1?(lfo1In * lfo1a):0) + (pitchModBoth?(envpitchmod * envm):0) + lfo2In;
+		osc.pto2 =  (pitchWheel *pitchWheelAmt) + (lfo1o2?lfo1In*lfo1a:0) + (envpitchmod * envm) + lfo2In;
 
 
 
@@ -219,7 +221,7 @@ public:
 		//needs to be done after we've gotten oscmod
 		// ptNote+40 => F2 = 87.31 Hz is base note for filter tracking
 		float cutoffnote =
-			(lfof?lfoDelayed*lfoa1:0)+
+			(lfo1f?lfo1Delayed*lfo1a:0)+
 			cutoff+
 			FltDetune*FltDetAmt+
 			fenvamt*fenvd.feedReturn(envm)+
@@ -303,6 +305,8 @@ public:
 		osc.setSampleRate(sr);
 		env.setSampleRate(sr);
 		fenv.setSampleRate(sr);
+		lfo1.setSampleRate(sr);
+		lfo2.setSampleRate(sr);
 		SampleRate = sr;
 		sampleRateInv = 1 / sr;
 		brightCoef = tan(jmin(briHold,flt.SampleRate*0.5f-10)* (juce::float_Pi) * flt.sampleRateInv);
