@@ -47,9 +47,6 @@ private:
 	//JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Motherboard)
 public:
 	bool asPlayedMode;
-	Lfo mlfo,vibratoLfo;
-	float vibratoAmount;
-	bool vibratoEnabled;
 
 	float Volume;
 	float pannings[MAX_VOICES];
@@ -62,7 +59,6 @@ public:
 	{
 		economyMode = true;
 		lkl=lkr=0;
-		vibratoEnabled = true;
 		asPlayedMode = false;
 		asPlayedCounter = 0;
 		for(int i = 0 ; i < 129 ; i++)
@@ -70,9 +66,7 @@ public:
 			awaitingkeys[i] = false;
 			priorities[i] = 0;
 		}
-		vibratoAmount = 0;
 		Oversample=false;
-		vibratoLfo.waveForm = 1;
 		wasUni = false;
 		Volume=0;
 	//	voices = new Voice* [MAX_VOICES];
@@ -109,11 +103,11 @@ public:
 	{
 		sampleRate = sr;
 		sampleRateInv = 1 / sampleRate;
-		mlfo.setSampleRate(sr);
-		vibratoLfo.setSampleRate(sr);
 		for(int i = 0 ; i < MAX_VOICES;++i)
 		{
 			voices[i].setSampleRate(sr);
+			voices[i].mLfo.setSampleRate(sr);
+			voices[i].vibratoLfo.setSampleRate(sr);
 		}
 		SetOversample(Oversample);
 	}
@@ -129,61 +123,42 @@ public:
 	}
 	void SetOversample(bool over)
 	{
-		if(over==true)
-		{
-			mlfo.setSampleRate(sampleRate*2);
-			vibratoLfo.setSampleRate(sampleRate*2);
-		}
-		else
-		{
-			mlfo.setSampleRate(sampleRate);
-			vibratoLfo.setSampleRate(sampleRate);
-		}
 		for(int i = 0 ; i < MAX_VOICES;i++)
 		{
 			voices[i].setHQ(over);
-			if(over)
+			if(over) {
 				voices[i].setSampleRate(sampleRate*2);
-			else
+				voices[i].mLfo.setSampleRate(sampleRate*2);
+				voices[i].vibratoLfo.setSampleRate(sampleRate*2);
+			} else {
 				voices[i].setSampleRate(sampleRate);
+				voices[i].mLfo.setSampleRate(sampleRate);
+				voices[i].vibratoLfo.setSampleRate(sampleRate);
+			}
 		}
 		Oversample = over;
 	}
-	inline float processSynthVoice(Voice& b,float lfoIn,float vibIn )
+	inline float processSynthVoice(Voice& b)
 	{
 		if(economyMode)
 			b.checkAdssrState();
 		if(b.shouldProcessed||(!economyMode))
 		{
-				b.lfoIn=lfoIn;
-				b.lfoVibratoIn=vibIn;
-				return b.ProcessSample();
+			return b.ProcessSample();
 		}
 		return 0;
 	}
 	void processSample(float* sm1,float* sm2)
 	{
-		mlfo.update();
-		vibratoLfo.update();
 		float vl=0,vr=0;
 		float vlo = 0 , vro = 0 ;
-		float lfovalue = mlfo.getVal();
-		float viblfo = vibratoEnabled?(vibratoLfo.getVal() * vibratoAmount):0;
-		float lfovalue2=0,viblfo2=0;
-		if(Oversample)
-		{		
-			mlfo.update();
-		vibratoLfo.update();
-		lfovalue2 = mlfo.getVal();
-		viblfo2 = vibratoEnabled?(vibratoLfo.getVal() * vibratoAmount):0;
-		}
 
 		for(int i = 0 ; i < totalvc;i++)
 		{
-				float x1 = processSynthVoice(voices[i],lfovalue,viblfo);
+				float x1 = processSynthVoice(voices[i]);
 				if(Oversample)
 				{
-					float x2 =  processSynthVoice(voices[i],lfovalue2,viblfo2);
+					float x2 =  processSynthVoice(voices[i]);
 					vlo+=x2*(1-pannings[i]);
 					vro+=x2*(pannings[i]);
 				}

@@ -57,15 +57,13 @@ public:
 		sh=0;
 		rg=Random();
 	}
-	void setSynced()
+	void setSynced(bool enable)
 	{
-		synced = true;
-		recalcRate(rawParam);
-	}
-	void setUnsynced()
-	{
-		synced = false;
-		phaseInc = frUnsc;
+		synced = enable;
+		if (synced)
+			recalcRate(rawParam);
+		else
+			phaseInc = frUnsc;
 	}
 	void hostSyncRetrigger(float bpm,float quaters)
 	{
