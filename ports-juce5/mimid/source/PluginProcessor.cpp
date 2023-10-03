@@ -406,9 +406,9 @@ const String MimidAudioProcessor::getParameterName (int index)
 	case LFOSHWAVE_UNUSED:
 		return S("LfoSampleHoldWave");
 	case LFO1AMT:
-		return S("LfoAmount1");
+		return S("Lfo1Amount");
 	case LFO2AMT:
-		return S("LfoAmount2");
+		return S("Lfo2Amount");
 	case LFOFILTER_UNUSED:
 		return S("LfoFilter");
 	case LFO1DEST:
