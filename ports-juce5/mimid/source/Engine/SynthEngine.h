@@ -196,7 +196,7 @@ public:
 	{
 		for(int i = 0 ; i < synth.MAX_VOICES;i++)
 		{
-			synth.voices[i].vibratoAmount = val;
+			synth.voices[i].modWheelSmoothed = val;
 		}
 	}
 	void procModWheelFrequency(float val)
@@ -205,7 +205,6 @@ public:
 		{
 			synth.voices[i].lfo2.setRawFrequency(val);
 			synth.voices[i].lfo2.setFrequency(logsc(val,0,50,120));
-			synth.voices[i].vibratoEnabled = val>0.05;
 		}
 	}
 	void procPitchWheel(float val)
