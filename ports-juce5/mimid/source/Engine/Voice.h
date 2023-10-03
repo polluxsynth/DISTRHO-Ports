@@ -338,6 +338,8 @@ public:
 		if(!Active || multiTrig) {
 			env.triggerAttack();
 			fenv.triggerAttack();
+			lfo1.keyResetPhase(); // TODO: Always?
+			lfo2.keyResetPhase(); // TODO: Always?
 		}
 		Active = true;
 	}

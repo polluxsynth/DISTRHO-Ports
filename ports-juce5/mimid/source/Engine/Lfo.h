@@ -38,6 +38,7 @@ private:
 
 	float syncRate;
 	bool clockSynced;
+	bool keySynced;
 
 public:
 	float Frequency;
@@ -52,6 +53,7 @@ public:
 		syncRate = 1;
 		rawFrequency=0;
 		clockSynced = false;
+		keySynced = false;
 		s1=0;
 		Frequency=1;
 		phase=0;
@@ -66,6 +68,19 @@ public:
 			recalcRate(rawFrequency);
 		else
 			phaseInc = frequency;
+	}
+	void setKeySync(bool enable)
+	{
+		keySynced = enable;
+		// When turning key sync off, reset phase, so that all
+		// voices run at the same phase.
+		if (!keySynced)
+			phase = 1;
+	}
+	void keyResetPhase()
+	{
+		if (keySynced)
+			phase = 1;
 	}
 	void hostSyncRetrigger(float bpm,float quaters)
 	{

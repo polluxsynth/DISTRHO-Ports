@@ -103,9 +103,20 @@ public:
 	}
 	void procLfo1Sync(float val)
 	{
+		int intval = roundToInt(val*2);
 		for(int i = 0 ; i < Motherboard::MAX_VOICES;i++)
 		{
-			synth.voices[i].lfo1.setClockSync(val > 0.5);
+			synth.voices[i].lfo1.setClockSync(intval == 1);
+			synth.voices[i].lfo1.setKeySync(intval == 2);
+		}
+	}
+	void procLfo2Sync(float val)
+	{
+		int intval = roundToInt(val*2);
+		for(int i = 0 ; i < Motherboard::MAX_VOICES;i++)
+		{
+			synth.voices[i].lfo2.setClockSync(intval == 1);
+			synth.voices[i].lfo2.setKeySync(intval == 2);
 		}
 	}
 	void procKeyAsgnRsz(float val)
