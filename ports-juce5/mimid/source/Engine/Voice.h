@@ -92,8 +92,7 @@ public:
 	float porta;
 	float prtst;
 
-	float vibratoAmount;
-	bool vibratoEnabled;
+	float modWheelSmoothed;
 
 	float cutoffwas,envelopewas;
 
@@ -184,8 +183,8 @@ public:
 		float oscps, oscmod;
 		float lfo1In, lfo2In;
 
-		lfo1In = lfo1.getVal();
-		lfo2In = vibratoEnabled?(lfo2.getVal() * vibratoAmount):0;
+		lfo1In = lfo1.getVal() * lfo1a;
+		lfo2In = lfo2.getVal() * lfo2a * modWheelSmoothed;
 
 		//portamento on osc input voltage
 		//implements rc circuit
