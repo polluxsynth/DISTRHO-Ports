@@ -120,7 +120,7 @@ public:
 	bool fourpole;
 
 
-	DelayLine<Samples*2> lenvd,fenvd,lfo1d;
+	DelayLine<Samples*2> lenvd,fenvd,lfo1d,lfo2d;
 
 	float oscpsw;
 	float briHold;
@@ -193,18 +193,19 @@ public:
 		osc.notePlaying = ptNote;
 		//both envelopes and filter cv need a delay equal to osc internal delay
 		float lfo1Delayed = lfo1d.feedReturn(lfo1In);
+		float lfo2Delayed = lfo2d.feedReturn(lfo2In);
 		//filter envelope undelayed
 		float envm = fenv.processSample() * (1 - (1-velocityValue)*vflt);
 		if(invertFenv)
 			envm = -envm;
 
 		//PW modulation
-		osc.pw1 = (lfo1pw1?lfo1In:0) + (pwEnvBoth?(pwenvmod * envm) : 0);
-		osc.pw2 = (lfo1pw2?lfo1In:0) + pwenvmod * envm;
+		osc.pw1 = (lfo1pw1?lfo1In:0) + (lfo2pw1?lfo1In:0) + (pwEnvBoth?(pwenvmod * envm) : 0);
+		osc.pw2 = (lfo1pw2?lfo1In:0) + (lfo2pw2?lfo2In:0) + pwenvmod * envm;
 
 		//Pitch modulation
-		osc.pto1 =   (!pitchWheelOsc2Only? (pitchWheel*pitchWheelAmt):0 ) + ( lfo1o1?(lfo1In * lfo1a):0) + (pitchModBoth?(envpitchmod * envm):0) + lfo2In;
-		osc.pto2 =  (pitchWheel *pitchWheelAmt) + (lfo1o2?lfo1In:0) + (envpitchmod * envm) + lfo2In;
+		osc.pto1 =   (!pitchWheelOsc2Only? (pitchWheel*pitchWheelAmt):0 ) + (lfo1o1?lfo1In:0) + (lfo2o1?lfo2In:0) + (pitchModBoth?(envpitchmod * envm):0);
+		osc.pto2 =  (pitchWheel*pitchWheelAmt) + (lfo1o2?lfo1In:0) + (lfo2o2?lfo2In:0) + (envpitchmod * envm);
 
 
 
@@ -221,6 +222,7 @@ public:
 		// ptNote+40 => F2 = 87.31 Hz is base note for filter tracking
 		float cutoffnote =
 			(lfo1f?lfo1Delayed:0)+
+			(lfo2f?lfo2Delayed:0)+
 			cutoff+
 			FltDetune*FltDetAmt+
 			fenvamt*fenvd.feedReturn(envm)+
