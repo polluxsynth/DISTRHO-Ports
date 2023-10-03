@@ -98,6 +98,9 @@ void ObxdAudioProcessor::setParameter (int index, float newValue)
 	case LFO1SYNC:
 		synth.procLfo1Sync(newValue);
 		break;
+	case LFO2SYNC:
+		synth.procLfo2Sync(newValue);
+		break;
 	case ECONOMY_MODE:
 		synth.procEconomyMode(newValue);
 		break;
@@ -352,6 +355,8 @@ const String ObxdAudioProcessor::getParameterName (int index)
 		return S("PwEnv");
 	case LFO1SYNC:
 		return S("Lfo1Sync");
+	case LFO2SYNC:
+		return S("Lfo2Sync");
 	case ECONOMY_MODE:
 		return S("EconomyMode");
 	case UNUSED_1:

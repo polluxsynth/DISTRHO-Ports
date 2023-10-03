@@ -107,5 +107,7 @@ enum Parameters
 	ASGN_RES,	// Restore mode: Store notes until voice available
 	ASGN_STRG,	// Single trig: behavior during rob and restore
 
+	LFO2SYNC,
+
 	PARAM_COUNT,
 };
