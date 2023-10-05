@@ -182,8 +182,6 @@ public:
 		float oscps, oscmod;
 		float lfoIn, lfoVibratoIn;
 
-		mLfo.update();
-		vibratoLfo.update();
 		lfoIn = mLfo.getVal();
 		lfoVibratoIn = vibratoEnabled?(vibratoLfo.getVal() * vibratoAmount):0;
 

@@ -138,13 +138,17 @@ public:
 		}
 		Oversample = over;
 	}
-	inline float processSynthVoice(Voice& b)
+	inline float processSynthVoice(Voice& voice)
 	{
 		if(economyMode)
-			b.checkAdssrState();
-		if(b.shouldProcessed||(!economyMode))
+			voice.checkAdssrState();
+		// Always update LFOs to keep them in phase even if voice
+		// is not playing.
+		voice.mLfo.update();
+		voice.vibratoLfo.update();
+		if(voice.shouldProcessed||(!economyMode))
 		{
-			return b.ProcessSample();
+			return voice.ProcessSample();
 		}
 		return 0;
 	}
