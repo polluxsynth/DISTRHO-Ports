@@ -91,10 +91,22 @@ public:
 	}
 	void setVoiceCount(int count)
 	{
+		// Turn off voices that are no longer used
 		for(int i = count ; i < MAX_VOICES;i++)
 		{
 			voices[i].NoteOff();
 			voices[i].ResetEnvelope();
+		}
+		// If the number of voices is increased, any free running
+		// LFOs need to be synced with the rest. Since the first
+		// voice is always available we simply use that.
+		// Since we start att totalvc, the loop is never executed
+		// for voice #0. Furthermore, it is not run at all if
+		// the voice count is not increased over the current value.
+		for (int i = totalvc; i < count; i++)
+		{
+			voices[i].lfo1.phaseSync(voices[0].lfo1);
+			voices[i].lfo2.phaseSync(voices[0].lfo2);
 		}
 		voiceAlloc.init(count, voiceList);
 		totalvc = count;
