@@ -77,10 +77,23 @@ public:
 		if (!keySynced)
 			phase = 1;
 	}
+	// Reset phase if in keySync mode
 	void keyResetPhase()
 	{
 		if (keySynced)
 			phase = 1;
+	}
+	// Sync phase when voice enabled
+	void phaseSync(Lfo &masterLfo)
+	{
+		if (!keySynced)
+			// If we are voice 0, this would be an identity
+			// statement, which is not really a problemm, and any
+			// if statement to alleviate it will in most cases
+			// just make the code path longer. In practice though,
+			// this is not intended to be called for voice 0
+			// anyway.
+			phase = masterLfo.phase;
 	}
 	void hostSyncRetrigger(float bpm,float quaters)
 	{
