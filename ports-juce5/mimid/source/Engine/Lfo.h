@@ -30,6 +30,7 @@ class Lfo
 private:
 	float phase; // 0 -> 1
 	float sh; // peak +1/-1
+	bool newCycle;
 	float s1;
     Random rg;
 	float SampleRate;
@@ -55,6 +56,7 @@ public:
 		Frequency=1;
 		phase=0;
 		sh=0;
+		newCycle=false;
 		rg=Random();
 	}
 	void setClockSync(bool enable)
@@ -91,9 +93,12 @@ public:
 				break;
 			case 4: Res = 1 - 2 * phase;
 				break;
-			case 5: Res = sh;
+			case 5: if (newCycle)
+					sh = rg.nextFloat()*2-1;
+				Res = sh;
 				break;
 		}
+		newCycle = false;
 		return tptlpupw(s1, Res,3000,SampleRateInv);
 	}
 	void setSampleRate(float sr)
@@ -107,7 +112,7 @@ public:
 		if(phase > 1)
 		{
 			phase-=1;
-			sh = rg.nextFloat()*2-1;
+			newCycle = true;
 		}
 
 	}
