@@ -204,6 +204,9 @@ void ObxdAudioProcessor::setParameter (int index, float newValue)
 	case ENVDER:
 		synth.processEnvelopeSpread(newValue);
 		break;
+	case LFOSPREAD:
+		synth.processLfoSpread(newValue);
+		break;
 	case XMOD:
 		synth.processOsc2Xmod(newValue);
 		break;
@@ -433,6 +436,8 @@ const String ObxdAudioProcessor::getParameterName (int index)
 		return S("FilterSpread");
 	case ENVDER:
 		return S("EnvelopeSpread");
+	case LFOSPREAD:
+		return S("LfoSpread");
 	case ASGN_RSZ:
 		return S("KeyAssignRsz");
 	case ASGN_MEM:
