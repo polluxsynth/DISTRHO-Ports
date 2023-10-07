@@ -72,9 +72,9 @@ public:
 	{
 		SampleRate = sr;
 	}
-	void setUniqueDeriviance(float der)
+	void setSpread(float spread)
 	{
-		uf = der;
+		uf = spread;
 		setAttack(ua);
 		setDecay(ud);
 		setSustainTime(us);
