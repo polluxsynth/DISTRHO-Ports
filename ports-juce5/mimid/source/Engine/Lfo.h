@@ -32,6 +32,7 @@ private:
 	float sh; // peak +1/-1
 	bool newCycle;
 	float s1;
+	float spread;
     Random rg;
 	float SampleRate;
 	float SampleRateInv;
@@ -57,6 +58,7 @@ public:
 		s1=0;
 		Frequency=1;
 		phase=0;
+		spread=1;
 		sh=0;
 		newCycle=false;
 		rg=Random();
@@ -67,7 +69,7 @@ public:
 		if (clockSynced)
 			recalcRate(rawFrequency);
 		else
-			phaseInc = frequency;
+			phaseInc = frequency * spread;
 	}
 	void setKeySync(bool enable)
 	{
@@ -144,11 +146,16 @@ public:
 		}
 
 	}
+	void setSpread(float val)
+	{
+		spread = val;
+		setFrequency(frequency);
+	}
 	void setFrequency(float val)
 	{
 		frequency = val;
 		if(!clockSynced)
-			phaseInc = val;
+			phaseInc = frequency * spread;
 	}
 	void setRawFrequency(float param)//used for clock synced rate changes
 	{

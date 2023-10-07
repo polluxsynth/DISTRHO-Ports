@@ -654,6 +654,13 @@ public:
 			synth.voices[i].setEnvSpreadAmt(linsc(param,0.0,1));
 		}
 	}
+	void processLfoSpread(float param)
+	{
+		for(int i = 0 ; i < synth.MAX_VOICES;i++)
+		{
+			synth.voices[i].setLfoSpreadAmt(linsc(param,0.0,1));
+		}
+	}
 	void processFilterSpread(float param)
 	{
 for(int i = 0 ; i < synth.MAX_VOICES;i++)

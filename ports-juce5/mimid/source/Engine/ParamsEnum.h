@@ -109,5 +109,7 @@ enum Parameters
 
 	LFO2SYNC,
 
+	LFOSPREAD,
+
 	PARAM_COUNT,
 };

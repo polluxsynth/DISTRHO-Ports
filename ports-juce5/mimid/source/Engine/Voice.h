@@ -70,6 +70,8 @@ public:
 	float EnvSpread;
 	float FenvSpread;
 
+	float Lfo1Spread;
+	float Lfo2Spread;
 
 	float FltSpread;
 	float FltSpreadAmt;
@@ -165,6 +167,8 @@ public:
 		levelSpread = Random::getSystemRandom().nextFloat()-0.5;
 		EnvSpread = Random::getSystemRandom().nextFloat()-0.5;
 		FenvSpread = Random::getSystemRandom().nextFloat()-0.5;
+		Lfo1Spread = Random::getSystemRandom().nextFloat()-0.5;
+		Lfo2Spread = Random::getSystemRandom().nextFloat()-0.5;
 		FltSpread = Random::getSystemRandom().nextFloat()-0.5;
 		PortaSpread =Random::getSystemRandom().nextFloat()-0.5;
 	//	lenvd=new DelayLine(Samples*2);
@@ -301,6 +305,12 @@ public:
 		env.setSpread(expf(EnvSpread*d * 2 * logf(1.5)));
 		fenv.setSpread(expf(EnvSpread*d * 2 * logf(1.5)));
 	}
+	void setLfoSpreadAmt(float d)
+	{
+		lfo1.setSpread(expf(Lfo1Spread*d * 2 * logf(1.5)));
+		lfo2.setSpread(expf(Lfo2Spread*d * 2 * logf(1.5)));
+	}
+
 	void setHQ(bool hq)
 	{
 		if(hq)
