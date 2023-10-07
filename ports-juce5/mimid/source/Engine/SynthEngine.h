@@ -382,11 +382,11 @@ public:
 			synth.voices[i].lfo2a = logsc(logsc(param,0,1,60),0,60,10);
 		}
 	}
-	void processDetune(float param)
+	void processOscSpread(float param)
 	{
 		for(int i = 0 ; i < synth.MAX_VOICES;i++)
 		{
-			synth.voices[i].osc.totalDetune = logsc(param,0.001,0.90);
+			synth.voices[i].osc.totalSpread = logsc(param,0.001,0.90);
 		}
 	}
 	void processOsc1PulseWidth(float param)
@@ -647,30 +647,30 @@ public:
 			synth.voices[i].fenv.setSustain(param);
 		}
 	}
-	void processEnvelopeDetune(float param)
+	void processEnvelopeSpread(float param)
 	{
 		for(int i = 0 ; i < synth.MAX_VOICES;i++)
 		{
-			synth.voices[i].setEnvDer(linsc(param,0.0,1));
+			synth.voices[i].setEnvSpreadAmt(linsc(param,0.0,1));
 		}
 	}
-	void processFilterDetune(float param)
+	void processFilterSpread(float param)
 	{
 for(int i = 0 ; i < synth.MAX_VOICES;i++)
 		{
-			synth.voices[i].FltDetAmt = linsc(param,0.0,18);
+			synth.voices[i].FltSpreadAmt = linsc(param,0.0,18);
 		}
 	}
-	void processPortamentoDetune(float param)
+	void processPortamentoSpread(float param)
 	{
 		for(int i = 0 ; i < synth.MAX_VOICES;i++)
 		{
-			synth.voices[i].PortaDetuneAmt = linsc(param,0.0,0.75);
+			synth.voices[i].PortaSpreadAmt = linsc(param,0.0,0.75);
 		}
 	}
-	void processLoudnessDetune(float param)
+	void processLoudnessSpread(float param)
 	{
-		ForEachVoice(levelDetuneAmt = linsc(param,0.0,0.67));
+		ForEachVoice(levelSpreadAmt = linsc(param,0.0,0.67));
 	}
 
 		 

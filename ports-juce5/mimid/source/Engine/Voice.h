@@ -67,17 +67,18 @@ public:
 	float cutoff;
 	float fenvamt;
 
-	float EnvDetune;
-	float FenvDetune;
+	float EnvSpread;
+	float FenvSpread;
 
-	float FltDetune;
-	float FltDetAmt;
 
-	float PortaDetune;
-	float PortaDetuneAmt;
+	float FltSpread;
+	float FltSpreadAmt;
 
-	float levelDetune;
-	float levelDetuneAmt;
+	float PortaSpread;
+	float PortaSpreadAmt;
+
+	float levelSpread;
+	float levelSpreadAmt;
 
 	float brightCoef;
 	float osc1FltMod;
@@ -151,9 +152,9 @@ public:
 		cutoffwas = envelopewas=0;
 		c1=c2=d1=d2=0;
 		pitchWheel=pitchWheelAmt=0;
-		PortaDetuneAmt=0;
-		FltDetAmt=0;
-		levelDetuneAmt=0;
+		PortaSpreadAmt=0;
+		FltSpreadAmt=0;
+		levelSpreadAmt=0;
 		porta =0;
 		prtst=0;
 		fltKF= false;
@@ -161,11 +162,11 @@ public:
 		fenvamt = 0;
 		Active = false;
 		midiIndx = 30;
-		levelDetune = Random::getSystemRandom().nextFloat()-0.5;
-		EnvDetune = Random::getSystemRandom().nextFloat()-0.5;
-		FenvDetune = Random::getSystemRandom().nextFloat()-0.5;
-		FltDetune = Random::getSystemRandom().nextFloat()-0.5;
-		PortaDetune =Random::getSystemRandom().nextFloat()-0.5;
+		levelSpread = Random::getSystemRandom().nextFloat()-0.5;
+		EnvSpread = Random::getSystemRandom().nextFloat()-0.5;
+		FenvSpread = Random::getSystemRandom().nextFloat()-0.5;
+		FltSpread = Random::getSystemRandom().nextFloat()-0.5;
+		PortaSpread =Random::getSystemRandom().nextFloat()-0.5;
 	//	lenvd=new DelayLine(Samples*2);
 	//	fenvd=new DelayLine(Samples*2);
 		oscmodEnable = false;
@@ -189,7 +190,7 @@ public:
 		//portamento on osc input voltage
 		//implements rc circuit
 		// Midi note 81 is A5 (880 Hz), so ptNote == 0 => 880 Hz
-		float ptNote  =tptlpupw(prtst, midiIndx-81, porta * (1+PortaDetune*PortaDetuneAmt),sampleRateInv);
+		float ptNote  =tptlpupw(prtst, midiIndx-81, porta * (1+PortaSpread*PortaSpreadAmt),sampleRateInv);
 		osc.notePlaying = ptNote;
 		//both envelopes and filter cv need a delay equal to osc internal delay
 		float lfo1Delayed = lfo1d.feedReturn(lfo1In);
@@ -214,7 +215,7 @@ public:
 
 		osc.ProcessSample(oscps, oscmod);
 
-		oscps *= 1 - levelDetuneAmt*levelDetune;
+		oscps *= 1 - levelSpreadAmt*levelSpread;
 		oscps = oscps - tptlpupw(c1,oscps,12,sampleRateInv);
 
 		//filter exp cutoff calculation
@@ -224,7 +225,7 @@ public:
 			(lfo1f?lfo1Delayed:0)+
 			(lfo2f?lfo2Delayed:0)+
 			cutoff+
-			FltDetune*FltDetAmt+
+			FltSpread*FltSpreadAmt+
 			fenvamt*fenvd.feedReturn(envm)+
 			-45 + (fltKF*(ptNote+40));
 		if (oscmodEnable) {
@@ -284,10 +285,10 @@ public:
 		brightCoef = tan(jmin(val,flt.SampleRate*0.5f-10)* (juce::float_Pi)*flt.sampleRateInv);
 
 	}
-	void setEnvDer(float d)
+	void setEnvSpreadAmt(float d)
 	{
-		env.setUniqueDeriviance(1 + EnvDetune*d);
-		fenv.setUniqueDeriviance(1 + FenvDetune*d);
+		env.setSpread(1 + EnvSpread*d);
+		fenv.setSpread(1 + FenvSpread*d);
 	}
 	void setHQ(bool hq)
 	{

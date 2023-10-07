@@ -89,7 +89,7 @@ void MimidAudioProcessor::setParameter (int index, float newValue)
 		synth.processInvertFenv(newValue);
 		break;
 	case LEVEL_DIF:
-		synth.processLoudnessDetune(newValue);
+		synth.processLoudnessSpread(newValue);
 		break;
 	case PW_ENV:
 		synth.processPwEnv(newValue);
@@ -195,13 +195,13 @@ void MimidAudioProcessor::setParameter (int index, float newValue)
 		synth.processLfoPw2_unused(newValue);
 		break;
 	case PORTADER:
-		synth.processPortamentoDetune(newValue);
+		synth.processPortamentoSpread(newValue);
 		break;
 	case FILTERDER:
-		synth.processFilterDetune(newValue);
+		synth.processFilterSpread(newValue);
 		break;
 	case ENVDER:
-		synth.processEnvelopeDetune(newValue);
+		synth.processEnvelopeSpread(newValue);
 		break;
 	case XMOD:
 		synth.processOsc2Xmod(newValue);
@@ -243,7 +243,7 @@ void MimidAudioProcessor::setParameter (int index, float newValue)
 		synth.processVolume(newValue);
 		break;
 	case UDET:
-		synth.processDetune(newValue);
+		synth.processOscSpread(newValue);
 		break;
 	case OSC2_DET:
 		synth.processOsc2Det(newValue);
@@ -347,7 +347,7 @@ const String MimidAudioProcessor::getParameterName (int index)
 	case OSC2PW:
 		return S("Osc2PW");
 	case LEVEL_DIF:
-		return S("LevelDif");
+		return S("LevelSpread");
 	case PW_ENV_BOTH:
 		return S("PwEnvBoth");
 	case PW_ENV:
@@ -427,11 +427,11 @@ const String MimidAudioProcessor::getParameterName (int index)
 	case LFOPW2_UNUSED:
 		return S("LfoPw2");
 	case PORTADER:
-		return S("PortamentoDetune");
+		return S("PortamentoSpread");
 	case FILTERDER:
-		return S("FilterDetune");
+		return S("FilterSpread");
 	case ENVDER:
-		return S("EnvelopeDetune");
+		return S("EnvelopeSpread");
 	case ASGN_RSZ:
 		return S("KeyAssignRsz");
 	case ASGN_MEM:
@@ -489,7 +489,7 @@ const String MimidAudioProcessor::getParameterName (int index)
 	case VOLUME:
 		return S("Volume");
 	case UDET:
-		return S("VoiceDetune");
+		return S("OscSpread");
 	case OSC2_DET:
 		return S("Oscillator2detune");
 	case CUTOFF:
