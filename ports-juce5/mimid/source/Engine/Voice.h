@@ -287,8 +287,19 @@ public:
 	}
 	void setEnvSpreadAmt(float d)
 	{
-		env.setSpread(1 + EnvSpread*d);
-		fenv.setSpread(1 + FenvSpread*d);
+		// Derivation: start with 2 ** (rndval * amt), which
+		// gives a range of 2**(-0.5) .. 2**(0.5) = 0.707 .. 1.41,
+		// which gives us values centered around 1 when applied
+		// multiplicatively as is done in the envelope.
+		// Replacing 2** with exp() gives us exp(rndval * amt * ln(a)),
+		// where a = maxval**2, i.e. exp(rndval * amt * ln(2)).
+		// Consequently, we have exp(rndval * amt * ln(maxval ** 2)) =
+		// exp(rndval * amt * 2 * ln(maxval)).
+		// If we then set maxval to be the more even 1.5, we get
+		// the final exp(rndval * amt * 2 * ln(1.5)) .
+		// The total range will then be 0.67 .. 1.5 .
+		env.setSpread(expf(EnvSpread*d * 2 * logf(1.5)));
+		fenv.setSpread(expf(EnvSpread*d * 2 * logf(1.5)));
 	}
 	void setHQ(bool hq)
 	{
