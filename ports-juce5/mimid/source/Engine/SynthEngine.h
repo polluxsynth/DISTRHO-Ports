@@ -251,9 +251,9 @@ public:
 			synth.voices[i].pitchWheelOsc2Only = param>0.5;
 		}
 	}
-	void processPan(float param,int idx)
+	void processPanSpread(float param)
 	{
-		synth.pannings[idx-1] = param;
+		synth.SetPanSpreadAmt(param);
 	}
 	void processTune(float param)
 	{
