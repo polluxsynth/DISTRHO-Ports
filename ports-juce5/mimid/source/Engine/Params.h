@@ -58,14 +58,14 @@ public:
 		values[LFO2FREQ]=0.6;
 
 //		values[FILTER_DRIVE]= 0.01;
-		values[PAN1]=0.5;
-		values[PAN2]=0.5;
-		values[PAN3]=0.5;
-		values[PAN4]=0.5;
-		values[PAN5]=0.5;
-		values[PAN6]=0.5;
-		values[PAN7]=0.5;
-		values[PAN8]=0.5;
+		values[PAN1_NOTUSED]=0.5;
+		values[PAN2_NOTUSED]=0.5;
+		values[PAN3_NOTUSED]=0.5;
+		values[PAN4_NOTUSED]=0.5;
+		values[PAN5_NOTUSED]=0.5;
+		values[PAN6_NOTUSED]=0.5;
+		values[PAN7_NOTUSED]=0.5;
+		values[PAN8_NOTUSED]=0.5;
 		values[ECONOMY_MODE] = 1;
 		values[ENVDER] = 0.3;
 		values[FILTERDER]=0.3;

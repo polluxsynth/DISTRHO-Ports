@@ -269,15 +269,15 @@ void ObxdAudioProcessorEditor::rebuildComponents()
 		veloFltEnvKnob = addTinyKnob(1013,300,ownerFilter,VFLTENV,"VFE",0);
 		veloAmpEnvKnob = addTinyKnob(1111,300,ownerFilter,VAMPENV,"VAE",0);
 
-		pan1Knob = addTinyKnob(914,368,ownerFilter,PAN1,"1",0.5);
-		pan2Knob = addTinyKnob(977,368,ownerFilter,PAN2,"2",0.5);
-		pan3Knob = addTinyKnob(1040,368,ownerFilter,PAN3,"3",0.5);
-		pan4Knob = addTinyKnob(1103,368,ownerFilter,PAN4,"4",0.5);
+		pan1Knob = addTinyKnob(914,368,ownerFilter,PAN1_NOTUSED,"1",0.5);
+		pan2Knob = addTinyKnob(977,368,ownerFilter,PAN2_NOTUSED,"2",0.5);
+		pan3Knob = addTinyKnob(1040,368,ownerFilter,PAN3_NOTUSED,"3",0.5);
+		pan4Knob = addTinyKnob(1103,368,ownerFilter,PAN4_NOTUSED,"4",0.5);
 
-		pan5Knob = addTinyKnob(1165,368,ownerFilter,PAN5,"5",0.5);
-		pan6Knob = addTinyKnob(1228,368,ownerFilter,PAN6,"6",0.5);
-		pan7Knob = addTinyKnob(1290,368,ownerFilter,PAN7,"7",0.5);
-		pan8Knob = addTinyKnob(1353,368,ownerFilter,PAN8,"8",0.5);
+		pan5Knob = addTinyKnob(1165,368,ownerFilter,PAN5_NOTUSED,"5",0.5);
+		pan6Knob = addTinyKnob(1228,368,ownerFilter,PAN6_NOTUSED,"6",0.5);
+		pan7Knob = addTinyKnob(1290,368,ownerFilter,PAN7_NOTUSED,"7",0.5);
+		pan8Knob = addTinyKnob(1353,368,ownerFilter,PAN8_NOTUSED,"8",0.5);
 
 		bendOsc2OnlyButton = addNormalTooglableButton(228,335,ownerFilter,BENDOSC2,"Osc2");
 		bendRangeButton = addNormalTooglableButton(183,335,ownerFilter,BENDRANGE,"12");
@@ -378,15 +378,15 @@ void ObxdAudioProcessorEditor::rebuildComponents()
 		veloFltEnvKnob = addNormalKnobClassic(428,345,ownerFilter,VFLTENV,"VFE",0);
 		transposeKnob = addNormalKnobClassic(176,120,ownerFilter,OCTAVE,"Transpose",0.5);
 
-		pan1Knob = addTinyKnobClassic(796,318,ownerFilter,PAN1,"1",0.5);
-		pan2Knob = addTinyKnobClassic(858,318,ownerFilter,PAN2,"2",0.5);
-		pan3Knob = addTinyKnobClassic(921,318,ownerFilter,PAN3,"3",0.5);
-		pan4Knob = addTinyKnobClassic(984,318,ownerFilter,PAN4,"4",0.5);
+		pan1Knob = addTinyKnobClassic(796,318,ownerFilter,PAN1_NOTUSED,"1",0.5);
+		pan2Knob = addTinyKnobClassic(858,318,ownerFilter,PAN2_NOTUSED,"2",0.5);
+		pan3Knob = addTinyKnobClassic(921,318,ownerFilter,PAN3_NOTUSED,"3",0.5);
+		pan4Knob = addTinyKnobClassic(984,318,ownerFilter,PAN4_NOTUSED,"4",0.5);
 
-		pan5Knob = addTinyKnobClassic(796,371,ownerFilter,PAN5,"5",0.5);
-		pan6Knob = addTinyKnobClassic(858,371,ownerFilter,PAN6,"6",0.5);
-		pan7Knob = addTinyKnobClassic(921,371,ownerFilter,PAN7,"7",0.5);
-		pan8Knob = addTinyKnobClassic(984,371,ownerFilter,PAN8,"8",0.5);
+		pan5Knob = addTinyKnobClassic(796,371,ownerFilter,PAN5_NOTUSED,"5",0.5);
+		pan6Knob = addTinyKnobClassic(858,371,ownerFilter,PAN6_NOTUSED,"6",0.5);
+		pan7Knob = addTinyKnobClassic(921,371,ownerFilter,PAN7_NOTUSED,"7",0.5);
+		pan8Knob = addTinyKnobClassic(984,371,ownerFilter,PAN8_NOTUSED,"8",0.5);
 
 		bendOsc2OnlyButton = addNormalTooglableButtonClassic(321,354,ownerFilter,BENDOSC2,"Osc2");
 		bendRangeButton = addNormalTooglableButtonClassic(267,354,ownerFilter,BENDRANGE,"12");
@@ -508,14 +508,14 @@ void ObxdAudioProcessorEditor::sliderValueChanged (Slider* c)
 		handleSParam(lfoAmt1Knob,LFO1AMT)
 		handleSParam(lfoAmt2Knob,LFO2AMT)
 
-				handleSParam(pan1Knob,PAN1)
-		handleSParam(pan2Knob,PAN2)
-		handleSParam(pan3Knob,PAN3)
-		handleSParam(pan4Knob,PAN4)
-		handleSParam(pan5Knob,PAN5)
-		handleSParam(pan6Knob,PAN6)
-		handleSParam(pan7Knob,PAN7)
-		handleSParam(pan8Knob,PAN8)
+				handleSParam(pan1Knob,PAN1_NOTUSED)
+		handleSParam(pan2Knob,PAN2_NOTUSED)
+		handleSParam(pan3Knob,PAN3_NOTUSED)
+		handleSParam(pan4Knob,PAN4_NOTUSED)
+		handleSParam(pan5Knob,PAN5_NOTUSED)
+		handleSParam(pan6Knob,PAN6_NOTUSED)
+		handleSParam(pan7Knob,PAN7_NOTUSED)
+		handleSParam(pan8Knob,PAN8_NOTUSED)
 
 		handleSParam(tuneKnob,TUNE)
 		handleSParam(brightnessKnob,BRIGHTNESS)
@@ -622,14 +622,14 @@ void ObxdAudioProcessorEditor::changeListenerCallback (ChangeBroadcaster* source
 
 		rn(transposeKnob,OCTAVE)
 
-		rn(pan1Knob,PAN1)
-		rn(pan2Knob,PAN2)
-		rn(pan3Knob,PAN3)
-		rn(pan4Knob,PAN4)
-		rn(pan5Knob,PAN5)
-		rn(pan6Knob,PAN6)
-		rn(pan7Knob,PAN7)
-		rn(pan8Knob,PAN8)
+		rn(pan1Knob,PAN1_NOTUSED)
+		rn(pan2Knob,PAN2_NOTUSED)
+		rn(pan3Knob,PAN3_NOTUSED)
+		rn(pan4Knob,PAN4_NOTUSED)
+		rn(pan5Knob,PAN5_NOTUSED)
+		rn(pan6Knob,PAN6_NOTUSED)
+		rn(pan7Knob,PAN7_NOTUSED)
+		rn(pan8Knob,PAN8_NOTUSED)
 
 		rn(voiceSwitch,VOICE_COUNT)
 		rn(legatoSwitch,LEGATOMODE_NOTUSED)

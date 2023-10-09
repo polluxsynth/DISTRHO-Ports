@@ -207,6 +207,9 @@ void ObxdAudioProcessor::setParameter (int index, float newValue)
 	case LFOSPREAD:
 		synth.processLfoSpread(newValue);
 		break;
+	case PANSPREAD:
+		synth.processPanSpread(newValue);
+		break;
 	case XMOD:
 		synth.processOsc2Xmod(newValue);
 		break;
@@ -306,29 +309,21 @@ void ObxdAudioProcessor::setParameter (int index, float newValue)
 	case ASGN_STRG:
 		synth.procKeyAsgnStrg(newValue);
 		break;
-	case PAN1:
-		synth.processPan(newValue,1);
+	case PAN1_NOTUSED:
 		break;
-	case PAN2:
-		synth.processPan(newValue,2);
+	case PAN2_NOTUSED:
 		break;
-	case PAN3:
-		synth.processPan(newValue,3);
+	case PAN3_NOTUSED:
 		break;
-	case PAN4:
-		synth.processPan(newValue,4);
+	case PAN4_NOTUSED:
 		break;
-	case PAN5:
-		synth.processPan(newValue,5);
+	case PAN5_NOTUSED:
 		break;
-	case PAN6:
-		synth.processPan(newValue,6);
+	case PAN6_NOTUSED:
 		break;
-	case PAN7:
-		synth.processPan(newValue,7);
+	case PAN7_NOTUSED:
 		break;
-	case PAN8:
-		synth.processPan(newValue,8);
+	case PAN8_NOTUSED:
 		break;
 	}
 	//DIRTY HACK
@@ -438,6 +433,8 @@ const String ObxdAudioProcessor::getParameterName (int index)
 		return S("EnvelopeSpread");
 	case LFOSPREAD:
 		return S("LfoSpread");
+	case PANSPREAD:
+		return S("PanSpread");
 	case ASGN_RSZ:
 		return S("KeyAssignRsz");
 	case ASGN_MEM:
@@ -448,22 +445,22 @@ const String ObxdAudioProcessor::getParameterName (int index)
 		return S("KeyAssignRes");
 	case ASGN_STRG:
 		return S("KeyAssignStrg");
-	case PAN1:
-		return S("Pan1");
-	case PAN2:
-		return S("Pan2");
-	case PAN3:
-		return S("Pan3");
-	case PAN4:
-		return S("Pan4");
-	case PAN5:
-		return S("Pan5");
-	case PAN6:
-		return S("Pan6");
-	case PAN7:
-		return S("Pan7");
-	case PAN8:
-		return S("Pan8");
+	case PAN1_NOTUSED:
+		return S("Pan1_NOTUSED");
+	case PAN2_NOTUSED:
+		return S("Pan2_NOTUSED");
+	case PAN3_NOTUSED:
+		return S("Pan3_NOTUSED");
+	case PAN4_NOTUSED:
+		return S("Pan4_NOTUSED");
+	case PAN5_NOTUSED:
+		return S("Pan5_NOTUSED");
+	case PAN6_NOTUSED:
+		return S("Pan6_NOTUSED");
+	case PAN7_NOTUSED:
+		return S("Pan7_NOTUSED");
+	case PAN8_NOTUSED:
+		return S("Pan8_NOTUSED");
 	case XMOD:
 		return S("Xmod");
 	case OSC2HS:

@@ -49,6 +49,7 @@ public:
 	bool asPlayedMode;
 
 	float Volume;
+	float panSpread[MAX_VOICES];
 	float pannings[MAX_VOICES];
 	Voice voices[MAX_VOICES];
 	VoiceAllocator<MAX_VOICES> voiceAlloc;
@@ -77,7 +78,8 @@ public:
 		{
 			voices[i].voiceNumber = i;
 			voiceList[i] = &voices[i];
-			pannings[i]= 0.5;
+			panSpread[i]= Random::getSystemRandom().nextFloat()-0.5;
+			pannings[i] = 0.5;
 		}
 	}
 	~Motherboard()
@@ -140,6 +142,13 @@ public:
 				voices[i].setSampleRate(sampleRate);
 		}
 		Oversample = over;
+	}
+	void SetPanSpreadAmt(float val)
+	{
+		for(int i = 0 ; i < MAX_VOICES;i++)
+			// pannings are 0..1, with 0.5 being center, whereas
+			// panSpread is [-0.5..+0.5] and val is 0..1
+			pannings[i] = panSpread[i] * val + 0.5;
 	}
 	inline float processSynthVoice(Voice& voice)
 	{
