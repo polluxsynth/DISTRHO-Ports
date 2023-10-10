@@ -55,6 +55,7 @@ public:
 
 	AdssrEnvelope env;
 	AdssrEnvelope fenv;
+	AdssrEnvelope genv;
 	Lfo lfo1;
 	Lfo lfo2;
 	OscillatorB osc;
@@ -62,13 +63,14 @@ public:
 
 	Random ng;
 
-	float vamp,vflt;
+	float vamp,vflt,vgen;
 
 	float cutoff;
 	float fenvamt;
 
 	float EnvSpread;
 	float FenvSpread;
+	float GenvSpread;
 
 	float Lfo1Spread;
 	float Lfo2Spread;
@@ -111,13 +113,11 @@ public:
 
 	bool selfOscPush;
 
-	float envpitchmod;
-	float pwenvmod;
-
-	bool pwEnvBoth;
-	bool pitchModBoth;
-
+	float genvamt;
+	bool genvo1, genvo2, genvpw1, genvpw2, genvres;
 	bool invertFenv;
+	bool unipolGenv;
+	bool invertGenv;
 
 
 	bool fourpole;
@@ -137,19 +137,17 @@ public:
 	Voice()
 	{
 		selfOscPush = false;
-		pitchModBoth = false;
 		invertFenv = false;
-		pwEnvBoth = false;
+		unipolGenv = false;
+		invertGenv = false;
 		ng = Random(Random::getSystemRandom().nextInt64());
 		sustainHold = false;
 		shouldProcessed = false;
-		vamp=vflt=0;
+		vamp=vflt=vgen=0;
 		velocityValue=0;
 		fourpole = false;
 		brightCoef =briHold= 1;
 		osc1FltMod = 0;
-		envpitchmod = 0;
-		pwenvmod = 0;
 		oscpsw = 0;
 		cutoffwas = envelopewas=0;
 		c1=c2=d1=d2=0;
@@ -167,6 +165,7 @@ public:
 		levelSpread = Random::getSystemRandom().nextFloat()-0.5;
 		EnvSpread = Random::getSystemRandom().nextFloat()-0.5;
 		FenvSpread = Random::getSystemRandom().nextFloat()-0.5;
+		GenvSpread = Random::getSystemRandom().nextFloat()-0.5;
 		Lfo1Spread = Random::getSystemRandom().nextFloat()-0.5;
 		Lfo2Spread = Random::getSystemRandom().nextFloat()-0.5;
 		FltSpread = Random::getSystemRandom().nextFloat()-0.5;
@@ -204,15 +203,20 @@ public:
 		if(invertFenv)
 			envm = -envm;
 
+		//filter envelope undelayed
+		float genvm = genv.processSample() * (1 - (1-velocityValue)*vgen) * genvamt;
+		if (!unipolGenv) // Bipolar
+			genvm = 2 * genvm - 1;
+		if (invertGenv)
+			genvm = -genvm;
+
 		//PW modulation
-		osc.pw1 = (lfo1pw1?lfo1In:0) + (lfo2pw1?lfo1In:0) + (pwEnvBoth?(pwenvmod * envm) : 0);
-		osc.pw2 = (lfo1pw2?lfo1In:0) + (lfo2pw2?lfo2In:0) + pwenvmod * envm;
+		osc.pw1 = (lfo1pw1?lfo1In:0) + (lfo2pw1?lfo1In:0) + (genvpw1?genvm:0);
+		osc.pw2 = (lfo1pw2?lfo1In:0) + (lfo2pw2?lfo2In:0) + (genvpw2?genvm:0);
 
 		//Pitch modulation
-		osc.pto1 =   (!pitchWheelOsc2Only? (pitchWheel*pitchWheelAmt):0 ) + (lfo1o1?lfo1In:0) + (lfo2o1?lfo2In:0) + (pitchModBoth?(envpitchmod * envm):0);
-		osc.pto2 =  (pitchWheel*pitchWheelAmt) + (lfo1o2?lfo1In:0) + (lfo2o2?lfo2In:0) + (envpitchmod * envm);
-
-
+		osc.pto1 =   (!pitchWheelOsc2Only? (pitchWheel*pitchWheelAmt):0 ) + (lfo1o1?lfo1In:0) + (lfo2o1?lfo2In:0) + (genvo1?(genvm*36):0);
+		osc.pto2 =  (pitchWheel*pitchWheelAmt) + (lfo1o2?lfo1In:0) + (lfo2o2?lfo2In:0) + (genvo2?(genvm*36):0);
 
 		//variable sort magic - upsample trick
 		float envVal = lenvd.feedReturn(env.processSample() * (1 - (1-velocityValue)*vamp));
@@ -304,6 +308,7 @@ public:
 		// The total range will then be 0.67 .. 1.5 .
 		env.setSpread(expf(EnvSpread*d * 2 * logf(1.5)));
 		fenv.setSpread(expf(EnvSpread*d * 2 * logf(1.5)));
+		genv.setSpread(expf(EnvSpread*d * 2 * logf(1.5)));
 	}
 	void setLfoSpreadAmt(float d)
 	{
@@ -328,6 +333,7 @@ public:
 		osc.setSampleRate(sr);
 		env.setSampleRate(sr);
 		fenv.setSampleRate(sr);
+		genv.setSampleRate(sr);
 		lfo1.setSampleRate(sr);
 		lfo2.setSampleRate(sr);
 		SampleRate = sr;
@@ -342,6 +348,7 @@ public:
 	{
 		env.ResetEnvelopeState();
 		fenv.ResetEnvelopeState();
+		genv.ResetEnvelopeState();
 	}
 	void NoteOn(int mididx,float velocity,bool multiTrig)
 	{
@@ -360,6 +367,7 @@ public:
 		if(!Active || multiTrig) {
 			env.triggerAttack();
 			fenv.triggerAttack();
+			genv.triggerAttack();
 			lfo1.keyResetPhase(); // TODO: Always?
 			lfo2.keyResetPhase(); // TODO: Always?
 		}
@@ -367,10 +375,10 @@ public:
 	}
 	void NoteOff()
 	{
-		if(!sustainHold)
-		{
-		env.triggerRelease();
-		fenv.triggerRelease();
+		if(!sustainHold) {
+			env.triggerRelease();
+			fenv.triggerRelease();
+			genv.triggerRelease();
 		}
 		Active = false;
 	}
@@ -385,6 +393,7 @@ public:
 		{
 			env.triggerRelease();
 			fenv.triggerRelease();
+			genv.triggerRelease();
 		}
 
 	}

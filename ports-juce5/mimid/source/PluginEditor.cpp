@@ -216,7 +216,7 @@ void ObxdAudioProcessorEditor::rebuildComponents()
 		xmodKnob = addNormalKnob(656,324,ownerFilter,XMOD,"Xmod",0);
 		osc2DetuneKnob = addNormalKnob(800,324,ownerFilter,OSC2_DET,"Detune",0);
 
-		envPitchModKnob = addNormalKnob(728,324,ownerFilter,ENVPITCH,"PEnv",0);
+		envPitchModKnob = addNormalKnob(728,324,ownerFilter,ENVPITCH_NOTUSED,"PEnv",0);
 		brightnessKnob = addNormalKnob(586,324,ownerFilter,BRIGHTNESS,"Bri",1);
 
 		attackKnob = addNormalKnob(1182,165,ownerFilter,LATK,"Atk",0);
@@ -328,7 +328,7 @@ void ObxdAudioProcessorEditor::rebuildComponents()
 		xmodKnob = addNormalKnobClassic(334,168,ownerFilter,XMOD,"Xmod",0);
 		osc2DetuneKnob = addNormalKnobClassic(334,104,ownerFilter,OSC2_DET,"Detune",0);
 
-		envPitchModKnob = addNormalKnobClassic(376,232,ownerFilter,ENVPITCH,"PEnv",0);
+		envPitchModKnob = addNormalKnobClassic(376,232,ownerFilter,ENVPITCH_NOTUSED,"PEnv",0);
 		brightnessKnob = addNormalKnobClassic(291,232,ownerFilter,BRIGHTNESS,"Bri",1);
 
 		attackKnob = addNormalKnobClassic(791,132,ownerFilter,LATK,"Atk",0);
@@ -519,7 +519,7 @@ void ObxdAudioProcessorEditor::sliderValueChanged (Slider* c)
 
 		handleSParam(tuneKnob,TUNE)
 		handleSParam(brightnessKnob,BRIGHTNESS)
-		handleSParam(envPitchModKnob,ENVPITCH)
+		handleSParam(envPitchModKnob,ENVPITCH_NOTUSED)
 
 		handleSParam(bendLfoRateKnob,LFO2FREQ)
 		handleSParam(veloAmpEnvKnob,VAMPENV)
@@ -565,7 +565,7 @@ void ObxdAudioProcessorEditor::changeListenerCallback (ChangeBroadcaster* source
 		rn(xmodKnob,XMOD)
 		rn(multimodeKnob,RESPONSE)
 		rn(brightnessKnob,BRIGHTNESS)
-		rn(envPitchModKnob,ENVPITCH)
+		rn(envPitchModKnob,ENVPITCH_NOTUSED)
 
 		rn(attackKnob,LATK)
 		rn(decayKnob,LDEC)
