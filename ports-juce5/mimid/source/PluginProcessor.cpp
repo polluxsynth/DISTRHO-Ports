@@ -76,14 +76,12 @@ void MimidAudioProcessor::setParameter (int index, float newValue)
 	programs.currentProgramPtr->values[index] = newValue;
 	switch(index)
 	{
-	case PW_ENV_BOTH:
-		synth.processPwEnvBoth(newValue);
+	case PW_ENV_BOTH_NOTUSED:
 		break;
 	case OSC2PW:
 		synth.processOsc2PulseWidth(newValue);
 		break;
-	case ENV_PITCH_BOTH:
-		synth.processPitchModBoth(newValue);
+	case ENV_PITCH_BOTH_NOTUSED:
 		break;
 	case FENV_INVERT:
 		synth.processInvertFenv(newValue);
@@ -91,8 +89,7 @@ void MimidAudioProcessor::setParameter (int index, float newValue)
 	case LEVEL_DIF:
 		synth.processLoudnessSpread(newValue);
 		break;
-	case PW_ENV:
-		synth.processPwEnv(newValue);
+	case PW_ENV_NOTUSED:
 		break;
 	case LFO1SYNC:
 		synth.procLfo1Sync(newValue);
@@ -116,6 +113,9 @@ void MimidAudioProcessor::setParameter (int index, float newValue)
 	case VFLTENV:
 		synth.procFltVelocityAmount(newValue);
 		break;
+	case VGENENV:
+		synth.procGenVelocityAmount(newValue);
+		break;
 	case ASPLAYEDALLOCATION_NOTUSED:
 		break;
 	case LFO2FREQ:
@@ -123,8 +123,7 @@ void MimidAudioProcessor::setParameter (int index, float newValue)
 		break;
 	case LEGATOMODE_NOTUSED:
 		break;
-	case ENVPITCH:
-		synth.processEnvelopeToPitch(newValue);
+	case ENVPITCH_NOTUSED:
 		break;
 	case OSCQuantize:
 		synth.processPitchQuantization(newValue);
@@ -293,6 +292,33 @@ void MimidAudioProcessor::setParameter (int index, float newValue)
 	case FREL:
 		synth.processFilterEnvelopeRelease(newValue);
 		break;
+	case GATK:
+		synth.processGenEnvelopeAttack(newValue);
+		break;
+	case GDEC:
+		synth.processGenEnvelopeDecay(newValue);
+		break;
+	case GSUS:
+		synth.processGenEnvelopeSustain(newValue);
+		break;
+	case GSUST:
+		synth.processGenEnvelopeSustainTime(newValue);
+		break;
+	case GREL:
+		synth.processGenEnvelopeRelease(newValue);
+		break;
+	case GAMT:
+		synth.processGenEnvelopeAmount(newValue);
+		break;
+	case GDEST:
+		synth.processGenEnvelopeDest(newValue);
+		break;
+	case GUNI:
+		synth.processGenEnvelopeUnipol(newValue);
+		break;
+	case GINV:
+		synth.processGenEnvelopeInvert(newValue);
+		break;
 	case ASGN_RSZ:
 		synth.procKeyAsgnRsz(newValue);
 		break;
@@ -338,7 +364,7 @@ const String MimidAudioProcessor::getParameterName (int index)
 	{
 	case SELF_OSC_PUSH_NOTUSED:
 		return S("SelfOscPush_NOTUSED");
-	case ENV_PITCH_BOTH:
+	case ENV_PITCH_BOTH_NOTUSED:
 		return S("EnvPitchBoth");
 	case FENV_INVERT:
 		return S("FenvInvert");
@@ -346,10 +372,10 @@ const String MimidAudioProcessor::getParameterName (int index)
 		return S("Osc2PW");
 	case LEVEL_DIF:
 		return S("LevelSpread");
-	case PW_ENV_BOTH:
-		return S("PwEnvBoth");
-	case PW_ENV:
-		return S("PwEnv");
+	case PW_ENV_BOTH_NOTUSED:
+		return S("PwEnvBoth_NOTUSED");
+	case PW_ENV_NOTUSED:
+		return S("PwEnv_NOTUSED");
 	case LFO1SYNC:
 		return S("Lfo1Sync");
 	case LFO2SYNC:
@@ -364,6 +390,8 @@ const String MimidAudioProcessor::getParameterName (int index)
 		return S("VAmpFactor");
 	case VFLTENV:
 		return S("VFltFactor");
+	case VGENENV:
+		return S("VGenFactor");
 	case ASPLAYEDALLOCATION_NOTUSED:
 		return S("AsPlayedAllocation_NOTUSED");
 	case LFO2FREQ:
@@ -372,8 +400,8 @@ const String MimidAudioProcessor::getParameterName (int index)
 		return S("FourPole_NOTUSED");
 	case LEGATOMODE_NOTUSED:
 		return S("LegatoMode_NOTUSED");
-	case ENVPITCH:
-		return S("EnvelopeToPitch");
+	case ENVPITCH_NOTUSED:
+		return S("EnvelopeToPitch_NOTUSED");
 	case OSCQuantize:
 		return S("PitchQuant");
 	case VOICE_COUNT:
@@ -520,6 +548,28 @@ const String MimidAudioProcessor::getParameterName (int index)
 		return S("FilterSustainTime");
 	case FREL:
 		return S("FilterRelease");
+	case GATK:
+		return S("GenAttack");
+	case GDEC:
+		return S("GenDecay");
+	case GSUS:
+		return S("GenSustain");
+	case GSUST:
+		return S("GenSustainTime");
+	case GREL:
+		return S("GenRelease");
+	case GAMT:
+		return S("GenEnvAmount");
+		break;
+	case GDEST:
+		return S("GenEnvDest");
+		break;
+	case GUNI:
+		return S("GenEnvUnipol");
+		break;
+	case GINV:
+		return S("GenEnvInvert");
+		break;
 	case OSC1FLTMOD:
 		return S("Osc1FilterMod");
 	}
