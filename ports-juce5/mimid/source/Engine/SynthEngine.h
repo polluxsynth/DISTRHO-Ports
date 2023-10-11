@@ -320,7 +320,11 @@ public:
 	{
 		for(int i = 0 ; i < synth.MAX_VOICES;i++)
 		{
-			synth.voices[i].lfo1a = logsc(logsc(param,0,1,60),0,60,10);
+			// Pitch (osc and filter) modulated +/- 60 semitones
+			//synth.voices[i].lfo1pitchamt= logsc(logsc(param,0,1,60),0,60,10);
+			synth.voices[i].lfo1pitchamt= logsc(param,0,60);
+			// PW modulated +/- 1.0 (full range)
+			synth.voices[i].lfo1pwamt = param;
 		}
 	}
 	void processLfo1Dest(float param)
@@ -386,7 +390,11 @@ public:
 	{
 		for(int i = 0 ; i < synth.MAX_VOICES;i++)
 		{
-			synth.voices[i].lfo2a = logsc(logsc(param,0,1,60),0,60,10);
+			// Pitch (osc and filter) modulated +/- 60 semitones
+			//synth.voices[i].lfo2pitchamt= logsc(logsc(param,0,1,60),0,60,10);
+			synth.voices[i].lfo2pitchamt= logsc(param,0,60);
+			// PW modulated +/- 1.0 (full range)
+			synth.voices[i].lfo2pwamt = param;
 		}
 	}
 	void processOscSpread(float param)
@@ -398,11 +406,13 @@ public:
 	}
 	void processOsc1PulseWidth(float param)
 	{
-		ForEachVoice (osc.osc1pw=linsc(param,0.0,0.95));
+		//ForEachVoice (osc.osc1pw=linsc(param,0.0,0.95));
+		ForEachVoice (osc.osc1pw=param);
 	}
 	void processOsc2PulseWidth(float param)
 	{
-		ForEachVoice(osc.osc2pw = linsc(param,0.0,0.95));
+		//ForEachVoice(osc.osc2pw = linsc(param,0.0,0.95));
+		ForEachVoice (osc.osc2pw=param);
 	}
 	void processInvertFenv(float param)
 	{
@@ -558,7 +568,8 @@ public:
 	{
 		for(int i = 0 ; i < synth.MAX_VOICES;i++)
 		{
-			synth.voices[i].fenvamt = linsc(param,0,140);
+			// Linearly scaled to (+/-) 0..70 semitones
+			synth.voices[i].fenvamt = linsc(param,0,70);
 		}
 	}
 	void processLoudnessEnvelopeAttack(float param)
@@ -676,7 +687,11 @@ public:
 	{
 		for(int i = 0 ; i < synth.MAX_VOICES;i++)
 		{
-			synth.voices[i].genvamt = param;
+			// Like LFOs, log scale to +/- 60 semitones
+			//synth.voices[i].genvpitchamt = logsc(logsc(param,0,1,60),0,60,10);
+			synth.voices[i].genvpitchamt = logsc(param,0,800);
+			// PW modulated +/- 1.0 (full range)
+			synth.voices[i].genvpwamt = param;
 		}
 	}
 	void processGenEnvelopeDest(float param)

@@ -105,7 +105,7 @@ public:
 	float pitchWheelAmt;
 	bool pitchWheelOsc2Only;
 
-	float lfo1a,lfo2a;
+	float lfo1pitchamt,lfo1pwamt,lfo2pitchamt,lfo2pwamt;
 	bool lfo1o1,lfo1o2,lfo1f;
 	bool lfo1pw1,lfo1pw2;
 	bool lfo2o1,lfo2o2,lfo2f;
@@ -113,7 +113,7 @@ public:
 
 	bool selfOscPush;
 
-	float genvamt;
+	float genvpitchamt,genvpwamt;
 	bool genvo1, genvo2, genvpw1, genvpw2, genvres;
 	bool invertFenv;
 	bool unipolGenv;
@@ -187,8 +187,8 @@ public:
 		float oscps, oscmod;
 		float lfo1In, lfo2In;
 
-		lfo1In = lfo1.getVal() * lfo1a;
-		lfo2In = lfo2.getVal() * lfo2a * modWheelSmoothed;
+		lfo1In = lfo1.getVal() * modWheelSmoothed;
+		lfo2In = lfo2.getVal();
 
 		//portamento on osc input voltage
 		//implements rc circuit
@@ -198,25 +198,25 @@ public:
 		//both envelopes and filter cv need a delay equal to osc internal delay
 		float lfo1Delayed = lfo1d.feedReturn(lfo1In);
 		float lfo2Delayed = lfo2d.feedReturn(lfo2In);
-		//filter envelope undelayed
-		float envm = fenv.processSample() * (1 - (1-velocityValue)*vflt);
+		//bipolar filter envelope undelayed
+		float envm = 2 * (fenv.processSample() * (1 - (1-velocityValue)*vflt)) - 1;
 		if(invertFenv)
 			envm = -envm;
 
 		//filter envelope undelayed
-		float genvm = genv.processSample() * (1 - (1-velocityValue)*vgen) * genvamt;
+		float genvm = genv.processSample() * (1 - (1-velocityValue)*vgen);
 		if (!unipolGenv) // Bipolar
 			genvm = 2 * genvm - 1;
 		if (invertGenv)
 			genvm = -genvm;
 
 		//PW modulation
-		osc.pw1 = (lfo1pw1?lfo1In:0) + (lfo2pw1?lfo1In:0) + (genvpw1?genvm:0);
-		osc.pw2 = (lfo1pw2?lfo1In:0) + (lfo2pw2?lfo2In:0) + (genvpw2?genvm:0);
+		osc.pw1 = (lfo1pw1?(lfo1In*lfo1pwamt):0) + (lfo2pw1?(lfo2In*lfo2pwamt):0) + (genvpw1?(genvm*genvpwamt):0);
+		osc.pw2 = (lfo1pw2?(lfo1In*lfo1pwamt):0) + (lfo2pw2?(lfo2In*lfo2pwamt):0) + (genvpw2?(genvm*genvpwamt):0);
 
 		//Pitch modulation
-		osc.pto1 =   (!pitchWheelOsc2Only? (pitchWheel*pitchWheelAmt):0 ) + (lfo1o1?lfo1In:0) + (lfo2o1?lfo2In:0) + (genvo1?(genvm*36):0);
-		osc.pto2 =  (pitchWheel*pitchWheelAmt) + (lfo1o2?lfo1In:0) + (lfo2o2?lfo2In:0) + (genvo2?(genvm*36):0);
+		osc.pto1 =   (!pitchWheelOsc2Only? (pitchWheel*pitchWheelAmt):0 ) + (lfo1o1?(lfo1In*lfo1pitchamt):0) + (lfo2o1?(lfo2In*lfo2pitchamt):0) + (genvo1?(genvm*genvpitchamt):0);
+		osc.pto2 =  (pitchWheel*pitchWheelAmt) + (lfo1o2?(lfo1In*lfo1pitchamt):0) + (lfo2o2?(lfo2In*lfo2pitchamt):0) + (genvo2?(genvm*genvpitchamt):0);
 
 		//variable sort magic - upsample trick
 		float envVal = lenvd.feedReturn(env.processSample() * (1 - (1-velocityValue)*vamp));
@@ -230,8 +230,8 @@ public:
 		//needs to be done after we've gotten oscmod
 		// ptNote+40 => F2 = 87.31 Hz is base note for filter tracking
 		float cutoffnote =
-			(lfo1f?lfo1Delayed:0)+
-			(lfo2f?lfo2Delayed:0)+
+			(lfo1f?(lfo1Delayed*lfo1pitchamt):0)+
+			(lfo2f?(lfo2Delayed*lfo2pitchamt):0)+
 			cutoff+
 			FltSpread*FltSpreadAmt+
 			fenvamt*fenvd.feedReturn(envm)+
