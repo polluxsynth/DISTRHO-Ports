@@ -67,6 +67,7 @@ public:
 
 	float cutoff;
 	float fenvamt;
+	float res;
 
 	float EnvSpread;
 	float FenvSpread;
@@ -160,6 +161,7 @@ public:
 		fltKF= false;
 		cutoff=0;
 		fenvamt = 0;
+		res=0;
 		Active = false;
 		midiIndx = 30;
 		levelSpread = Random::getSystemRandom().nextFloat()-0.5;
@@ -281,9 +283,9 @@ public:
 		x1 = tptpc(d2,x1,brightCoef);
 		//TODO: filter oscmod as well to reduce aliasing?
 		if(fourpole)
-			x1 = flt.Apply4Pole(x1,(cutoffcalc)); 
+			x1 = flt.Apply4Pole(x1, cutoffcalc, res);
 		else
-			x1 = flt.Apply(x1,(cutoffcalc)); 
+			x1 = flt.Apply(x1, cutoffcalc, res);
 		x1 *= (envVal);
 		return x1;
 	}

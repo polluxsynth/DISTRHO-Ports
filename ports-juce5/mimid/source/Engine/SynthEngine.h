@@ -549,7 +549,7 @@ public:
 	{
 		for(int i = 0 ; i < synth.MAX_VOICES;i++)
 		{
-			synth.voices[i].flt.setResonance(linsc(param,0, 0.991));
+			synth.voices[i].res = linsc(param,0, 0.991);
 		}
 	}
 	void processResponse(float param)
