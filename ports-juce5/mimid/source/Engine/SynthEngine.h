@@ -540,7 +540,7 @@ public:
 	{
 		for(int i = 0 ; i < synth.MAX_VOICES;i++)
 		{
-			synth.voices[i].flt.setResonance(0.991-logsc(1-param,0,0.991,40));
+			synth.voices[i].flt.setResonance(linsc(param,0, 0.991));
 		}
 	}
 	void processResponse(float param)
