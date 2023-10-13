@@ -124,7 +124,7 @@ public:
 	bool fourpole;
 
 
-	DelayLine<Samples*2> lenvd,fenvd,lfo1d,lfo2d;
+	DelayLine<Samples*2> lenvd,fenvd,genvd,lfo1d,lfo2d;
 
 	float oscpsw;
 	float briHold;
@@ -282,10 +282,14 @@ public:
 		float x1 = oscps;
 		x1 = tptpc(d2,x1,brightCoef);
 		//TODO: filter oscmod as well to reduce aliasing?
+		float genvmdelayed = genvd.feedReturn(genvm);
+		// Cap resonance at 0 and +1 to avoid nasty artefacts
+		float rescalc = jmin(jmax(res + (genvres?(genvpwamt*genvmdelayed):0), 0.0f), 1.0f);
+
 		if(fourpole)
-			x1 = flt.Apply4Pole(x1, cutoffcalc, res);
+			x1 = flt.Apply4Pole(x1, cutoffcalc, rescalc);
 		else
-			x1 = flt.Apply(x1, cutoffcalc, res);
+			x1 = flt.Apply(x1, cutoffcalc, rescalc);
 		x1 *= (envVal);
 		return x1;
 	}
@@ -360,6 +364,7 @@ public:
 			//Not doing this will cause clicks or glitches
 			lenvd.fillZeroes();
 			fenvd.fillZeroes();
+			genvd.fillZeroes();
 			ResetEnvelope();
 		}
 		shouldProcessed = true;
