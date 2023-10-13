@@ -74,11 +74,6 @@ public:
 		rcor24 = (970.0 / 44000)*rcrate;
 		rcor24Inv = 1 / rcor24;
 	}
-	inline void setResonance(float res)
-	{
-		R = 1-res;
-		R24 =( 3.5 * res);
-	}
 	
 	inline float diodePairResistanceApprox(float x)
 	{
@@ -105,9 +100,9 @@ public:
 
 		return y;
 	}
-	inline float Apply(float sample,float g)
+	inline float Apply(float sample,float g, float r)
         {
-			
+			R = 1 - r;
 			float gpw = tanf(g *sampleRateInv * juce::float_Pi);
 			g = gpw;
             //float v = ((sample- R * s1*2 - g2*s1 - s2)/(1+ R*g1*2 + g1*g2));
@@ -141,8 +136,9 @@ public:
 		float y = (sample - R24 * S) / (1 + R24*G);
 		return y;
 	}
-	inline float Apply4Pole(float sample,float g)
+	inline float Apply4Pole(float sample,float g, float r)
 	{
+			R24 = 3.5 * r;
 			float g1 = (float)tan(g *sampleRateInv * juce::float_Pi);
 			g = g1;
 
