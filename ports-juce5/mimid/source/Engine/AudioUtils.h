@@ -60,6 +60,7 @@ inline static float getNote(float freq)
 	return log(freq / 440) / log(2) * 12;
 }
 
+// TPT LPF w/ cutoff supplied in Hz, but no pre-warping
 inline static float tptlpupw(float & state , float inp , float cutoff , float srInv)
 {
 	cutoff = (cutoff * srInv)*juce::float_Pi;
@@ -69,6 +70,7 @@ inline static float tptlpupw(float & state , float inp , float cutoff , float sr
 	return res;
 }
 
+// TPT LPF w/ cutoff pre-warping
 inline static float tptlp(float& state,float inp,float cutoff,float srInv)
 {
 	cutoff = tan(cutoff * (srInv)* (juce::float_Pi)) ;
@@ -78,9 +80,19 @@ inline static float tptlp(float& state,float inp,float cutoff,float srInv)
 	return res;
 };
 
+// TPT LPF w/ already pre-warped cutoff
 inline static float tptpc(float& state,float inp,float cutoff)
 {
 	double v = (inp - state) * cutoff / (1 + cutoff);
+	double res = v + state;
+	state = res + v;
+	return res;
+}
+
+// TPT LPF, supplying lpc = cutoff / (1 + cutoff)
+inline static float tptlpc(float &state, float inp, float lpc)
+{
+	double v = (inp - state) * lpc;
 	double res = v + state;
 	state = res + v;
 	return res;
