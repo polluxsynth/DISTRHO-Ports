@@ -35,7 +35,7 @@ private:
 	float rcorInv;
 	float rcor24,rcor24Inv;
 
-	//24 db multimode
+	//24 db variable cutoff slope
 	float mmt;
 	int mmch;
 public:
@@ -82,7 +82,7 @@ public:
 	}
 	//resolve 0-delay feedback
 	inline float NR(float sample, float g)
-	{ 
+	{
 		//calculating feedback non-linear transconducance and compensated for R (-1)
 		//Boosting non-linearity
 		float tCfb;
@@ -102,31 +102,28 @@ public:
 	}
 	inline float Apply(float sample,float g, float r)
         {
-			R = 1 - r;
-			float gpw = tanf(g *sampleRateInv * juce::float_Pi);
-			g = gpw;
-            //float v = ((sample- R * s1*2 - g2*s1 - s2)/(1+ R*g1*2 + g1*g2));
-			float v = NR(sample,g);
+		R = 1 - r;
+		g = tanf(g *sampleRateInv * juce::float_Pi);
+		//float v = ((sample- R * s1*2 - g2*s1 - s2)/(1+ R*g1*2 + g1*g2));
+		float v = NR(sample,g);
 
-            float y1 = v*g + s1;
-            s1 = v*g + y1;
+		float y1 = v*g + s1;
+		s1 = v*g + y1;
 
-			float y2 = y1*g + s2;
-			s2 = y1*g + y2;
+		float y2 = y1*g + s2;
+		s2 = y1*g + y2;
 
-            float mc;
-			if(!bandPassSw)
-            mc = (1-mm)*y2 + (mm)*v;
-			else
-			{
-
-				mc =2 * ( mm < 0.5 ? 
-					((0.5 - mm) * y2 + (mm) * y1):
-					((1-mm) * y1 + (mm-0.5) * v)
-						);
-			}
-
-			return mc;
+		float mc;
+		if(!bandPassSw)
+			mc = (1-mm)*y2 + (mm)*v;
+		else
+		{
+			mc =2 * ( mm < 0.5 ?
+				((0.5 - mm) * y2 + (mm) * y1):
+				((1-mm) * y1 + (mm-0.5) * v)
+				);
+		}
+		return mc;
         }
 	inline float NR24(float sample,float g,float lpc)
 	{
@@ -138,45 +135,45 @@ public:
 	}
 	inline float Apply4Pole(float sample,float g, float r)
 	{
-			R24 = 3.5 * r;
-			float g1 = (float)tan(g *sampleRateInv * juce::float_Pi);
-			g = g1;
+		R24 = 3.5 * r;
+		g = (float)tan(g *sampleRateInv * juce::float_Pi);
 
+		float lpc = g / (1 + g);
+		float y0 = NR24(sample,g,lpc);
+		//first low pass in cascade
+		double v = (y0 - s1) * lpc;
+		double res = v + s1;
+		s1 = res + v;
+		// Soft clip s1 state so filter oscillates nicely instead of
+		// blowing up.
+		s1 = atan(s1*rcor24)*rcor24Inv;
 
-			
-			float lpc = g / (1 + g);
-			float y0 = NR24(sample,g,lpc);
-			//first low pass in cascade
-			double v = (y0 - s1) * lpc;
-			double res = v + s1;
-			s1 = res + v;
-			//damping
-			s1 =atan(s1*rcor24)*rcor24Inv;
-
-			float y1= res;
-			float y2 = tptpc(s2,y1,g);
-			float y3 = tptpc(s3,y2,g);
-			float y4 = tptpc(s4,y3,g);
-			float mc;
-			switch(mmch)
-			{
-			case 0:
-				mc = ((1 - mmt) * y4 + (mmt) * y3);
-				break;
-			case 1:
-				mc = ((1 - mmt) * y3 + (mmt) * y2);
-				break;
-			case 2:
-				mc = ((1 - mmt) * y2 + (mmt) * y1);
-				break;
-			case 3:
-				mc = y1;
-				break;
-			default:
-				mc=0;
-				break;
-			}
-			//half volume comp
-			return mc * (1 + R24 * 0.45);
+		float y1 = res;
+		float y2 = tptpc(s2,y1,g);
+		float y3 = tptpc(s3,y2,g);
+		float y4 = tptpc(s4,y3,g);
+		float mc;
+		// fade between adjacent cutoff slopes
+		// (24 - 18 - 12 - 6 dB/oct)
+		switch(mmch)
+		{
+		case 0:
+			mc = ((1 - mmt) * y4 + (mmt) * y3);
+			break;
+		case 1:
+			mc = ((1 - mmt) * y3 + (mmt) * y2);
+			break;
+		case 2:
+			mc = ((1 - mmt) * y2 + (mmt) * y1);
+			break;
+		case 3:
+			mc = y1;
+			break;
+		default:
+			mc=0;
+			break;
+		}
+		//half volume comp
+		return mc * (1 + R24 * 0.45);
 	}
 };
