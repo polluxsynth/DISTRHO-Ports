@@ -41,6 +41,7 @@ private:
 
 	float d1,d2;
 	float c1,c2;
+	float shpf;
 
 	// offset to get apparent zero cutoff frequency shift with oscmod
 	const float oscmod_offset = 0.20;
@@ -87,6 +88,8 @@ public:
 
 	float brightCoef;
 	float osc1FltMod;
+
+	float hpffreq, hpfcutoff;
 
 	int midiIndx;
 
@@ -148,10 +151,12 @@ public:
 		velocityValue=0;
 		fourpole = false;
 		brightCoef =briHold= 1;
+		hpffreq=4;
+		hpfcutoff=0;
 		osc1FltMod = 0;
 		oscpsw = 0;
 		cutoffwas = envelopewas=0;
-		c1=c2=d1=d2=0;
+		c1=c2=d1=d2=shpf=0;
 		pitchWheel=pitchWheelAmt=0;
 		PortaSpreadAmt=0;
 		FltSpreadAmt=0;
@@ -290,8 +295,25 @@ public:
 			x1 = flt.Apply4Pole(x1, cutoffcalc, rescalc);
 		else
 			x1 = flt.Apply(x1, cutoffcalc, rescalc);
+
+#if 1 // HPF: Min freq 4 Hz to emulate coupling capacitor
+		//float hpffreq = 4 * exp(unused1 * 8.5); // Hz
+		float hpffreq = logsc(unused1, 4, 2500);
+		// We can skip tan as the max frequency is so low
+		float hpfcutoff = hpffreq * sampleRateInv * juce::float_Pi;
+		x1 -= tptpc(shpf, x1, hpfcutoff);
+#endif
+
+#endif
+		// VCA
 		x1 *= (envVal);
 		return x1;
+	}
+	void setHPF(float val)
+	{
+		// map 0->1 to 4..20000 Hz, exponentially
+		hpffreq = 4 * exp(val * 9.5); // Hz
+		hpfcutoff = tan(hpffreq * sampleRateInv * juce::float_Pi);
 	}
 	void setBrightness(float val)
 	{
@@ -345,6 +367,7 @@ public:
 		SampleRate = sr;
 		sampleRateInv = 1 / sr;
 		brightCoef = tan(jmin(briHold,flt.SampleRate*0.5f-10)* (juce::float_Pi) * flt.sampleRateInv);
+		hpfcutoff = tan(hpffreq * sampleRateInv * juce::float_Pi);
 	}
 	void checkAdssrState()
 	{
