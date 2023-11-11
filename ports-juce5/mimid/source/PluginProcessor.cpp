@@ -152,8 +152,8 @@ void MimidAudioProcessor::setParameter (int index, float newValue)
 	case TUNE:
 		synth.processTune(newValue);
 		break;
-	case BRIGHTNESS:
-		synth.processBrightness(newValue);
+	case HPFFREQ:
+		synth.processHPFfreq(newValue);
 		break;
 	case OSC1FLTMOD:
 		synth.processOsc1FltMod(newValue);
@@ -420,8 +420,8 @@ const String MimidAudioProcessor::getParameterName (int index)
 		return S("Octave");
 	case TUNE:
 		return S("Tune");
-	case BRIGHTNESS:
-		return S("Brightness");
+	case HPFFREQ:
+		return S("HPFfreq");
 	case NOISEMIX:
 		return S("NoiseMix");
 	case OSC1MIX:

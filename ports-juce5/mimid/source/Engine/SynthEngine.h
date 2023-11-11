@@ -474,11 +474,11 @@ public:
 			synth.voices[i].osc.nmx = logsc(param,0,1,35);
 		}
 	}
-	void processBrightness(float param)
+	void processHPFfreq(float param)
 	{
 		for(int i = 0 ; i < synth.MAX_VOICES;i++)
 		{
-			synth.voices[i].setBrightness(  linsc(param,7000,26000));
+			synth.voices[i].setHPFfreq(param);
 		}
 	}
 	void processOsc1FltMod(float param)
