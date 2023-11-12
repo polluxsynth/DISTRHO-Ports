@@ -334,6 +334,9 @@ void MimidAudioProcessor::setParameter (int index, float newValue)
 	case ASGN_STRG:
 		synth.procKeyAsgnStrg(newValue);
 		break;
+	case VCADRIVE:
+		synth.processVCADrive(newValue);
+		break;
 	case PAN1_NOTUSED:
 		break;
 	case PAN2_NOTUSED:
@@ -572,6 +575,8 @@ const String MimidAudioProcessor::getParameterName (int index)
 		break;
 	case OSC1FLTMOD:
 		return S("Osc1FilterMod");
+	case VCADRIVE:
+		return S("VCADrive");
 	}
 	return String();
 }
