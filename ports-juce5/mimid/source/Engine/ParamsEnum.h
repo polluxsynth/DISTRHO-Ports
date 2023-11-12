@@ -125,6 +125,7 @@ enum Parameters
 	GINV,
 
 	VGENENV,
+	VCADRIVE,
 
 	PARAM_COUNT,
 };

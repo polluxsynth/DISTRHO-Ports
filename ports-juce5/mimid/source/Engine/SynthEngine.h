@@ -472,6 +472,10 @@ public:
 			synth.voices[i].setHPFfreq(param);
 		}
 	}
+	void processVCADrive(float param)
+	{
+		ForEachVoice(sqdist.setAmount(param * 0.435));
+	}
 	void processOsc1FltMod(float param)
 	{
 		ForEachVoice(osc1FltMod = param*100);

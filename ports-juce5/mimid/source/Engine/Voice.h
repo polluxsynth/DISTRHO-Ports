@@ -29,6 +29,7 @@
 #include "Lfo.h"
 #include "Filter.h"
 #include "Decimator.h"
+#include "SquareDist.h"
 
 class Voice
 {
@@ -61,6 +62,7 @@ public:
 	Lfo lfo2;
 	OscillatorB osc;
 	Filter flt;
+	SquareDist sqdist;
 
 	Random ng;
 
@@ -297,6 +299,9 @@ public:
 
 		// HPF
 		x1 -= tptpc(shpf, x1, hpfcutoff);
+
+		// Distortion/overdrive
+		x1 = sqdist.Apply(x1);
 
 		// VCA
 		x1 *= (envVal);
