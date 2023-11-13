@@ -285,7 +285,6 @@ public:
 			cutoffcalc = jmin(cutoffcalc,19000.0f);
 
 		float x1 = oscps;
-		x1 = tptpc(d2,x1,brightCoef);
 		//TODO: filter oscmod as well to reduce aliasing?
 		float genvmdelayed = genvd.feedReturn(genvm);
 		// Cap resonance at 0 and +1 to avoid nasty artefacts
@@ -296,30 +295,23 @@ public:
 		else
 			x1 = flt.Apply(x1, cutoffcalc, rescalc);
 
-#if 1 // HPF: Min freq 4 Hz to emulate coupling capacitor
-		//float hpffreq = 4 * exp(unused1 * 8.5); // Hz
-		float hpffreq = logsc(unused1, 4, 2500);
-		// We can skip tan as the max frequency is so low
-		float hpfcutoff = hpffreq * sampleRateInv * juce::float_Pi;
+		// HPF
 		x1 -= tptpc(shpf, x1, hpfcutoff);
-#endif
 
-#endif
 		// VCA
 		x1 *= (envVal);
 		return x1;
-	}
-	void setHPF(float val)
-	{
-		// map 0->1 to 4..20000 Hz, exponentially
-		hpffreq = 4 * exp(val * 9.5); // Hz
-		hpfcutoff = tan(hpffreq * sampleRateInv * juce::float_Pi);
 	}
 	void setBrightness(float val)
 	{
 		briHold = val;
 		brightCoef = tan(jmin(val,flt.SampleRate*0.5f-10)* (juce::float_Pi)*flt.sampleRateInv);
 
+	}
+	void setHPFfreq(float val)
+	{
+		hpffreq = logsc(val, 4, 2500);
+		hpfcutoff = tan(hpffreq * sampleRateInv * juce::float_Pi);
 	}
 	void setEnvSpreadAmt(float d)
 	{
