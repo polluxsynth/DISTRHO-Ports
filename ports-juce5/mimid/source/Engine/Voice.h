@@ -29,6 +29,8 @@
 #include "Lfo.h"
 #include "Filter.h"
 #include "Decimator.h"
+#include "SquareDist.h"
+#include "CubeDist.h"
 
 class Voice
 {
@@ -61,6 +63,8 @@ public:
 	Lfo lfo2;
 	OscillatorB osc;
 	Filter flt;
+	SquareDist sqdist;
+	CubeDist cubedist;
 
 	Random ng;
 
@@ -189,20 +193,6 @@ public:
 	//	delete lenvd;
 	//	delete fenvd;
 	}
-	// Cubic distortion, originally from atan(x * amount) / amount,
-	// converted to x + amount * x^3 (truncated Taylor around x=0)
-	inline float cubeDist(float sample, float amount)
-	{
-		return sample * (1 - sample * sample * amount);
-	}
-	// Square distortion, to get distortion with minimal bandwidth expansion
-	// Essentially, x*x is x ring modulated with itself
-	// We change the sign when x < 0 to get symmetry
-	inline float squareDist(float sample, float amount)
-	{
-		return sample * (sample >= 0 ? (1 - amount * sample) :
-					       (1 + amount * sample));
-	}
 	inline float ProcessSample()
 	{
 		float oscps, oscmod;
@@ -313,57 +303,9 @@ public:
 		x1 -= tptpc(shpf, x1, hpfcutoff);
 
 	if (unused2 > 0.5) {
-#if 1 // Cube dist
-		// Actual processing code, including amplitude compensation
-		// so peak is the same at all times.
-		// TODO: The amount, limit and comp can be calculated when
-		// parameter (unused1 in this case) updated, and kept out of
-		// the actual processing code.
-
-		// square unused1 to get reasonably linear scale
-		// because of the squaring in cubeDist
-		float amount = unused1 + 0.001;
-		// Limit: solve distortion derivative equation f'(x) = 0
-		// to get limit for when the signal flatlines
-		float limit = sqrt(1/(3 * amount));
-		float distpeak = cubeDist(limit, amount);
-		if (x1 > limit) x1 = distpeak;
-		else if (x1 < -limit) x1 = -distpeak;
-		else x1 = cubeDist(x1, amount);
-		float comp;
-		const float peak = 1.5; // assumed peak amplitude
-		if (limit > peak)
-			comp = peak/cubeDist(peak, amount);
-		else
-			comp = peak/cubeDist(limit, amount); // /distpeak
-		x1 *= comp; // compensate for amplitude drop
-		//x1 = (1 + unused1 * 4) * atan(x1 * amount) / amount;
-		//x1 *= 1 - x1 * x1 * (unused1 * 0.2);
-#endif
+		x1 = cubedist.Apply(x1);
 	} else {
-#if 1 // Square dist
-		// Actual processing code, including amplitude compensation
-		// so peak is the same at all times.
-		// TODO: The amount, limit and comp can be calculated when
-		// parameter (unused1 in this case) updated, and kept out of
-		// the actual processing code.
-
-		// Limit: solve distortion derivative equation f'(x) = 0
-		// to get limit for when the signal flatlines
-		float amount = unused1 + 0.001;
-		float limit = 1/(2 * amount);
-		float distpeak = squareDist(limit, amount);
-		if (x1 > limit) x1 = distpeak;
-		else if (x1 < -limit) x1 = -distpeak;
-		else x1 = squareDist(x1, amount);
-		float comp;
-		const float peak = 1.5; // assumed peak amplitude
-		if (limit > peak)
-			comp = peak/squareDist(peak, amount);
-		else
-			comp = peak/squareDist(limit, amount); // /distpeak
-		x1 *= comp; // compensate for amplitude drop
-#endif
+		x1 = sqdist.Apply(x1);
 	}
 		// VCA
 		x1 *= (envVal);

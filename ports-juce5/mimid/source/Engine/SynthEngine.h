@@ -168,6 +168,9 @@ public:
 		ForEachVoice(unused1=val);
 		ForEachVoice(osc.unused1=val);
 		ForEachVoice(flt.unused1=val);
+		// TODO: Move dist to its own parameter
+		ForEachVoice(sqdist.setAmount(val));
+		ForEachVoice(cubedist.setAmount(val));
 	}
 	// TODO: Remove
 	void procUnused2(float val)
