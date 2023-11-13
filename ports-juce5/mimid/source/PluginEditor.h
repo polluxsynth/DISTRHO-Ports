@@ -70,7 +70,7 @@ private:
 		*tuneKnob,
 		*lfoFrequencyKnob,*lfoAmt1Knob,*lfoAmt2Knob,
 		*pan1Knob,*pan2Knob,*pan3Knob,*pan4Knob,*pan5Knob,*pan6Knob,*pan7Knob,*pan8Knob,
-		*brightnessKnob,*envPitchModKnob,
+		*HPFKnob,*envPitchModKnob,
 		*bendLfoRateKnob,*veloAmpEnvKnob,*veloFltEnvKnob,*transposeKnob;
 
 	TooglableButton* hardSyncButton,*osc1SawButton,*osc2SawButton,*osc1PulButton,*osc2PulButton,*filterKeyFollowButton,*unisonButton,*pitchQuantButton,

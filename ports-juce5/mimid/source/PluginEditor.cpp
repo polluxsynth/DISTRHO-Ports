@@ -217,7 +217,7 @@ void ObxdAudioProcessorEditor::rebuildComponents()
 		osc2DetuneKnob = addNormalKnob(800,324,ownerFilter,OSC2_DET,"Detune",0);
 
 		envPitchModKnob = addNormalKnob(728,324,ownerFilter,ENVPITCH_NOTUSED,"PEnv",0);
-		brightnessKnob = addNormalKnob(586,324,ownerFilter,BRIGHTNESS,"Bri",1);
+		HPFKnob = addNormalKnob(586,324,ownerFilter,HPFFREQ,"HPF",1);
 
 		attackKnob = addNormalKnob(1182,165,ownerFilter,LATK,"Atk",0);
 		decayKnob = addNormalKnob(1246,165,ownerFilter,LDEC,"Dec",0);
@@ -329,7 +329,7 @@ void ObxdAudioProcessorEditor::rebuildComponents()
 		osc2DetuneKnob = addNormalKnobClassic(334,104,ownerFilter,OSC2_DET,"Detune",0);
 
 		envPitchModKnob = addNormalKnobClassic(376,232,ownerFilter,ENVPITCH_NOTUSED,"PEnv",0);
-		brightnessKnob = addNormalKnobClassic(291,232,ownerFilter,BRIGHTNESS,"Bri",1);
+		HPFKnob = addNormalKnobClassic(291,232,ownerFilter,HPFFREQ,"HPF",1);
 
 		attackKnob = addNormalKnobClassic(791,132,ownerFilter,LATK,"Atk",0);
 		decayKnob = addNormalKnobClassic(853,132,ownerFilter,LDEC,"Dec",0);
@@ -518,7 +518,7 @@ void ObxdAudioProcessorEditor::sliderValueChanged (Slider* c)
 		handleSParam(pan8Knob,PAN8_NOTUSED)
 
 		handleSParam(tuneKnob,TUNE)
-		handleSParam(brightnessKnob,BRIGHTNESS)
+		handleSParam(HPFKnob,HPFFREQ)
 		handleSParam(envPitchModKnob,ENVPITCH_NOTUSED)
 
 		handleSParam(bendLfoRateKnob,LFO2FREQ)
@@ -564,7 +564,7 @@ void ObxdAudioProcessorEditor::changeListenerCallback (ChangeBroadcaster* source
 		rn(pulseWidthKnob,OSC1PW)
 		rn(xmodKnob,XMOD)
 		rn(multimodeKnob,RESPONSE)
-		rn(brightnessKnob,BRIGHTNESS)
+		rn(HPFKnob,HPFFREQ)
 		rn(envPitchModKnob,ENVPITCH_NOTUSED)
 
 		rn(attackKnob,LATK)

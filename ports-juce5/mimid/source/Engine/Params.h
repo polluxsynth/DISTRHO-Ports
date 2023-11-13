@@ -44,7 +44,7 @@ public:
 			values[k] = 0.0f;
 		}
 		values[VOICE_COUNT] = 1.0f;
-		values[BRIGHTNESS]=1.0f;
+		values[HPFFREQ]=0.0f;
 		values[OCTAVE]=0.5;
 		values[TUNE] = 0.5f;
 		values[OSC2_DET]=0.4;
