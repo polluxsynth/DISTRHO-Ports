@@ -312,6 +312,7 @@ public:
 		// HPF
 		x1 -= tptpc(shpf, x1, hpfcutoff);
 
+	if (unused2 > 0.5) {
 #if 1 // Cube dist
 		// Actual processing code, including amplitude compensation
 		// so peak is the same at all times.
@@ -339,8 +340,8 @@ public:
 		//x1 = (1 + unused1 * 4) * atan(x1 * amount) / amount;
 		//x1 *= 1 - x1 * x1 * (unused1 * 0.2);
 #endif
-
-#if 0 // Square dist
+	} else {
+#if 1 // Square dist
 		// Actual processing code, including amplitude compensation
 		// so peak is the same at all times.
 		// TODO: The amount, limit and comp can be calculated when
@@ -349,7 +350,7 @@ public:
 
 		// Limit: solve distortion derivative equation f'(x) = 0
 		// to get limit for when the signal flatlines
-		float amount = unused2 * 4 + 0.001;
+		float amount = unused1 + 0.001;
 		float limit = 1/(2 * amount);
 		float distpeak = squareDist(limit, amount);
 		if (x1 > limit) x1 = distpeak;
@@ -363,6 +364,7 @@ public:
 			comp = peak/squareDist(limit, amount); // /distpeak
 		x1 *= comp; // compensate for amplitude drop
 #endif
+	}
 		// VCA
 		x1 *= (envVal);
 		return x1;
