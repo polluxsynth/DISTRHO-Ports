@@ -294,6 +294,13 @@ public:
 		// Cap resonance at 0 and +1 to avoid nasty artefacts
 		float rescalc = jmin(jmax(res + (genvres?(genvpwamt*genvmdelayed):0), 0.0f), 1.0f);
 
+	if (unused2 < 0.5) { // dist pre filter
+	if (unused2 < 0.25) // square dist
+		x1 = sqdist.Apply(x1);
+	else
+		x1 = cubedist.Apply(x1);
+	}
+
 		if(fourpole)
 			x1 = flt.Apply4Pole(x1, cutoffcalc, rescalc);
 		else
@@ -302,11 +309,13 @@ public:
 		// HPF
 		x1 -= tptpc(shpf, x1, hpfcutoff);
 
-	if (unused2 > 0.5) {
+	if (unused2 >= 0.5) { //dist post filter
+	if (unused2 > 0.75) // cube dist
 		x1 = cubedist.Apply(x1);
-	} else {
+	else
 		x1 = sqdist.Apply(x1);
 	}
+
 		// VCA
 		x1 *= (envVal);
 		return x1;
