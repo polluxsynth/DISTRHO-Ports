@@ -45,6 +45,9 @@ private:
 	// We change the sign when x < 0 to get symmetry
 	inline float distfunc(float sample)
 	{
+		// Pre gain to bring maximum sample value into line with
+		// cube dist
+		sample *= 1.74;
 		return sample * (sample >= 0 ? (1 - distAmount * sample) :
 					       (1 + distAmount * sample));
 	}
@@ -57,7 +60,7 @@ public:
 		distAmount = val + 0.001;
 		// distLimit: solve distortion derivative equation f'(x) = 0
 		// to get limit for when the signal flatlines
-		distLimit = 1/(2 * distAmount); // max input before flatline
+		distLimit = 1/(2 * distAmount * 1.74); // max input before flatline
 		distPeak = distfunc(distLimit); // max output
 		distGainComp = distTarget/distfunc(distLimit > distTarget ?
 						   distTarget :
