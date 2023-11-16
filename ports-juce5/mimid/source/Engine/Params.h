@@ -72,6 +72,7 @@ public:
 		values[LEVEL_DIF]=0.3;
 		values[PORTADER]=0.3;
 		values[UDET]=0.2;
+		values[VCADRIVE]=0.0;
 	}
 	~Params()
 	{

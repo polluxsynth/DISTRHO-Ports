@@ -168,9 +168,6 @@ public:
 		ForEachVoice(unused1=val);
 		ForEachVoice(osc.unused1=val);
 		ForEachVoice(flt.unused1=val);
-		// TODO: Move dist to its own parameter
-		ForEachVoice(sqdist.setAmount(val));
-		ForEachVoice(cubedist.setAmount(val));
 	}
 	// TODO: Remove
 	void procUnused2(float val)
@@ -474,6 +471,11 @@ public:
 		{
 			synth.voices[i].setHPFfreq(param);
 		}
+	}
+	void processVCADrive(float param)
+	{
+		ForEachVoice(sqdist.setAmount(param * 0.25));
+		ForEachVoice(cubedist.setAmount(param * 0.25));
 	}
 	void processOsc1FltMod(float param)
 	{
