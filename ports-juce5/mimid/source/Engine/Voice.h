@@ -31,6 +31,8 @@
 #include "Decimator.h"
 #include "SquareDist.h"
 #include "CubeDist.h"
+#include "SquareFold.h"
+#include "CubeFold.h"
 
 class Voice
 {
@@ -65,6 +67,8 @@ public:
 	Filter flt;
 	SquareDist sqdist;
 	CubeDist cubedist;
+	SquareFold sqfold;
+	CubeFold cubefold;
 
 	Random ng;
 
@@ -294,11 +298,23 @@ public:
 		// Cap resonance at 0 and +1 to avoid nasty artefacts
 		float rescalc = jmin(jmax(res + (genvres?(genvpwamt*genvmdelayed):0), 0.0f), 1.0f);
 
+#if 0
 	if (unused2 < 0.5) { // dist pre filter
 	if (unused2 < 0.25) // square dist
 		x1 = sqdist.Apply(x1);
 	else
 		x1 = cubedist.Apply(x1);
+	}
+#endif
+	if (unused1 < 0.5) { // pre filter
+	if (unused2 > 0.75) // cube dist
+		x1 = cubedist.Apply(x1);
+	else if (unused2 > 0.5) // square dist
+		x1 = sqdist.Apply(x1);
+	else if (unused2 > 0.25) // square fold
+		x1 = sqfold.Apply(x1);
+	else // cube fold
+		x1 = cubefold.Apply(x1);
 	}
 
 		if(fourpole)
@@ -309,11 +325,23 @@ public:
 		// HPF
 		x1 -= tptpc(shpf, x1, hpfcutoff);
 
+#if 0
 	if (unused2 >= 0.5) { //dist post filter
 	if (unused2 > 0.75) // cube dist
 		x1 = cubedist.Apply(x1);
 	else
 		x1 = sqdist.Apply(x1);
+	}
+#endif
+	if (unused1 > 0.5) { // post filter
+	if (unused2 > 0.75) // cube dist
+		x1 = cubedist.Apply(x1);
+	else if (unused2 > 0.5) // square dist
+		x1 = sqdist.Apply(x1);
+	else if (unused2 > 0.25) // square fold
+		x1 = sqfold.Apply(x1);
+	else // cube fold
+		x1 = cubefold.Apply(x1);
 	}
 
 		// VCA

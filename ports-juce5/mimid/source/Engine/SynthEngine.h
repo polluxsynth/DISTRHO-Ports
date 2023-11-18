@@ -476,6 +476,8 @@ public:
 	{
 		ForEachVoice(sqdist.setAmount(param * 0.25));
 		ForEachVoice(cubedist.setAmount(param * 0.25));
+		ForEachVoice(sqfold.setAmount(param * 0.25));
+		ForEachVoice(cubefold.setAmount(param * 0.25));
 	}
 	void processOsc1FltMod(float param)
 	{
