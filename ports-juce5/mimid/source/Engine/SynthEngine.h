@@ -168,6 +168,7 @@ public:
 		ForEachVoice(unused1=val);
 		ForEachVoice(osc.unused1=val);
 		ForEachVoice(flt.unused1=val);
+		ForEachVoice(sqgentle.setSlope(val));
 	}
 	// TODO: Remove
 	void procUnused2(float val)
@@ -476,6 +477,7 @@ public:
 	{
 		ForEachVoice(sqdist.setAmount(param * 0.25));
 		ForEachVoice(cubedist.setAmount(param * 0.25));
+		ForEachVoice(sqgentle.setAmount(param * 0.25));
 		ForEachVoice(sqfold.setAmount(param * 0.25));
 		ForEachVoice(cubefold.setAmount(param * 0.25));
 	}

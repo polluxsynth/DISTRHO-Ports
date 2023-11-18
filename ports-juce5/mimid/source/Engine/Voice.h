@@ -31,6 +31,7 @@
 #include "Decimator.h"
 #include "SquareDist.h"
 #include "CubeDist.h"
+#include "SquareGentle.h"
 #include "SquareFold.h"
 #include "CubeFold.h"
 
@@ -69,6 +70,7 @@ public:
 	CubeDist cubedist;
 	SquareFold sqfold;
 	CubeFold cubefold;
+	SquareGentle sqgentle;
 
 	Random ng;
 
@@ -306,6 +308,7 @@ public:
 		x1 = cubedist.Apply(x1);
 	}
 #endif
+#if 0
 	if (unused1 < 0.5) { // pre filter
 	if (unused2 > 0.75) // cube dist
 		x1 = cubedist.Apply(x1);
@@ -316,6 +319,7 @@ public:
 	else // cube fold
 		x1 = cubefold.Apply(x1);
 	}
+#endif
 
 		if(fourpole)
 			x1 = flt.Apply4Pole(x1, cutoffcalc, rescalc);
@@ -333,16 +337,18 @@ public:
 		x1 = sqdist.Apply(x1);
 	}
 #endif
-	if (unused1 > 0.5) { // post filter
-	if (unused2 > 0.75) // cube dist
+//	if (unused1 > 0.5) { // post filter
+	if (unused2 > 0.8) // square gentle
+		x1 = sqgentle.Apply(x1);
+	else if (unused2 > 0.6) // cube dist
 		x1 = cubedist.Apply(x1);
-	else if (unused2 > 0.5) // square dist
+	else if (unused2 > 0.4) // square dist
 		x1 = sqdist.Apply(x1);
-	else if (unused2 > 0.25) // square fold
+	else if (unused2 > 0.2) // square fold
 		x1 = sqfold.Apply(x1);
 	else // cube fold
 		x1 = cubefold.Apply(x1);
-	}
+//	}
 
 		// VCA
 		x1 *= (envVal);
