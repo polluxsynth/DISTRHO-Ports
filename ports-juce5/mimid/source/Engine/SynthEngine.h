@@ -168,6 +168,7 @@ public:
 		ForEachVoice(unused1=val);
 		ForEachVoice(osc.unused1=val);
 		ForEachVoice(flt.unused1=val);
+		ForEachVoice(sqdist.setImbalance(val));
 	}
 	// TODO: Remove
 	void procUnused2(float val)

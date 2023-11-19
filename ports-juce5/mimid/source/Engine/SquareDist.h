@@ -27,13 +27,24 @@ private:
 
 	//JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (SquareDist)
 public:
-	float distAmount, distLimit, distPeak, distGainComp;
+	float diodeImbalance;
+	float distAmount;
+	struct distParams {
+		float amount, limit, peak;
+	};
+	distParams distP, distM;
+	float distGainComp;
 
 	SquareDist()
 	{
-		distAmount=0.001;
-		distLimit=10;
-		distPeak=10;
+		distP.amount=0.001;
+		distP.limit=10;
+		distP.peak=10;
+		distM.amount=0.001;
+		distM.limit=10;
+		distM.peak=10;
+		distAmount= 0;
+		diodeImbalance=0;
 		distGainComp=1;
 	}
 	~SquareDist()
@@ -43,31 +54,57 @@ private:
 	// Square distortion, to get distortion with minimal bandwidth expansion
 	// Essentially, x*x is x ring modulated with itself
 	// We change the sign when x < 0 to get symmetry
-	inline float distfunc(float sample)
+	inline float distfunc(float amount, float sample)
 	{
-		return sample * (sample >= 0 ? (1 - distAmount * sample) :
-					       (1 + distAmount * sample));
+		return sample * (sample >= 0 ? (1 - amount * sample) :
+					       (1 + amount * sample));
 	}
 public:
-	void setAmount(float val)
+	void calcParams(void)
 	{
 		// Add a small amount to avoid division by zero and get
 		// distLimit to be larger than any practical signal when
 		// amount is set to 0.
-		distAmount = val + 0.001;
+		distP.amount = distAmount * (1 + diodeImbalance) + 0.001;
+		distM.amount = distAmount + 0.001;
 		// distLimit: solve distortion derivative equation f'(x) = 0
 		// to get limit for when the signal flatlines
-		distLimit = 1/(2 * distAmount); // max input before flatline
-		distPeak = distfunc(distLimit); // max output
-		distGainComp = distTarget/distfunc(distLimit > distTarget ?
-						   distTarget :
-						   distLimit);
+		distP.limit = 1/(2 * distP.amount); // max input before flatline
+		distP.peak = distfunc(distP.amount, distP.limit); // max output
+		distM.limit = -1/(2 * distM.amount); // min input before flatline
+		distM.peak = distfunc(distM.amount, distM.limit); // min output
+
+		// Take average of gain compensation for plus and negative
+		// portions.
+		float distGainCompP =
+			distTarget/distfunc(distP.amount,
+					    distP.limit > distTarget ?
+						distTarget :
+						distP.limit);
+		float distGainCompM =
+			distTarget/distfunc(distM.amount,
+					    distM.limit < -distTarget ?
+						distTarget :
+						-distM.limit);
+
+		distGainComp = (distGainCompP + distGainCompM) / 2;
+	}
+	void setAmount(float val)
+	{
+		distAmount = val;
+		calcParams();
+	}
+	void setImbalance(float val)
+	{
+		diodeImbalance = val;
+		calcParams();
 	}
 	inline float Apply(float sample)
 	{
-		if (sample > distLimit) sample = distPeak;
-		else if (sample < -distLimit) sample = -distPeak;
-		else sample = distfunc(sample);
+		if (sample > distP.limit) sample = distP.peak;
+		else if (sample < distM.limit) sample = distM.peak;
+		else if (sample < 0) sample = distfunc(distM.amount, sample);
+		else sample = distfunc(distP.amount, sample);
 		sample *= distGainComp; // compensate for amplitude drop
 		return sample;
 	}
