@@ -24,7 +24,7 @@
 	==============================================================================
  */
 #pragma once
-#include "OscillatorB.h"
+#include "Oscillators.h"
 #include "AdssrEnvelope.h"
 #include "Lfo.h"
 #include "Filter.h"
@@ -60,7 +60,7 @@ public:
 	AdssrEnvelope genv;
 	Lfo lfo1;
 	Lfo lfo2;
-	OscillatorB osc;
+	Oscillators osc;
 	Filter flt;
 	SquareDist sqdist;
 

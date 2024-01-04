@@ -34,7 +34,7 @@
 #include "PulseOsc.h"
 #include "TriangleOsc.h"
 
-class OscillatorB
+class Oscillators
 {
 private:
 	float SampleRate;
@@ -95,7 +95,7 @@ public:
 
 	float unused1, unused2; //TODO remove
 
-	OscillatorB() :
+	Oscillators() :
 		n(Samples*2),
 		hsam(Samples),
 		o1s(),o2s(),
@@ -131,7 +131,7 @@ public:
 		//syncFracd =  new DelayLine(hsam);
 		//cvd = new DelayLine(hsam);
 	}
-	~OscillatorB()
+	~Oscillators()
 	{
 		//delete del1;
 		//delete del2;
