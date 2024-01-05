@@ -53,7 +53,6 @@ private:
 	const int n;
 	const int hsam;
 	//delay line implements fixed sample delay
-	DelayLine<Samples> del1,del2;
 	DelayLine<Samples> xmodd;
 	DelayLineBoolean<Samples> syncd;
 	DelayLine<Samples> syncFracd;
@@ -123,22 +122,9 @@ public:
 		o1mx=o2mx=0;
 		x1=wn.nextFloat();
 		x2=wn.nextFloat();
-
-		//del1 = new DelayLine(hsam);
-		//del2 = new DelayLine(hsam);
-		//xmodd = new DelayLine(hsam);
-		//syncd = new DelayLineBoolean(hsam);
-		//syncFracd =  new DelayLine(hsam);
-		//cvd = new DelayLine(hsam);
 	}
 	~Oscillators()
 	{
-		//delete del1;
-		//delete del2;
-		//delete xmodd;
-		//delete cvd;
-		//delete syncd;
-		//delete syncFracd;
 	}
 	void setDecimation()
 	{
