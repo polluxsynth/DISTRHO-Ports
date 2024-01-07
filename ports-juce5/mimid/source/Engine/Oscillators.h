@@ -73,7 +73,7 @@ public:
 
 	float totalSpread;
 
-	float osc2Det;
+	float osc1Det;
 	float osc1pw,osc2pw;
 	float pw1,pw2;
 
@@ -90,7 +90,7 @@ public:
 	float osc1p,osc2p;
 	bool hardSync;
 	float xmod;
-	bool osc1modout;
+	bool osc2modout;
 
 	float unused1, unused2; //TODO remove
 
@@ -116,7 +116,7 @@ public:
 		hardSync = false;
 		osc1p=osc2p=10;
 		osc1Saw=osc2Saw=osc1Pul=osc2Pul=false;
-		osc2Det = 0;
+		osc1Det = 0;
 		notePlaying = 30;
 		osc1pw = osc2pw = 0;
 		o1mx=o2mx=0;
@@ -152,82 +152,34 @@ public:
 	inline void ProcessSample(float &audioOutput, float &modOutput)
 	{
 		float noiseGen = wn.nextFloat()-0.5;
-		pitch1 = getPitch(dirt * noiseGen + notePlaying + (quantizeCw?((int)(osc1p)):osc1p)+ pto1 + tune + oct+totalSpread*osc1Factor);
+		pitch2 = getPitch(dirt * noiseGen + notePlaying + (quantizeCw?((int)(osc2p)):osc2p)+ pto2 + tune + oct+totalSpread*osc2Factor);
 		bool hsr = false;
 		float hsfrac=0;
-		float fs = jmin(pitch1*(sampleRateInv),0.45f);
-		x1+=fs;
+		float fs = jmin(pitch2*(sampleRateInv),0.45f);
+		x2+=fs;
 		hsfrac = 0;
-		float osc1mix=0.0f;
-		float pwcalc =jlimit<float>(0.1f,1.0f,(osc1pw + pw1)*0.5f + 0.5f);
-		if(osc1Pul)
-			o1p.processMaster(x1,fs,pwcalc,pw1w);
-		else if(osc1Saw)
-			o1s.processMaster(x1,fs);
-		else if(osc1Tri)
-			o1t.processMaster(x1,fs);
+		float osc2mix=0.0f;
+		float pwcalc =jlimit<float>(0.1f,1.0f,(osc2pw + pw2)*0.5f + 0.5f);
+		if(osc2Pul)
+			o2p.processMaster(x2,fs,pwcalc,pw2w);
+		else if(osc2Saw)
+			o2s.processMaster(x2,fs);
+		else if(osc2Tri)
+			o2t.processMaster(x2,fs);
 
-		if(x1 >= 1.0f)
+		if(x2 >= 1.0f)
 		{
-			x1-=1.0f;
-			hsfrac = x1/fs;
+			x2-=1.0f;
+			hsfrac = x2/fs;
 			hsr = true;
 		}
 
-		
-
-		pw1w = pwcalc;
+		pw2w = pwcalc;
 
 		hsr &= hardSync;
 		//Delaying our hard sync gate signal and frac
 		hsr = syncd.feedReturn(hsr) != 0.0f;
 		hsfrac = syncFracd.feedReturn(hsfrac);
-
-		if(osc1Pul)
-			osc1mix = o1p.getValue(x1,pwcalc) + o1p.aliasReduction();
-		else if(osc1Saw)
-			osc1mix = o1s.getValue(x1) + o1s.aliasReduction();
-		else if(osc1Tri)
-			osc1mix = o1t.getValue(x1) + o1t.aliasReduction();
-
-		//Pitch control needs additional delay buffer to compensate
-		//This will give us less aliasing on xmod
-		//Hard sync gate signal delayed too
-		noiseGen = wn.nextFloat()-0.5;
-		// Offset on osc1mix * xmod is to get zero pitch shift at
-		// max xmod
-		pitch2 = getPitch(cvd.feedReturn(dirt *noiseGen + notePlaying + osc2Det + (quantizeCw?((int)(osc2p)):osc2p) + pto2+ (osc1modout?osc1mix-0.0569:0)*xmod + tune + oct +totalSpread*osc2Factor));
-
-		fs = jmin(pitch2 * (sampleRateInv),0.45f);
-
-		pwcalc = jlimit<float>(0.1f,1.0f,(osc2pw + pw2)*0.5f + 0.5f);
-
-		float osc2mix=0.0f;
-
-		x2 +=fs;
-
-		if(osc2Pul)
-			o2p.processSlave(x2,fs,hsr,hsfrac,pwcalc,pw2w);
-		else if(osc2Saw)
-			o2s.processSlave(x2,fs,hsr,hsfrac);
-		else if(osc2Tri)
-			o2t.processSlave(x2,fs,hsr,hsfrac);
-
-
-		if(x2 >= 1.0f)
-			x2-=1.0;
-
-
-		pw2w=pwcalc;
-		//On hard sync reset slave phase is affected that way
-		if(hsr)
-		{
-			float fracMaster = (fs * hsfrac);
-			x2 =fracMaster;
-		}
-		//Delaying osc1 signal
-		//And getting delayed back
-		osc1mix = xmodd.feedReturn(osc1mix);
 
 		if(osc2Pul)
 			osc2mix = o2p.getValue(x2,pwcalc) + o2p.aliasReduction();
@@ -236,9 +188,55 @@ public:
 		else if(osc2Tri)
 			osc2mix = o2t.getValue(x2) + o2t.aliasReduction();
 
+		//Pitch control needs additional delay buffer to compensate
+		//This will give us less aliasing on xmod
+		//Hard sync gate signal delayed too
+		noiseGen = wn.nextFloat()-0.5;
+		// Offset on osc2mix * xmod is to get zero pitch shift at
+		// max xmod
+		pitch1 = getPitch(cvd.feedReturn(dirt *noiseGen + notePlaying + osc1Det + (quantizeCw?((int)(osc1p)):osc1p) + pto1+ (osc2modout?osc2mix-0.0569:0)*xmod + tune + oct +totalSpread*osc1Factor));
+
+		fs = jmin(pitch1 * (sampleRateInv),0.45f);
+
+		pwcalc = jlimit<float>(0.1f,1.0f,(osc1pw + pw1)*0.5f + 0.5f);
+
+		float osc1mix=0.0f;
+
+		x1 +=fs;
+
+		if(osc1Pul)
+			o1p.processSlave(x1,fs,hsr,hsfrac,pwcalc,pw1w);
+		else if(osc1Saw)
+			o1s.processSlave(x1,fs,hsr,hsfrac);
+		else if(osc1Tri)
+			o1t.processSlave(x1,fs,hsr,hsfrac);
+
+
+		if(x1 >= 1.0f)
+			x1-=1.0;
+
+
+		pw1w=pwcalc;
+		//On hard sync reset slave phase is affected that way
+		if(hsr)
+		{
+			float fracMaster = (fs * hsfrac);
+			x1 =fracMaster;
+		}
+		//Delaying osc2 signal
+		//And getting delayed back
+		osc2mix = xmodd.feedReturn(osc2mix);
+
+		if(osc1Pul)
+			osc1mix = o1p.getValue(x1,pwcalc) + o1p.aliasReduction();
+		else if(osc1Saw)
+			osc1mix = o1s.getValue(x1) + o1s.aliasReduction();
+		else if(osc1Tri)
+			osc1mix = o1t.getValue(x1) + o1t.aliasReduction();
+
 		//mixing
-		float res =o1mx*osc1mix + o2mx *osc2mix + (noiseGen)*(nmx*1.3 + 0.0006);
+		float res =o1mx*osc1mix + o2mx*osc2mix + (noiseGen)*(nmx*1.3 + 0.0006);
 		audioOutput = res*3;
-		modOutput = osc1mix;
+		modOutput = osc2mix;
 	}
 };

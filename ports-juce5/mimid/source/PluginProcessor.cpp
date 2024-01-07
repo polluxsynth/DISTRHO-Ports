@@ -137,8 +137,8 @@ void MimidAudioProcessor::setParameter (int index, float newValue)
 	case FILTER_TYPE:
 		synth.processFilterType(newValue);
 		break;
-	case BENDOSC2:
-		synth.procPitchWheelOsc2Only(newValue);
+	case BENDOSC1:
+		synth.procPitchWheelOsc1Only(newValue);
 		break;
 	case BENDRANGE:
 		synth.procPitchWheelAmount(newValue);
@@ -250,8 +250,8 @@ void MimidAudioProcessor::setParameter (int index, float newValue)
 	case UDET:
 		synth.processOscSpread(newValue);
 		break;
-	case OSC2_DET:
-		synth.processOsc2Det(newValue);
+	case OSC1_DET:
+		synth.processOsc1Det(newValue);
 		break;
 	case CUTOFF:
 		synth.processCutoff(newValue);
@@ -417,8 +417,8 @@ const String MimidAudioProcessor::getParameterName (int index)
 		return S("FilterType");
 	case BENDRANGE:
 		return S("BendRange");
-	case BENDOSC2:
-		return S("BendOsc2Only");
+	case BENDOSC1:
+		return S("BendOsc1Only");
 	case OCTAVE:
 		return S("Octave");
 	case TUNE:
@@ -523,8 +523,8 @@ const String MimidAudioProcessor::getParameterName (int index)
 		return S("Volume");
 	case UDET:
 		return S("OscSpread");
-	case OSC2_DET:
-		return S("Oscillator2detune");
+	case OSC1_DET:
+		return S("Oscillator1detune");
 	case CUTOFF:
 		return S("Cutoff");
 	case RESONANCE:

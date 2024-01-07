@@ -109,7 +109,7 @@ public:
 
 	float pitchWheel;
 	float pitchWheelAmt;
-	bool pitchWheelOsc2Only;
+	bool pitchWheelOsc1Only;
 
 	float lfo1pitchamt,lfo1pwamt,lfo2pitchamt,lfo2pwamt;
 	bool lfo1o1,lfo1o2,lfo1f;
@@ -224,8 +224,8 @@ public:
 		osc.pw2 = (lfo1pw2?(lfo1In*lfo1pwamt):0) + (lfo2pw2?(lfo2In*lfo2pwamt):0) + (genvpw2?(genvm*genvpwamt):0);
 
 		//Pitch modulation
-		osc.pto1 =   (!pitchWheelOsc2Only? (pitchWheel*pitchWheelAmt):0 ) + (lfo1o1?(lfo1In*lfo1pitchamt):0) + (lfo2o1?(lfo2In*lfo2pitchamt):0) + (genvo1?(genvm*genvpitchamt):0);
-		osc.pto2 =  (pitchWheel*pitchWheelAmt) + (lfo1o2?(lfo1In*lfo1pitchamt):0) + (lfo2o2?(lfo2In*lfo2pitchamt):0) + (genvo2?(genvm*genvpitchamt):0);
+		osc.pto1 =   pitchWheel*pitchWheelAmt + (lfo1o1?(lfo1In*lfo1pitchamt):0) + (lfo2o1?(lfo2In*lfo2pitchamt):0) + (genvo1?(genvm*genvpitchamt):0);
+		osc.pto2 =  (!pitchWheelOsc1Only?(pitchWheel*pitchWheelAmt):0) + (lfo1o2?(lfo1In*lfo1pitchamt):0) + (lfo2o2?(lfo2In*lfo2pitchamt):0) + (genvo2?(genvm*genvpitchamt):0);
 
 		//variable sort magic - upsample trick
 		float envVal = lenvd.feedReturn(env.processSample() * (1 - (1-velocityValue)*vamp));

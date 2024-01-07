@@ -251,11 +251,11 @@ public:
 			synth.voices[i].pitchWheelAmt = param>0.5?12:2;
 		}
 	}
-	void procPitchWheelOsc2Only(float param)
+	void procPitchWheelOsc1Only(float param)
 	{
 		for(int i = 0 ; i < synth.MAX_VOICES;i++)
 		{
-			synth.voices[i].pitchWheelOsc2Only = param>0.5;
+			synth.voices[i].pitchWheelOsc1Only = param>0.5;
 		}
 	}
 	void processPanSpread(float param)
@@ -489,11 +489,11 @@ public:
 	{
 		ForEachVoice(osc1FltMod = param*100);
 	}
-	void processOsc2Det(float param)
+	void processOsc1Det(float param)
 	{
 		for(int i = 0 ; i < synth.MAX_VOICES;i++)
 		{
-			synth.voices[i].osc.osc2Det = logsc(param,0.001,0.6);
+			synth.voices[i].osc.osc1Det = logsc(param,0.001,0.6);
 		}
 	}
 
@@ -505,7 +505,7 @@ public:
 			synth.voices[i].osc.osc1Saw = intparam == 1;
 			synth.voices[i].osc.osc1Pul = intparam == 2;
 			synth.voices[i].osc.osc1Tri = intparam == 3;
-			synth.voices[i].osc.osc1modout =
+			synth.voices[i].osc.osc2modout =
 			synth.voices[i].oscmodEnable = intparam != 0;
 		}
 	}
