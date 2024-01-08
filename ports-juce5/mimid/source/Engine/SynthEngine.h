@@ -436,14 +436,14 @@ public:
 	{
 		for(int i = 0 ; i < synth.MAX_VOICES;i++)
 		{
-			synth.voices[i].osc.osc1p = roundToInt(param * 48);
+			synth.voices[i].osc.osc1p = roundToInt(param * 72);
 		}
 	}
 	void processOsc2Pitch(float param)
 	{
 		for(int i = 0 ; i < synth.MAX_VOICES;i++)
 		{
-			synth.voices[i].osc.osc2p = roundToInt(param * 48);
+			synth.voices[i].osc.osc2p = roundToInt(param * 72);
 		}
 	}
 	void processOsc1Mix(float param)
