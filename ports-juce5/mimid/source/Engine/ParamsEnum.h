@@ -54,7 +54,7 @@ enum Parameters
 	XMOD,
 	OSC1P,
 	OSC2P,
-	OSCQuantize,
+	OSCQuantize_NOTUSED,
 	OSC1Saw_NOTUSED,
 	OSC1Pul_NOTUSED,
 	OSC2Saw_NOTUSED,

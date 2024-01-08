@@ -77,9 +77,6 @@ public:
 	float osc1pw,osc2pw;
 	float pw1,pw2;
 
-
-	bool quantizeCw;
-
 	float o1mx,o2mx;
 	float nmx;
 	float pto1,pto2;
@@ -114,7 +111,7 @@ public:
 		pw1=pw2=0;
 		xmod = 0;
 		hardSync = false;
-		osc1p=osc2p=10;
+		osc1p=osc2p=24;
 		osc1Saw=osc2Saw=osc1Pul=osc2Pul=false;
 		osc1Det = 0;
 		notePlaying = 30;
@@ -152,7 +149,7 @@ public:
 	inline void ProcessSample(float &audioOutput, float &modOutput)
 	{
 		float noiseGen = wn.nextFloat()-0.5;
-		pitch2 = getPitch(dirt * noiseGen + notePlaying + (quantizeCw?((int)(osc2p)):osc2p)+ pto2 + tune + oct+totalSpread*osc2Factor);
+		pitch2 = getPitch(dirt * noiseGen + notePlaying + osc2p + pto2 + tune + oct+totalSpread*osc2Factor);
 		bool hsr = false;
 		float hsfrac=0;
 		float fs = jmin(pitch2*(sampleRateInv),0.45f);
@@ -194,7 +191,7 @@ public:
 		noiseGen = wn.nextFloat()-0.5;
 		// Offset on osc2mix * xmod is to get zero pitch shift at
 		// max xmod
-		pitch1 = getPitch(cvd.feedReturn(dirt *noiseGen + notePlaying + osc1Det + (quantizeCw?((int)(osc1p)):osc1p) + pto1+ (osc2modout?osc2mix-0.0569:0)*xmod + tune + oct +totalSpread*osc1Factor));
+		pitch1 = getPitch(cvd.feedReturn(dirt *noiseGen + notePlaying + osc1Det + osc1p + pto1 + (osc2modout?osc2mix-0.0569:0)*xmod + tune + oct +totalSpread*osc1Factor));
 
 		fs = jmin(pitch1 * (sampleRateInv),0.45f);
 

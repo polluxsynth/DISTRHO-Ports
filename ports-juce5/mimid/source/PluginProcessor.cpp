@@ -125,8 +125,7 @@ void MimidAudioProcessor::setParameter (int index, float newValue)
 		break;
 	case ENVPITCH_NOTUSED:
 		break;
-	case OSCQuantize:
-		synth.processPitchQuantization(newValue);
+	case OSCQuantize_NOTUSED:
 		break;
 	case VOICE_COUNT:
 		synth.setVoiceCount(newValue);
@@ -405,8 +404,8 @@ const String MimidAudioProcessor::getParameterName (int index)
 		return S("LegatoMode_NOTUSED");
 	case ENVPITCH_NOTUSED:
 		return S("EnvelopeToPitch_NOTUSED");
-	case OSCQuantize:
-		return S("PitchQuant");
+	case OSCQuantize_NOTUSED:
+		return S("PitchQuant_NOTUSED");
 	case VOICE_COUNT:
 		return S("VoiceCount");
 	case BANDPASS_NOTUSED:
