@@ -154,7 +154,6 @@ public:
 		float hsfrac=0;
 		float fs = jmin(pitch2*(sampleRateInv),0.45f);
 		x2+=fs;
-		hsfrac = 0;
 		float osc2mix=0.0f;
 		float pwcalc =jlimit<float>(0.1f,1.0f,(osc2pw + pw2)*0.5f + 0.5f);
 		if(osc2Pul)
@@ -173,9 +172,8 @@ public:
 
 		pw2w = pwcalc;
 
-		hsr &= hardSync;
 		//Delaying our hard sync gate signal and frac
-		hsr = syncd.feedReturn(hsr) != 0.0f;
+		hsr = syncd.feedReturn(hsr);
 		hsfrac = syncFracd.feedReturn(hsfrac);
 
 		if(osc2Pul)
@@ -199,6 +197,8 @@ public:
 
 		float osc1mix=0.0f;
 
+		hsr &= hardSync;
+
 		x1 +=fs;
 
 		if(osc1Pul)
@@ -208,10 +208,8 @@ public:
 		else if(osc1Tri)
 			o1t.processSlave(x1,fs,hsr,hsfrac);
 
-
 		if(x1 >= 1.0f)
 			x1-=1.0;
-
 
 		pw1w=pwcalc;
 		//On hard sync reset slave phase is affected that way
