@@ -210,8 +210,8 @@ void MimidAudioProcessor::setParameter (int index, float newValue)
 	case XMOD:
 		synth.processOsc2Xmod(newValue);
 		break;
-	case OSC2HS:
-		synth.processOsc2HardSync(newValue);
+	case OSCSYNC_LEVEL:
+		synth.processOsc2SyncLevel(newValue);
 		break;
 	case OSC2P:
 		synth.processOsc2Pitch(newValue);
@@ -492,8 +492,8 @@ const String MimidAudioProcessor::getParameterName (int index)
 		return S("Pan8_NOTUSED");
 	case XMOD:
 		return S("Xmod");
-	case OSC2HS:
-		return S("Osc2HardSync");
+	case OSCSYNC_LEVEL:
+		return S("SyncLevel");
 	case OSC1P:
 		return S("Osc1Pitch");
 	case OSC2P:

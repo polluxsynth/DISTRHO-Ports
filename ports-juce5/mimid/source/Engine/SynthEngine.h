@@ -425,11 +425,11 @@ public:
 			synth.voices[i].osc.xmod= param*24;
 		}
 	}
-	void processOsc2HardSync(float param)
+	void processOsc2SyncLevel(float param)
 	{
 		for(int i = 0 ; i < synth.MAX_VOICES;i++)
 		{
-			synth.voices[i].osc.hardSync = param>0.5;
+			synth.voices[i].osc.syncLevel = 1.0 - param;
 		}
 	}
 	void processOsc1Pitch(float param)

@@ -85,7 +85,7 @@ public:
 	float osc1Saw,osc2Saw, osc1Pul,osc2Pul, osc1Tri, osc2Tri;
 
 	float osc1p,osc2p;
-	bool hardSync;
+	float syncLevel;
 	float xmod;
 	bool osc2modout;
 
@@ -110,7 +110,7 @@ public:
 		pto1=pto2=0;
 		pw1=pw2=0;
 		xmod = 0;
-		hardSync = false;
+		syncLevel = 1;
 		osc1p=osc2p=24;
 		osc1Saw=osc2Saw=osc1Pul=osc2Pul=false;
 		osc1Det = 0;
@@ -197,9 +197,11 @@ public:
 
 		float osc1mix=0.0f;
 
-		hsr &= hardSync;
-
 		x1 +=fs;
+
+		// Sync level: we check if x1 is above the sync level when
+		// the reset from the master oscillator occurs.
+		hsr &= x1 - hsfrac*fs >= syncLevel;
 
 		if(osc1Pul)
 			o1p.processSlave(x1,fs,hsr,hsfrac,pwcalc,pw1w);
