@@ -201,7 +201,10 @@ public:
 
 		// Sync level: we check if x1 is above the sync level when
 		// the reset from the master oscillator occurs.
-		hsr &= x1 - hsfrac*fs >= syncLevel;
+		// If the sync level is high enough, disable completely,
+		// to avoid artefacts when osc2 is running at an insanely
+		// high frequency (empirically).
+		hsr &= (syncLevel <= 0.99) && (x1 - hsfrac*fs >= syncLevel);
 
 		if(osc1Pul)
 			o1p.processSlave(x1,fs,hsr,hsfrac,pwcalc,pw1w);
