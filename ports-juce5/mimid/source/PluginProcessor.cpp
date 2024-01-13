@@ -252,6 +252,9 @@ void MimidAudioProcessor::setParameter (int index, float newValue)
 	case OSC1_DET:
 		synth.processOsc1Det(newValue);
 		break;
+	case OSC2_DET:
+		synth.processOsc2Det(newValue);
+		break;
 	case CUTOFF:
 		synth.processCutoff(newValue);
 		break;
@@ -524,6 +527,8 @@ const String MimidAudioProcessor::getParameterName (int index)
 		return S("OscSpread");
 	case OSC1_DET:
 		return S("Oscillator1detune");
+	case OSC2_DET:
+		return S("Oscillator2detune");
 	case CUTOFF:
 		return S("Cutoff");
 	case RESONANCE:

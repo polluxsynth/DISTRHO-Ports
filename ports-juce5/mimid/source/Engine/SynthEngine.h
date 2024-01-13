@@ -489,6 +489,13 @@ public:
 			synth.voices[i].osc.osc1Det = logsc(param,0.001,0.6);
 		}
 	}
+	void processOsc2Det(float param)
+	{
+		for(int i = 0 ; i < synth.MAX_VOICES;i++)
+		{
+			synth.voices[i].osc.osc2Det = logsc(param,0.001,0.6);
+		}
+	}
 
 	void processOsc1Wave(float param)
 	{

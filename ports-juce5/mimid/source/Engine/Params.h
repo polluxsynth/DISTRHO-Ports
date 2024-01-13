@@ -47,7 +47,8 @@ public:
 		values[HPFFREQ]=0.0f;
 		values[OCTAVE]=0.5;
 		values[TUNE] = 0.5f;
-		values[OSC1_DET]=0.4;
+		values[OSC1_DET]=0.5;
+		values[OSC2_DET]=0.5;
 		values[LSUS]=1.0f;
 		values[CUTOFF]=1.0f;
 		values[VOLUME]=0.5f;

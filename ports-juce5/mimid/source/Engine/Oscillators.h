@@ -73,7 +73,7 @@ public:
 
 	float totalSpread;
 
-	float osc1Det;
+	float osc1Det,osc2Det;
 	float osc1pw,osc2pw;
 	float pw1,pw2;
 
@@ -113,7 +113,7 @@ public:
 		syncLevel = 1;
 		osc1p=osc2p=24;
 		osc1Saw=osc2Saw=osc1Pul=osc2Pul=false;
-		osc1Det = 0;
+		osc1Det = osc2Det = 0;
 		notePlaying = 30;
 		osc1pw = osc2pw = 0;
 		o1mx=o2mx=0;
@@ -149,7 +149,7 @@ public:
 	inline void ProcessSample(float &audioOutput, float &modOutput)
 	{
 		float noiseGen = wn.nextFloat()-0.5;
-		pitch2 = getPitch(dirt * noiseGen + notePlaying + osc2p + pto2 + tune + oct+totalSpread*osc2Factor);
+		pitch2 = getPitch(dirt * noiseGen + notePlaying + osc2Det + osc2p + pto2 + tune + oct+totalSpread*osc2Factor);
 		bool hsr = false;
 		float hsfrac=0;
 		float fs = jmin(pitch2*(sampleRateInv),0.45f);
