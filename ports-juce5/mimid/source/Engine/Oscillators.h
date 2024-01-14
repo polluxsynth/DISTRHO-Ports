@@ -38,29 +38,28 @@ class Oscillators
 {
 private:
 	float SampleRate;
-	float pitch1;
-	float pitch2;
 	float sampleRateInv;
 
 
-	float x1,x2;
+	float x1,x2,x3;
 
 	float osc1Factor;
 	float osc2Factor;
 
-	float pw1w,pw2w;
+	float pw1w,pw2w,pw3w;
 	//blep const
 	const int n;
 	const int hsam;
 	//delay line implements fixed sample delay
-	DelayLine<Samples> xmodd;
+	DelayLine<Samples> osc2d;
+	DelayLine<Samples> osc3d;
 	DelayLineBoolean<Samples> syncd;
 	DelayLine<Samples> syncFracd;
 	DelayLine<Samples> cvd;
 	Random wn;
-	SawOsc o1s,o2s;
-	PulseOsc o1p,o2p;
-	TriangleOsc o1t,o2t;
+	SawOsc o1s,o2s,o3s;
+	PulseOsc o1p,o2p,o3p;
+	TriangleOsc o1t,o2t,o3t;
 public:
 
 	float tune;//+-1 
@@ -73,16 +72,19 @@ public:
 
 	float totalSpread;
 
-	float osc1Det,osc2Det;
-	float osc1pw,osc2pw;
+	float osc1Det,osc2Det,osc3Det;
+	float osc3Ofs, osc3Ratio;
+	float osc1pw,osc2pw,osc3pw;
 	float pw1,pw2;
 
-	float o1mx,o2mx;
+	float o1mx,o2mx,o3mx;
 	float nmx;
 	float pto1,pto2;
 
 	//osc waveshapes
-	float osc1Saw,osc2Saw, osc1Pul,osc2Pul, osc1Tri, osc2Tri;
+	bool osc1Saw, osc1Pul, osc1Tri;
+	bool osc2Saw, osc2Pul, osc2Tri;
+	bool osc3Saw, osc3Pul, osc3Tri;
 
 	float osc1p,osc2p;
 	float syncLevel;
@@ -106,7 +108,7 @@ public:
 		nmx=0;
 		oct=0;
 		tune=0;
-		pw1w=pw2w=0;
+		pw1w=pw2w=pw3w=0;
 		pto1=pto2=0;
 		pw1=pw2=0;
 		xmod = 0;
@@ -114,11 +116,14 @@ public:
 		osc1p=osc2p=24;
 		osc1Saw=osc2Saw=osc1Pul=osc2Pul=false;
 		osc1Det = osc2Det = 0;
+		osc3Det = 1.0; // multiplicative
+		osc3Ofs = 0;
+		osc3Ratio = 1.0;
 		notePlaying = 30;
-		osc1pw = osc2pw = 0;
+		osc1pw = osc2pw = osc3pw = 0;
 		o1mx=o2mx=0;
 		x1=wn.nextFloat();
-		x2=wn.nextFloat();
+		x3=x2=wn.nextFloat(); // osc2 and 3 start in phase
 	}
 	~Oscillators()
 	{
@@ -131,6 +136,9 @@ public:
 		o2p.setDecimation();
 		o2t.setDecimation();
 		o2s.setDecimation();
+		o3p.setDecimation();
+		o3t.setDecimation();
+		o3s.setDecimation();
 	}
 	void removeDecimation()
 	{
@@ -140,6 +148,9 @@ public:
 		o2p.removeDecimation();
 		o2t.removeDecimation();
 		o2s.removeDecimation();
+		o3p.removeDecimation();
+		o3t.removeDecimation();
+		o3s.removeDecimation();
 	}
 	void setSampleRate(float sr)
 	{
@@ -148,8 +159,9 @@ public:
 	}
 	inline void ProcessSample(float &audioOutput, float &modOutput)
 	{
+		// osc 2 = master oscillator
 		float noiseGen = wn.nextFloat()-0.5;
-		pitch2 = getPitch(dirt * noiseGen + notePlaying + osc2Det + osc2p + pto2 + tune + oct+totalSpread*osc2Factor);
+		float pitch2 = getPitch(dirt * noiseGen + notePlaying + osc2Det + osc2p + pto2 + tune + oct+totalSpread*osc2Factor);
 		bool hsr = false;
 		float hsfrac=0;
 		float fs = jmin(pitch2*(sampleRateInv),0.45f);
@@ -183,13 +195,50 @@ public:
 		else if(osc2Tri)
 			osc2mix = o2t.getValue(x2) + o2t.aliasReduction();
 
+		// osc3 = osc2 sub oscillator
+		// TODO: This is not a true sub, since the phase to osc2 is
+		// not fixed. Should we have fixed key sync on osc3 to
+		// mitigate this, or implement osc3 as a true sub oscillator
+		// dividing down from osc2 (which precludes and Hz offset)
+		// Fixed ratio to osc2, plus an offset in Hz.
+		// TODO: Do we need both detune and offset?
+		float pitch3 = pitch2 * osc3Ratio * osc3Det + osc3Ofs;
+
+		fs = jmin(pitch3 * (sampleRateInv),0.45f);
+		x3+=fs;
+
+		pwcalc = jlimit<float>(0.1f,1.0f,osc3pw*0.5f + 0.5f);
+
+		float osc3mix=0.0f;
+
+		if(osc3Pul)
+			o3p.processMaster(x3,fs,pwcalc,pw3w);
+		else if(osc3Saw)
+			o3s.processMaster(x3,fs);
+		else if(osc3Tri)
+			o3t.processMaster(x3,fs);
+
+		if(x3 >= 1.0f)
+			x3-=1.0f;
+
+		pw3w = pwcalc;
+
+		if(osc3Pul)
+			osc3mix = o3p.getValue(x3,pwcalc) + o3p.aliasReduction();
+		else if(osc3Saw)
+			osc3mix = o3s.getValue(x3) + o3s.aliasReduction();
+		else if(osc3Tri)
+			osc3mix = o3t.getValue(x3) + o3t.aliasReduction();
+
+		// osc1 = slave oscillator
+
 		//Pitch control needs additional delay buffer to compensate
 		//This will give us less aliasing on xmod
 		//Hard sync gate signal delayed too
 		noiseGen = wn.nextFloat()-0.5;
 		// Offset on osc2mix * xmod is to get zero pitch shift at
 		// max xmod
-		pitch1 = getPitch(cvd.feedReturn(dirt *noiseGen + notePlaying + osc1Det + osc1p + pto1 + (osc2modout?osc2mix-0.0569:0)*xmod + tune + oct +totalSpread*osc1Factor));
+		float pitch1 = getPitch(cvd.feedReturn(dirt *noiseGen + notePlaying + osc1Det + osc1p + pto1 + (osc2modout?osc2mix-0.0569:0)*xmod + tune + oct +totalSpread*osc1Factor));
 
 		fs = jmin(pitch1 * (sampleRateInv),0.45f);
 
@@ -223,9 +272,11 @@ public:
 			float fracMaster = (fs * hsfrac);
 			x1 =fracMaster;
 		}
-		//Delaying osc2 signal
-		//And getting delayed back
-		osc2mix = xmodd.feedReturn(osc2mix);
+
+		// Delay osc2 and osc3 to get in phase with osc1 which is
+		// in itself delayed due to xmod
+		osc2mix = osc2d.feedReturn(osc2mix);
+		osc3mix = osc3d.feedReturn(osc3mix);
 
 		if(osc1Pul)
 			osc1mix = o1p.getValue(x1,pwcalc) + o1p.aliasReduction();
@@ -235,7 +286,7 @@ public:
 			osc1mix = o1t.getValue(x1) + o1t.aliasReduction();
 
 		//mixing
-		float res =o1mx*osc1mix + o2mx*osc2mix + (noiseGen)*(nmx*1.3 + 0.0006);
+		float res =o1mx*osc1mix + o2mx*osc2mix + o3mx*osc3mix + (noiseGen)*(nmx*1.3 + 0.0006);
 		audioOutput = res*3;
 		modOutput = osc2mix;
 	}
