@@ -57,6 +57,11 @@ public:
 		values[OSC1WAVE]=0.25;
 		values[OSC2WAVE]=0.25;
 		values[LFO2FREQ]=0.6;
+		values[OSC3_RATIO]=0,
+		values[OSC3_DET]=1.0,
+		values[OSC3_OFS]=0.0,
+		values[OSC3WAVE]=0,
+		values[OSC3MIX]=0,
 
 //		values[FILTER_DRIVE]= 0.01;
 		values[PAN1_NOTUSED]=0.5;

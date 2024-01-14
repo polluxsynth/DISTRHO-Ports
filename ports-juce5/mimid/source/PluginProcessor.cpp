@@ -255,6 +255,21 @@ void MimidAudioProcessor::setParameter (int index, float newValue)
 	case OSC2_DET:
 		synth.processOsc2Det(newValue);
 		break;
+	case OSC3_RATIO:
+		synth.processOsc3Ratio(newValue);
+		break;
+	case OSC3_DET:
+		synth.processOsc3Det(newValue);
+		break;
+	case OSC3_OFS:
+		synth.processOsc3Ofs(newValue);
+		break;
+	case OSC3WAVE:
+		synth.processOsc3Wave(newValue);
+		break;
+	case OSC3MIX:
+		synth.processOsc3Mix(newValue);
+		break;
 	case CUTOFF:
 		synth.processCutoff(newValue);
 		break;

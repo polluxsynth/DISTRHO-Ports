@@ -129,5 +129,11 @@ enum Parameters
 
 	OSCSYNC_LEVEL,
 
+	OSC3_DET,
+	OSC3_RATIO,
+	OSC3_OFS,
+	OSC3WAVE,
+	OSC3MIX,
+
 	PARAM_COUNT,
 };
