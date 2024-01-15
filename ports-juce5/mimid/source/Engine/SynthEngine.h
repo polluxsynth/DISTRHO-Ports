@@ -460,13 +460,6 @@ public:
 			synth.voices[i].osc.o2mx = param;
 		}
 	}
-	void processNoiseMix(float param)
-	{
-		for(int i = 0 ; i < synth.MAX_VOICES;i++)
-		{
-			synth.voices[i].osc.nmx = logsc(param,0,1,35);
-		}
-	}
 	void processHPFfreq(float param)
 	{
 		for(int i = 0 ; i < synth.MAX_VOICES;i++)
@@ -520,33 +513,12 @@ public:
 			synth.voices[i].osc.osc2Tri = intparam == 3;
 		}
 	}
-	void processOsc3Ratio(float param)
-	{
-		int intparam = roundToInt(param*3);
-		float multiplier = 1.0/(1 << intparam); // 0,0.5,0.25,0.125
-		ForEachVoice(osc.osc3Ratio=multiplier);
-	}
-	void processOsc3Det(float param)
-	{
-		float ratio = exp(logf(2.0)/12.0 * param);
-		ForEachVoice(osc.osc3Det=ratio);
-	}
-	void processOsc3Ofs(float param)
-	{
-		float hz = param * 20;
-		ForEachVoice(osc.osc3Ofs=hz);
-	}
 	void processOsc3Wave(float param)
 	{
 		int intparam = roundToInt(param*4);
-		for(int i = 0 ; i < synth.MAX_VOICES;i++)
-		{
-			synth.voices[i].osc.osc3Saw = intparam == 1;
-			synth.voices[i].osc.osc3Pul = intparam >= 2 &&
-						      intparam <= 3;
-			synth.voices[i].osc.osc3pw = (intparam - 2) * 0.5;
-			synth.voices[i].osc.osc3Tri = intparam == 4;
-		}
+		// off - -1 square - -2 square - -2 pulse - noise
+		ForEachVoice(osc.osc3Waveform = intparam);
+		//ForEachVoice(osc.noiseEnable = (intparam == 4));
 	}
 	void processOsc3Mix(float param)
 	{

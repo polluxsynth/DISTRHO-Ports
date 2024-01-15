@@ -142,8 +142,8 @@ void MimidAudioProcessor::setParameter (int index, float newValue)
 	case BENDRANGE:
 		synth.procPitchWheelAmount(newValue);
 		break;
-	case NOISEMIX:
-		synth.processNoiseMix(newValue);
+	case OSC3MIX:
+		synth.processOsc3Mix(newValue);
 		break;
 	case OCTAVE:
 		synth.processOctave(newValue);
@@ -255,20 +255,8 @@ void MimidAudioProcessor::setParameter (int index, float newValue)
 	case OSC2_DET:
 		synth.processOsc2Det(newValue);
 		break;
-	case OSC3_RATIO:
-		synth.processOsc3Ratio(newValue);
-		break;
-	case OSC3_DET:
-		synth.processOsc3Det(newValue);
-		break;
-	case OSC3_OFS:
-		synth.processOsc3Ofs(newValue);
-		break;
 	case OSC3WAVE:
 		synth.processOsc3Wave(newValue);
-		break;
-	case OSC3MIX:
-		synth.processOsc3Mix(newValue);
 		break;
 	case CUTOFF:
 		synth.processCutoff(newValue);
@@ -442,8 +430,8 @@ const String MimidAudioProcessor::getParameterName (int index)
 		return S("Tune");
 	case HPFFREQ:
 		return S("HPFfreq");
-	case NOISEMIX:
-		return S("NoiseMix");
+	case OSC3MIX:
+		return S("Osc3Mix");
 	case OSC1MIX:
 		return S("Osc1Mix");
 	case OSC2MIX:
