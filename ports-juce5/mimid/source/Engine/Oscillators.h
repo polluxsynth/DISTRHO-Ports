@@ -222,6 +222,7 @@ public:
 		// Offset on osc2mix * xmod is to get zero pitch shift at
 		// max xmod
 		float pitch1 = getPitch(cvd.feedReturn(dirt *noiseGen + notePlaying + osc1Det + osc1p + pto1 + (osc2modout?osc2mix-0.0569:0)*xmod + tune + oct +totalSpread*osc1Factor));
+		pitch1 += osc2mix * unused1 * 100.0; // linear FM.
 
 		fs = jmin(pitch1 * (sampleRateInv),0.45f);
 
