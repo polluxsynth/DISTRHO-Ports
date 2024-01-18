@@ -31,6 +31,12 @@
 #include "Params.h"
 #include "ParamSmoother.h"
 
+#define ForEachVoice(expr) \
+	for(int i = 0 ; i < synth.MAX_VOICES;i++) \
+		{\
+			synth.voices[i].expr;\
+		}
+
 class SynthEngine
 {
 private:
@@ -38,17 +44,24 @@ private:
 	ParamSmoother cutoffSmoother;
 	ParamSmoother pitchWheelSmoother;
 	ParamSmoother modWheelSmoother;
+	ParamSmoother afterTouchSmoother;
 	float sampleRate;
+	float atscale;
+	float velscale;
 	// TODO Remove unused1,2:
 	float unused1, unused2;
 	//JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (SynthEngine)
+
 public:
 	SynthEngine():
 		cutoffSmoother(),
 		//synth = new Motherboard();
 		pitchWheelSmoother(),
-		modWheelSmoother()
+		modWheelSmoother(),
+		afterTouchSmoother()
 	{
+		atscale = 1;
+		velscale = 1;
 	}
 	~SynthEngine()
 	{
@@ -68,6 +81,7 @@ public:
 		cutoffSmoother.setSampleRate(sr);
 		pitchWheelSmoother.setSampleRate(sr);
 		modWheelSmoother.setSampleRate(sr);
+		afterTouchSmoother.setSampleRate(sr);
 		synth.setSampleRate(sr);
 	}
 	void processSample(float *left,float *right)
@@ -75,6 +89,7 @@ public:
 		processCutoffSmoothed(cutoffSmoother.smoothStep());
 		procPitchWheelSmoothed(pitchWheelSmoother.smoothStep());
 		procModWheelSmoothed(modWheelSmoother.smoothStep());
+		procAfterTouchSmoothed(afterTouchSmoother.smoothStep());
 
 		synth.processSample(left,right);
 	}
@@ -103,21 +118,39 @@ public:
 	}
 	void procLfo1Sync(float val)
 	{
-		int intval = roundToInt(val*2);
+		// Off - Tempo - Key - Oneshot
+		int intval = roundToInt(val*3);
 		for(int i = 0 ; i < Motherboard::MAX_VOICES;i++)
 		{
 			synth.voices[i].lfo1.setClockSync(intval == 1);
-			synth.voices[i].lfo1.setKeySync(intval == 2);
+			synth.voices[i].lfo1.setKeySync(intval >= 2 && intval <= 3);
+			synth.voices[i].lfo1.setOneShot(intval == 3);
 		}
 	}
 	void procLfo2Sync(float val)
 	{
-		int intval = roundToInt(val*2);
+		// Off - Tempo - Key - Oneshot
+		int intval = roundToInt(val*3);
 		for(int i = 0 ; i < Motherboard::MAX_VOICES;i++)
 		{
 			synth.voices[i].lfo2.setClockSync(intval == 1);
-			synth.voices[i].lfo2.setKeySync(intval == 2);
+			synth.voices[i].lfo2.setKeySync(intval >= 2 && intval <= 3);
+			synth.voices[i].lfo2.setOneShot(intval == 3);
 		}
+	}
+	void procLfo1Polarity(float val)
+	{
+		// Normal - Invert - Unipolar - Unipolar+Invert
+		int intval = roundToInt(val*3);
+		ForEachVoice(lfo1.invert = (intval & 1));
+		ForEachVoice(lfo1.unipolar = (intval & 2));
+	}
+	void procLfo2Polarity(float val)
+	{
+		// Normal - Invert - Unipolar - Unipolar+Invert
+		int intval = roundToInt(val*3);
+		ForEachVoice(lfo2.invert = (intval & 1));
+		ForEachVoice(lfo2.unipolar = (intval & 2));
 	}
 	void procKeyAsgnRsz(float val)
 	{
@@ -159,11 +192,6 @@ public:
 	{
 		synth.economyMode = val>0.5;
 	}
-#define ForEachVoice(expr) \
-	for(int i = 0 ; i < synth.MAX_VOICES;i++) \
-		{\
-			synth.voices[i].expr;\
-		}\
 
 	// TODO: Remove
 	void procUnused1(float val)
@@ -206,23 +234,40 @@ public:
 			synth.voices[i].vgen= val;
 		}
 	}
+	void procVelocityScale(float scale)
+	{
+		scale = 1 - 2 * scale; // 0..1 -> 1..0..-1
+		scale = powf(8.0, scale); // => 8 .. 1 .. 1/8
+		ForEachVoice(velscale = scale);
+	}
+	void procAfterTouchScale(float scale)
+	{
+		scale = 1 - 2 * scale; // 0..1 -> 1..0..-1
+		atscale = powf(8.0, scale); // => 8 .. 1 .. 1/8
+	}
 	void procModWheel(float val)
 	{
 		modWheelSmoother.setSteep(val);
 	}
 	void procModWheelSmoothed(float val)
 	{
-		for(int i = 0 ; i < synth.MAX_VOICES;i++)
-		{
-			synth.voices[i].modWheelSmoothed = val;
-		}
+		ForEachVoice(modw = val);
 	}
-	void procModWheelFrequency(float val)
+	void procAfterTouch(float val)
+	{
+		val = powf(val, atscale);
+		afterTouchSmoother.setSteep(val);
+	}
+	void procAfterTouchSmoothed(float val)
+	{
+		ForEachVoice(aftert = val);
+	}
+	void processLfo2Frequency(float val)
 	{
 		for(int i = 0 ; i < synth.MAX_VOICES;i++)
 		{
 			synth.voices[i].lfo2.setRawFrequency(val);
-			synth.voices[i].lfo2.setFrequency(logsc(val,0,50,120));
+			synth.voices[i].lfo2.setFrequency(logsc(val,0,100,240));
 		}
 	}
 	void procPitchWheel(float val)
@@ -294,38 +339,27 @@ public:
 	{
 		synth.Volume = linsc(param,0,0.30);
 	}
-	void processLfoFrequency(float param)
+	void processLfo1Frequency(float param)
 	{
 		for(int i = 0 ; i < synth.MAX_VOICES;i++)
 		{
 			synth.voices[i].lfo1.setRawFrequency(param);
-			synth.voices[i].lfo1.setFrequency(logsc(param,0,50,120));
+			synth.voices[i].lfo1.setFrequency(logsc(param,0,100,240));
 		}
 	}
 	void processLfo1Wave(float param)
 	{
-		for(int i = 0 ; i < synth.MAX_VOICES;i++)
-		{
-			synth.voices[i].lfo1.waveForm =  roundToInt(param*5);
-		}
+		int intparam = roundToInt(param * 9);
+		ForEachVoice(lfo1.setWaveForm(intparam));
 	}
 	void processLfo2Wave(float param)
 	{
-		for(int i = 0 ; i < synth.MAX_VOICES;i++)
-		{
-			synth.voices[i].lfo2.waveForm =  roundToInt(param*5);
-		}
+		int intparam = roundToInt(param * 9);
+		ForEachVoice(lfo2.setWaveForm(intparam));
 	}
 	void processLfo1Amt(float param)
 	{
-		for(int i = 0 ; i < synth.MAX_VOICES;i++)
-		{
-			// Pitch (osc and filter) modulated +/- 60 semitones
-			//synth.voices[i].lfo1pitchamt= logsc(logsc(param,0,1,60),0,60,10);
-			synth.voices[i].lfo1pitchamt= logsc(param,0,60);
-			// PW modulated +/- 1.0 (full range)
-			synth.voices[i].lfo1pwamt = param;
-		}
+		ForEachVoice(lfo1amt = param);
 	}
 	void processLfo1Dest(float param)
 	{
@@ -365,6 +399,30 @@ public:
 			synth.voices[i].lfo2f = lfo2filt;
 		}
 	}
+	void procLfo1Controller(float val)
+	{
+		int intval = roundToInt(val*3);
+		// off - modwheel - aftertouch - genv
+		ForEachVoice(lfo1modw = (intval == 1));
+		ForEachVoice(lfo1after = (intval == 2));
+		ForEachVoice(lfo1genv = (intval == 3));
+	}
+	void procLfo1ControllerAmt(float val)
+	{
+		ForEachVoice(lfo1modamt = val);
+	}
+	void procLfo2Controller(float val)
+	{
+		int intval = roundToInt(val*3);
+		// off - modwheel - aftertouch - genv
+		ForEachVoice(lfo2modw = (intval == 1));
+		ForEachVoice(lfo2after = (intval == 2));
+		ForEachVoice(lfo2genv = (intval == 3));
+	}
+	void procLfo2ControllerAmt(float val)
+	{
+		ForEachVoice(lfo2modamt = val);
+	}
 	void processLfoFilter_unused(float param)
 	{
 		for(int i = 0 ; i < synth.MAX_VOICES;i++)
@@ -388,14 +446,7 @@ public:
 	}
 	void processLfo2Amt(float param)
 	{
-		for(int i = 0 ; i < synth.MAX_VOICES;i++)
-		{
-			// Pitch (osc and filter) modulated +/- 60 semitones
-			//synth.voices[i].lfo2pitchamt= logsc(logsc(param,0,1,60),0,60,10);
-			synth.voices[i].lfo2pitchamt= logsc(param,0,60);
-			// PW modulated +/- 1.0 (full range)
-			synth.voices[i].lfo2pwamt = param;
-		}
+		ForEachVoice(lfo2amt = param);
 	}
 	void processOscSpread(float param)
 	{

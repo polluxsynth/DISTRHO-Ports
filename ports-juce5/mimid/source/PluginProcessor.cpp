@@ -119,7 +119,7 @@ void MimidAudioProcessor::setParameter (int index, float newValue)
 	case ASPLAYEDALLOCATION_NOTUSED:
 		break;
 	case LFO2FREQ:
-		synth.procModWheelFrequency(newValue);
+		synth.processLfo2Frequency(newValue);
 		break;
 	case LEGATOMODE_NOTUSED:
 		break;
@@ -161,7 +161,7 @@ void MimidAudioProcessor::setParameter (int index, float newValue)
 		synth.processResponse(newValue);
 		break;
 	case LFO1FREQ:
-		synth.processLfoFrequency(newValue);
+		synth.processLfo1Frequency(newValue);
 		break;
 	case LFO1AMT:
 		synth.processLfo1Amt(newValue);
@@ -341,6 +341,30 @@ void MimidAudioProcessor::setParameter (int index, float newValue)
 		break;
 	case VCADRIVE:
 		synth.processVCADrive(newValue);
+		break;
+	case LFO1_CONTRAMT:
+		synth.procLfo1ControllerAmt(newValue);
+		break;
+	case LFO2_CONTRAMT:
+		synth.procLfo2ControllerAmt(newValue);
+		break;
+	case LFO1_POLARITY:
+		synth.procLfo1Polarity(newValue);
+		break;
+	case LFO2_POLARITY:
+		synth.procLfo2Polarity(newValue);
+		break;
+	case VEL_SCALE:
+		synth.procVelocityScale(newValue);
+		break;
+	case AT_SCALE:
+		synth.procAfterTouchScale(newValue);
+		break;
+	case LFO1_AMT_CTRL:
+		synth.procLfo1Controller(newValue);
+		break;
+	case LFO2_AMT_CTRL:
+		synth.procLfo2Controller(newValue);
 		break;
 	case PAN1_NOTUSED:
 		break;
@@ -584,6 +608,22 @@ const String MimidAudioProcessor::getParameterName (int index)
 		return S("Osc1FilterMod");
 	case VCADRIVE:
 		return S("VCADrive");
+	case LFO1_CONTRAMT:
+		return S("Lfo1ContrAmt");
+	case LFO2_CONTRAMT:
+		return S("Lfo2ContrAmt");
+	case LFO1_POLARITY:
+		return S("Lfo1Polarity");
+	case LFO2_POLARITY:
+		return S("Lfo2Polarity");
+	case VEL_SCALE:
+		return S("VelocityScale");
+	case AT_SCALE:
+		return S("AfterTouchScale");
+	case LFO1_AMT_CTRL:
+		return S("Lfo1AmtCont");
+	case LFO2_AMT_CTRL:
+		return S("Lfo2AmtCont");
 	}
 	return String();
 }
@@ -714,6 +754,8 @@ inline void MimidAudioProcessor::processMidiPerSample(MidiBuffer::Iterator* iter
 		}
 		if(midiMsg.isController() && midiMsg.getControllerNumber()==1)
 			synth.procModWheel(midiMsg.getControllerValue() / 127.0);
+		if(midiMsg.isChannelPressure())
+			synth.procAfterTouch(midiMsg.getChannelPressureValue() / 127.0);
 		if(midiMsg.isSustainPedalOn())
 		{
 			synth.sustainOn();

@@ -39,14 +39,39 @@ private:
 
 	float syncRate;
 	bool clockSynced;
+	bool oneShot;
 	bool keySynced;
 
+	float symmetry;
+	float symmetryOffset;
+	float symmetryInv;
+	float symmetryRevInv;
+
+	enum WaveType { OFF, TRIANGLE, PULSE, S_H } wavetype;
+
+	struct WaveDef {
+		enum WaveType wavetype;
+		float symmetry;
+	} WaveDef_Table[14] = {
+		 { OFF, 0 }, // Off, (symmetry unused)
+		 { TRIANGLE, 0 }, // Tri peak at 0%/Falling saw
+		 { TRIANGLE, 0.10 }, // Tri peak at 10%
+		 { TRIANGLE, 0.5 }, // Tri symmetric
+		 { TRIANGLE, 0.90 }, // Tri peak at 90%
+		 { TRIANGLE, 1 }, // Tri peak at 100%/Rising saw
+		 { PULSE, 0.25 }, // Pulse 25% duty cycle
+		 { PULSE, 0.5 }, // Square (symmetric pulse)
+		 { PULSE, 0.75 }, // Pulse 75% duty cycle
+		 { S_H, 0 }, // S/H (symmetry unused)
+	};
 public:
 	float Frequency;
 	float phaseInc;
 	float frequency;//frequency value without sync
 	float rawFrequency;
 	int waveForm;
+	bool invert;
+	bool unipolar;
 	Lfo()
 	{
 		phaseInc = 0;
@@ -59,6 +84,10 @@ public:
 		Frequency=1;
 		phase=0;
 		spread=1;
+		waveForm=0;
+		symmetry=0.5;
+		symmetryOffset=0;
+		invert=unipolar=false;
 		sh=0;
 		newCycle=false;
 		rg=Random();
@@ -79,11 +108,27 @@ public:
 		if (!keySynced)
 			phase = 1;
 	}
+	void setSymmetryOffset()
+	{
+		// symmetryOffset is where the waveform starts in LFO
+		// mode, relative to the oneshot/envelope mode, where
+		// it starts at the lowest point. In LFO mode, the triangle
+		// waveform always starts at half the amplitude (= zero
+		// when the waveform is bipolar)
+		symmetryOffset = oneShot ? 0 : symmetry * 0.5;
+	}
+	void setOneShot(bool enable)
+	{
+		oneShot = enable;
+		setSymmetryOffset();
+	}
 	// Reset phase if in keySync mode
 	void keyResetPhase()
 	{
-		if (keySynced)
-			phase = 1;
+		if (keySynced) {
+			phase = 0;
+			newCycle = true;
+		}
 	}
 	// Sync phase when voice enabled
 	void phaseSync(Lfo &masterLfo)
@@ -109,24 +154,36 @@ public:
 	inline float getVal()
 	{
 		float Res = 0;
-		switch (waveForm)
-		// OFF - TRI - SQU - SAWU - SAWD - S/H
+		float tmpPh = phase;
+		switch (wavetype)
 		{
-			case 0: break;
-			case 1: Res = phase < 0.25 ? 4 * phase :
-				      phase < 0.75 ? 2 - 4 * phase :
-					             4 * phase - 4;
+			case OFF:
+				 break;
+			case TRIANGLE:
+				tmpPh += symmetryOffset;
+				tmpPh -= (tmpPh > 1); // Handle wrap
+				// By using <= here, the reverse sawtooth
+				// will stop at its maximum point in oneshot
+				// mode, effectively turning it into an attack
+				// only envelope, which is more useful than the
+				// saw which drops directly to zero.
+				Res = tmpPh <= symmetry ? tmpPh * symmetryInv :
+							 (1 - tmpPh) * symmetryRevInv;
 				break;
-			case 2: Res = phase < 0.5 ? 1 : -1;
+			case PULSE:
+				Res = tmpPh < symmetry ? 1 : 0;
 				break;
-			case 3: Res = phase * 2 - 1;
-				break;
-			case 4: Res = 1 - 2 * phase;
-				break;
-			case 5: if (newCycle)
-					sh = rg.nextFloat()*2-1;
+			case S_H:
+				if (newCycle)
+					sh = rg.nextFloat();
 				Res = sh;
 				break;
+		}
+		if (wavetype != OFF) {
+			if (!unipolar)
+				Res = Res * 2 - 1;
+			if (invert)
+				Res = -Res;
 		}
 		newCycle = false;
 		return tptlpupw(s1, Res,3000,SampleRateInv);
@@ -138,13 +195,20 @@ public:
 	}
 	inline void update()
 	{
-		phase+=((phaseInc * SampleRateInv));
-		if(phase > 1)
-		{
-			phase-=1;
-			newCycle = true;
+		if (oneShot) {
+			// Oneshot mode - stop when phase reaches 1
+			if (phase < 1)
+				phase+=((phaseInc * SampleRateInv));
+			if (phase > 1)
+				phase = 1;
+		} else {
+			// Normal LFO mode - reset phase when > 1
+			phase+=((phaseInc * SampleRateInv));
+			if (phase > 1) {
+				phase -= 1;
+				newCycle = true;
+			}
 		}
-
 	}
 	void setSpread(float val)
 	{
@@ -164,6 +228,15 @@ public:
 		{
 			recalcRate(param);
 		}
+	}
+	void setWaveForm(int select)
+	{
+		struct WaveDef &wavedef = WaveDef_Table[select];
+		wavetype = wavedef.wavetype;
+		symmetry = wavedef.symmetry;
+		symmetryInv = symmetry > 0.0 ? 1.0 / symmetry : 0;
+		symmetryRevInv = symmetry < 1.0 ? 1.0 / (1.0 - symmetry) : 0;
+		setSymmetryOffset();
 	}
 	void recalcRate(float param)
 	{

@@ -67,6 +67,7 @@ public:
 	Random ng;
 
 	float vamp,vflt,vgen;
+	float velscale;
 
 	float cutoff;
 	float fenvamt;
@@ -103,15 +104,15 @@ public:
 	float porta;
 	float prtst;
 
-	float modWheelSmoothed;
-
 	float cutoffwas,envelopewas;
 
 	float pitchWheel;
 	float pitchWheelAmt;
 	bool pitchWheelOsc1Only;
 
-	float lfo1pitchamt,lfo1pwamt,lfo2pitchamt,lfo2pwamt;
+	float lfo1amt, lfo2amt;
+	float lfo1modamt, lfo2modamt;
+	float modw, aftert;
 	bool lfo1o1,lfo1o2,lfo1f;
 	bool lfo1pw1,lfo1pw2;
 	bool lfo2o1,lfo2o2,lfo2f;
@@ -124,12 +125,13 @@ public:
 	bool invertFenv;
 	bool unipolGenv;
 	bool invertGenv;
-
+	bool lfo1modw, lfo1after, lfo1genv;
+	bool lfo2modw, lfo2after, lfo2genv;
 
 	bool fourpole;
 
 
-	DelayLine<Samples*2> lenvd,fenvd,genvd,lfo1d,lfo2d;
+	DelayLine<Samples*2> lenvd,fenvd,genvd,lfo1d,lfo2d,lfo1m,lfo2m;
 
 	float oscpsw;
 	float briHold;
@@ -150,6 +152,7 @@ public:
 		sustainHold = false;
 		shouldProcessed = false;
 		vamp=vflt=vgen=0;
+		velscale=1;
 		velocityValue=0;
 		fourpole = false;
 		brightCoef =briHold= 1;
@@ -194,19 +197,7 @@ public:
 	inline float ProcessSample()
 	{
 		float oscps, oscmod;
-		float lfo1In, lfo2In;
 
-		lfo1In = lfo1.getVal() * modWheelSmoothed;
-		lfo2In = lfo2.getVal();
-
-		//portamento on osc input voltage
-		//implements rc circuit
-		// Midi note 81 is A5 (880 Hz), so ptNote == 0 => 880 Hz
-		float ptNote  =tptlpupw(prtst, midiIndx-81, porta * (1+PortaSpread*PortaSpreadAmt),sampleRateInv);
-		osc.notePlaying = ptNote;
-		//both envelopes and filter cv need a delay equal to osc internal delay
-		float lfo1Delayed = lfo1d.feedReturn(lfo1In);
-		float lfo2Delayed = lfo2d.feedReturn(lfo2In);
 		//bipolar filter envelope undelayed
 		float envm = 2 * (fenv.processSample() * (1 - (1-2*velocityValue)*vflt)) - 1;
 		if(invertFenv)
@@ -219,13 +210,42 @@ public:
 		if (invertGenv)
 			genvm = -genvm;
 
+		//Multiplying modamt with (1-lfoamt) scales
+		//the modulation so that the total value never goes above 1.0
+		//no matter what combination of amount and modwheel/aftertouch
+		//is dialed in.
+		float lfo1totalamt = lfo1amt +
+				     ((lfo1modw ? modw : 0) +
+				      (lfo1after ? aftert : 0) +
+				      (lfo1genv ? genvm*genvpwamt : 0)) *
+					lfo1modamt * (1 - lfo1amt);
+		float lfo2totalamt = lfo2amt +
+				     ((lfo2modw ? modw : 0) +
+				      (lfo2after ? aftert : 0) +
+				      (lfo2genv ? genvm*genvpwamt : 0)) *
+					 lfo2modamt * (1 - lfo2amt);
+
+		float lfo1In = lfo1.getVal();
+		float lfo1mod = lfo1In * lfo1totalamt;
+		float lfo2In = lfo2.getVal();
+		float lfo2mod = lfo2In * lfo2totalamt;
+
+		//portamento on osc input voltage
+		//implements rc circuit
+		// Midi note 81 is A5 (880 Hz), so ptNote == 0 => 880 Hz
+		float ptNote  =tptlpupw(prtst, midiIndx-81, porta * (1+PortaSpread*PortaSpreadAmt),sampleRateInv);
+		osc.notePlaying = ptNote;
+		//both envelopes and filter cv need a delay equal to osc internal delay
+		float lfo1Delayed = lfo1d.feedReturn(lfo1In) * lfo1m.feedReturn(lfo1totalamt);
+		float lfo2Delayed = lfo2d.feedReturn(lfo2In) * lfo2m.feedReturn(lfo2totalamt);
+
 		//PW modulation
-		osc.pw1 = (lfo1pw1?(lfo1In*lfo1pwamt):0) + (lfo2pw1?(lfo2In*lfo2pwamt):0) + (genvpw1?(genvm*genvpwamt):0);
-		osc.pw2 = (lfo1pw2?(lfo1In*lfo1pwamt):0) + (lfo2pw2?(lfo2In*lfo2pwamt):0) + (genvpw2?(genvm*genvpwamt):0);
+		osc.pw1 = (lfo1pw1?lfo1mod:0) + (lfo2pw1?lfo2mod:0) + (genvpw1?(genvm*genvpwamt):0);
+		osc.pw2 = (lfo1pw2?lfo1mod:0) + (lfo2pw2?lfo2mod:0) + (genvpw2?(genvm*genvpwamt):0);
 
 		//Pitch modulation
-		osc.pto1 =   pitchWheel*pitchWheelAmt + (lfo1o1?(lfo1In*lfo1pitchamt):0) + (lfo2o1?(lfo2In*lfo2pitchamt):0) + (genvo1?(genvm*genvpitchamt):0);
-		osc.pto2 =  (!pitchWheelOsc1Only?(pitchWheel*pitchWheelAmt):0) + (lfo1o2?(lfo1In*lfo1pitchamt):0) + (lfo2o2?(lfo2In*lfo2pitchamt):0) + (genvo2?(genvm*genvpitchamt):0);
+		osc.pto1 =   pitchWheel*pitchWheelAmt + (lfo1o1?lfo1mod*12:0) + (lfo2o1?lfo2mod*12:0) + (genvo1?(genvm*genvpitchamt):0);
+		osc.pto2 =  (!pitchWheelOsc1Only?(pitchWheel*pitchWheelAmt):0) + (lfo1o2?lfo1mod*12:0) + (lfo2o2?lfo2mod*12:0) + (genvo2?(genvm*genvpitchamt):0);
 
 		//variable sort magic - upsample trick
 		float envVal = lenvd.feedReturn(env.processSample() * (1 - (1-velocityValue)*vamp));
@@ -239,8 +259,8 @@ public:
 		//needs to be done after we've gotten oscmod
 		// ptNote+40 => F2 = 87.31 Hz is base note for filter tracking
 		float cutoffnote =
-			(lfo1f?(lfo1Delayed*lfo1pitchamt):0)+
-			(lfo2f?(lfo2Delayed*lfo2pitchamt):0)+
+			(lfo1f?(lfo1Delayed*60):0)+
+			(lfo2f?(lfo2Delayed*60):0)+
 			cutoff+
 			FltSpread*FltSpreadAmt+
 			fenvamt*fenvd.feedReturn(envm)+
@@ -389,7 +409,9 @@ public:
 		}
 		shouldProcessed = true;
 		if(velocity!=-0.5)
-			velocityValue = velocity;
+			// Scale velocity according to velscale [ 8..1..1/8 ]
+			// range is same (0..1 -> 0..1), but scale changes
+			velocityValue = powf(velocity, velscale);
 		midiIndx = mididx;
 		if(!Active || multiTrig) {
 			env.triggerAttack();
