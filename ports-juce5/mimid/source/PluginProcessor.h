@@ -1,10 +1,11 @@
 /*
 	==============================================================================
-	This file is part of Obxd synthesizer.
+	This file is part of Mimid synthesizer.
 
 	Copyright © 2013-2014 Filatov Vadim
+	Copyright 2023 Ricard Wanderlof
 	
-	Contact author via email :
+	Contact original author via email :
 	justdat_@_e1.ru
 
 	This file may be licensed under the terms of of the
@@ -113,15 +114,15 @@ static inline float fxbSwapFloat (const float x) noexcept
 //==============================================================================
 /**
 */
-class ObxdAudioProcessor :
+class MimidAudioProcessor :
 	public AudioProcessor,
 	// public AudioProcessorListener,
 	public ChangeBroadcaster
 {
 public:
     //==============================================================================
-    ObxdAudioProcessor();
-    ~ObxdAudioProcessor();
+    MimidAudioProcessor();
+    ~MimidAudioProcessor();
 
     //==============================================================================
     void prepareToPlay (double sampleRate, int samplesPerBlock);
@@ -210,7 +211,7 @@ private:
 	InterProcessLock configLock;
 
 	//==============================================================================
-	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ObxdAudioProcessor)
+	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MimidAudioProcessor)
 };
 
 #endif  // PLUGINPROCESSOR_H_INCLUDED

@@ -18,7 +18,7 @@ Copyright 2023 Ricard Wanderlof
 #define S(T) (juce::String(T))
 
 //==============================================================================
-ObxdAudioProcessor::ObxdAudioProcessor()
+MimidAudioProcessor::MimidAudioProcessor()
 	: programs()
 	, configLock("__" JucePlugin_Name "ConfigLock__")
 {
@@ -45,14 +45,14 @@ ObxdAudioProcessor::ObxdAudioProcessor()
 	}
 }
 
-ObxdAudioProcessor::~ObxdAudioProcessor()
+MimidAudioProcessor::~MimidAudioProcessor()
 {
 	config->saveIfNeeded();
 	config = nullptr;
 }
 
 //==============================================================================
-void ObxdAudioProcessor::initAllParams()
+void MimidAudioProcessor::initAllParams()
 {
 	for (int i = 0 ; i < PARAM_COUNT; i++)
 	{
@@ -61,17 +61,17 @@ void ObxdAudioProcessor::initAllParams()
 }
 
 //==============================================================================
-int ObxdAudioProcessor::getNumParameters()
+int MimidAudioProcessor::getNumParameters()
 {
 	return PARAM_COUNT;
 }
 
-float ObxdAudioProcessor::getParameter (int index)
+float MimidAudioProcessor::getParameter (int index)
 {
 	return programs.currentProgramPtr->values[index];
 }
 
-void ObxdAudioProcessor::setParameter (int index, float newValue)
+void MimidAudioProcessor::setParameter (int index, float newValue)
 {
 	programs.currentProgramPtr->values[index] = newValue;
 	switch(index)
@@ -315,7 +315,7 @@ void ObxdAudioProcessor::setParameter (int index, float newValue)
 		sendChangeMessage();
 }
 
-const String ObxdAudioProcessor::getParameterName (int index)
+const String MimidAudioProcessor::getParameterName (int index)
 {
 	switch(index)
 	{
@@ -481,38 +481,38 @@ const String ObxdAudioProcessor::getParameterName (int index)
 	return String();
 }
 
-const String ObxdAudioProcessor::getParameterText (int index)
+const String MimidAudioProcessor::getParameterText (int index)
 {
 	return String(programs.currentProgramPtr->values[index],2);
 }
 
 //==============================================================================
-const String ObxdAudioProcessor::getName() const
+const String MimidAudioProcessor::getName() const
 {
 	return JucePlugin_Name;
 }
 
-const String ObxdAudioProcessor::getInputChannelName (int channelIndex) const
+const String MimidAudioProcessor::getInputChannelName (int channelIndex) const
 {
 	return String (channelIndex + 1);
 }
 
-const String ObxdAudioProcessor::getOutputChannelName (int channelIndex) const
+const String MimidAudioProcessor::getOutputChannelName (int channelIndex) const
 {
 	return String (channelIndex + 1);
 }
 
-bool ObxdAudioProcessor::isInputChannelStereoPair (int index) const
+bool MimidAudioProcessor::isInputChannelStereoPair (int index) const
 {
 	return true;
 }
 
-bool ObxdAudioProcessor::isOutputChannelStereoPair (int index) const
+bool MimidAudioProcessor::isOutputChannelStereoPair (int index) const
 {
 	return true;
 }
 
-bool ObxdAudioProcessor::acceptsMidi() const
+bool MimidAudioProcessor::acceptsMidi() const
 {
 #if JucePlugin_WantsMidiInput
 	return true;
@@ -521,7 +521,7 @@ bool ObxdAudioProcessor::acceptsMidi() const
 #endif
 }
 
-bool ObxdAudioProcessor::producesMidi() const
+bool MimidAudioProcessor::producesMidi() const
 {
 #if JucePlugin_ProducesMidiOutput
 	return true;
@@ -530,28 +530,28 @@ bool ObxdAudioProcessor::producesMidi() const
 #endif
 }
 
-bool ObxdAudioProcessor::silenceInProducesSilenceOut() const
+bool MimidAudioProcessor::silenceInProducesSilenceOut() const
 {
 	return false;
 }
 
-double ObxdAudioProcessor::getTailLengthSeconds() const
+double MimidAudioProcessor::getTailLengthSeconds() const
 {
 	return 0.0;
 }
 
 //==============================================================================
-int ObxdAudioProcessor::getNumPrograms()
+int MimidAudioProcessor::getNumPrograms()
 {
 	return PROGRAMCOUNT;
 }
 
-int ObxdAudioProcessor::getCurrentProgram()
+int MimidAudioProcessor::getCurrentProgram()
 {
 	return programs.currentProgram;
 }
 
-void ObxdAudioProcessor::setCurrentProgram (int index)
+void MimidAudioProcessor::setCurrentProgram (int index)
 {
 	programs.currentProgram = index;
 	programs.currentProgramPtr = programs.programs + programs.currentProgram;
@@ -563,18 +563,18 @@ void ObxdAudioProcessor::setCurrentProgram (int index)
 	updateHostDisplay();
 }
 
-const String ObxdAudioProcessor::getProgramName (int index)
+const String MimidAudioProcessor::getProgramName (int index)
 {
 	return programs.programs[index].name;
 }
 
-void ObxdAudioProcessor::changeProgramName (int index, const String& newName)
+void MimidAudioProcessor::changeProgramName (int index, const String& newName)
 {
 	 programs.programs[index].name = newName;
 }
 
 //==============================================================================
-void ObxdAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
+void MimidAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
 {
 	// Use this method as the place to do any pre-playback
 	// initialisation that you need..
@@ -583,12 +583,12 @@ void ObxdAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
 	synth.setSampleRate(sampleRate);
 }
 
-void ObxdAudioProcessor::releaseResources()
+void MimidAudioProcessor::releaseResources()
 {
 
 }
 
-inline void ObxdAudioProcessor::processMidiPerSample(MidiBuffer::Iterator* iter,const int samplePos)
+inline void MimidAudioProcessor::processMidiPerSample(MidiBuffer::Iterator* iter,const int samplePos)
 {
 	while (getNextEvent(iter, samplePos))
 	{
@@ -627,7 +627,7 @@ inline void ObxdAudioProcessor::processMidiPerSample(MidiBuffer::Iterator* iter,
 	}
 }
 
-bool ObxdAudioProcessor::getNextEvent(MidiBuffer::Iterator* iter,const int samplePos)
+bool MimidAudioProcessor::getNextEvent(MidiBuffer::Iterator* iter,const int samplePos)
 {
 	if (hasMidiMessage && midiEventPos <= samplePos)
 	{
@@ -638,7 +638,7 @@ bool ObxdAudioProcessor::getNextEvent(MidiBuffer::Iterator* iter,const int sampl
 	return false;
 }
 
-void ObxdAudioProcessor::processBlock (AudioSampleBuffer& buffer, MidiBuffer& midiMessages)
+void MimidAudioProcessor::processBlock (AudioSampleBuffer& buffer, MidiBuffer& midiMessages)
 {
 	MidiBuffer::Iterator ppp(midiMessages);
 	hasMidiMessage = ppp.getNextEvent(nextMidi,midiEventPos);
@@ -665,18 +665,18 @@ void ObxdAudioProcessor::processBlock (AudioSampleBuffer& buffer, MidiBuffer& mi
 }
 
 //==============================================================================
-bool ObxdAudioProcessor::hasEditor() const
+bool MimidAudioProcessor::hasEditor() const
 {
 	return false;
 }
 
-AudioProcessorEditor* ObxdAudioProcessor::createEditor()
+AudioProcessorEditor* MimidAudioProcessor::createEditor()
 {
 	return NULL;
 }
 
 //==============================================================================
-void ObxdAudioProcessor::getStateInformation (MemoryBlock& destData)
+void MimidAudioProcessor::getStateInformation (MemoryBlock& destData)
 {
 	XmlElement xmlState = XmlElement("Pollux");
 	xmlState.setAttribute(S("currentProgram"), programs.currentProgram);
@@ -700,7 +700,7 @@ void ObxdAudioProcessor::getStateInformation (MemoryBlock& destData)
 	copyXmlToBinary(xmlState,destData);
 }
 
-void ObxdAudioProcessor::setStateInformation (const void* data, int sizeInBytes)
+void MimidAudioProcessor::setStateInformation (const void* data, int sizeInBytes)
 {
 	if (XmlElement* const xmlState = getXmlFromBinary(data,sizeInBytes))
 	{
@@ -729,7 +729,7 @@ void ObxdAudioProcessor::setStateInformation (const void* data, int sizeInBytes)
 	}
 }
 
-void  ObxdAudioProcessor::setCurrentProgramStateInformation(const void* data,int sizeInBytes)
+void  MimidAudioProcessor::setCurrentProgramStateInformation(const void* data,int sizeInBytes)
 {
 	if (XmlElement* const e = getXmlFromBinary(data, sizeInBytes))
 	{
@@ -748,7 +748,7 @@ void  ObxdAudioProcessor::setCurrentProgramStateInformation(const void* data,int
 	}
 }
 
-void ObxdAudioProcessor::getCurrentProgramStateInformation(MemoryBlock& destData)
+void MimidAudioProcessor::getCurrentProgramStateInformation(MemoryBlock& destData)
 {
 	XmlElement xmlState = XmlElement("Pollux");
 
@@ -763,7 +763,7 @@ void ObxdAudioProcessor::getCurrentProgramStateInformation(MemoryBlock& destData
 }
 
 //==============================================================================
-bool ObxdAudioProcessor::loadFromFXBFile(const File& fxbFile)
+bool MimidAudioProcessor::loadFromFXBFile(const File& fxbFile)
 {
 	MemoryBlock mb;
 	if (! fxbFile.loadFileAsData(mb))
@@ -863,7 +863,7 @@ bool ObxdAudioProcessor::loadFromFXBFile(const File& fxbFile)
 	return true;
 }
 
-bool ObxdAudioProcessor::restoreProgramSettings(const fxProgram* const prog)
+bool MimidAudioProcessor::restoreProgramSettings(const fxProgram* const prog)
 {
 	if (compareMagic (prog->chunkMagic, "CcnK")
 		&& compareMagic (prog->fxMagic, "FxCk"))
@@ -880,7 +880,7 @@ bool ObxdAudioProcessor::restoreProgramSettings(const fxProgram* const prog)
 }
 
 //==============================================================================
-void ObxdAudioProcessor::scanAndUpdateBanks()
+void MimidAudioProcessor::scanAndUpdateBanks()
 {
 	bankFiles.clearQuick();
 
@@ -891,18 +891,18 @@ void ObxdAudioProcessor::scanAndUpdateBanks()
 	}
 }
 
-const Array<File>& ObxdAudioProcessor::getBankFiles() const
+const Array<File>& MimidAudioProcessor::getBankFiles() const
 {
 	return bankFiles;
 }
 
-File ObxdAudioProcessor::getCurrentBankFile() const
+File MimidAudioProcessor::getCurrentBankFile() const
 {
 	return getBanksFolder().getChildFile(currentBank);
 }
 
 //==============================================================================
-File ObxdAudioProcessor::getDocumentFolder() const
+File MimidAudioProcessor::getDocumentFolder() const
 {
 	File folder = File::getSpecialLocation(File::userDocumentsDirectory).getChildFile("Pollux").getChildFile("MiMi-d");
 	if (folder.isSymbolicLink())
@@ -910,22 +910,22 @@ File ObxdAudioProcessor::getDocumentFolder() const
 	return folder;
 }
 
-File ObxdAudioProcessor::getSkinFolder() const
+File MimidAudioProcessor::getSkinFolder() const
 {
 	return getDocumentFolder().getChildFile("Skins");
 }
 
-File ObxdAudioProcessor::getBanksFolder() const
+File MimidAudioProcessor::getBanksFolder() const
 {
 	return getDocumentFolder().getChildFile("Banks");
 }
 
-File ObxdAudioProcessor::getCurrentSkinFolder() const
+File MimidAudioProcessor::getCurrentSkinFolder() const
 {
 	return getSkinFolder().getChildFile(currentSkin);
 }
 
-void ObxdAudioProcessor::setCurrentSkinFolder(const String& folderName)
+void MimidAudioProcessor::setCurrentSkinFolder(const String& folderName)
 {
 	currentSkin = folderName;
 
@@ -937,5 +937,5 @@ void ObxdAudioProcessor::setCurrentSkinFolder(const String& folderName)
 // This creates new instances of the plugin..
 AudioProcessor* JUCE_CALLTYPE createPluginFilter()
 {
-	return new ObxdAudioProcessor();
+	return new MimidAudioProcessor();
 }
