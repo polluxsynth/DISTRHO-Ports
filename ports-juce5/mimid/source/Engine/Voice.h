@@ -208,12 +208,12 @@ public:
 		float lfo1Delayed = lfo1d.feedReturn(lfo1In);
 		float lfo2Delayed = lfo2d.feedReturn(lfo2In);
 		//bipolar filter envelope undelayed
-		float envm = 2 * (fenv.processSample() * (1 - (1-velocityValue)*vflt)) - 1;
+		float envm = 2 * (fenv.processSample() * (1 - (1-2*velocityValue)*vflt)) - 1;
 		if(invertFenv)
 			envm = -envm;
 
 		//filter envelope undelayed
-		float genvm = genv.processSample() * (1 - (1-velocityValue)*vgen);
+		float genvm = genv.processSample() * (1 - (1-2*velocityValue)*vgen);
 		if (!unipolGenv) // Bipolar
 			genvm = 2 * genvm - 1;
 		if (invertGenv)
