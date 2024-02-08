@@ -113,8 +113,7 @@ void MimidAudioProcessor::setParameter (int index, float newValue)
 	case VFLTENV:
 		synth.procFltVelocityAmount(newValue);
 		break;
-	case VGENENV:
-		synth.procGenVelocityAmount(newValue);
+	case VGENENV_NOTUSED:
 		break;
 	case ASPLAYEDALLOCATION_NOTUSED:
 		break;
@@ -297,32 +296,23 @@ void MimidAudioProcessor::setParameter (int index, float newValue)
 	case FREL:
 		synth.processFilterEnvelopeRelease(newValue);
 		break;
-	case GATK:
-		synth.processGenEnvelopeAttack(newValue);
+	case GATK_NOTUSED:
 		break;
-	case GDEC:
-		synth.processGenEnvelopeDecay(newValue);
+	case GDEC_NOTUSED:
 		break;
-	case GSUS:
-		synth.processGenEnvelopeSustain(newValue);
+	case GSUS_NOTUSED:
 		break;
-	case GSUST:
-		synth.processGenEnvelopeSustainTime(newValue);
+	case GSUST_NOTUSED:
 		break;
-	case GREL:
-		synth.processGenEnvelopeRelease(newValue);
+	case GREL_NOTUSED:
 		break;
-	case GAMT:
-		synth.processGenEnvelopeAmount(newValue);
+	case GAMT_NOTUSED:
 		break;
-	case GDEST:
-		synth.processGenEnvelopeDest(newValue);
+	case GDEST_NOTUSED:
 		break;
-	case GUNI:
-		synth.processGenEnvelopeUnipol(newValue);
+	case GUNI_NOTUSED:
 		break;
-	case GINV:
-		synth.processGenEnvelopeInvert(newValue);
+	case GINV_NOTUSED:
 		break;
 	case ASGN_RSZ:
 		synth.procKeyAsgnRsz(newValue);
@@ -422,8 +412,8 @@ const String MimidAudioProcessor::getParameterName (int index)
 		return S("VAmpFactor");
 	case VFLTENV:
 		return S("VFltFactor");
-	case VGENENV:
-		return S("VGenFactor");
+	case VGENENV_NOTUSED:
+		return S("VGenFactor_NOTUSED");
 	case ASPLAYEDALLOCATION_NOTUSED:
 		return S("AsPlayedAllocation_NOTUSED");
 	case LFO2FREQ:
@@ -582,27 +572,27 @@ const String MimidAudioProcessor::getParameterName (int index)
 		return S("FilterSustainTime");
 	case FREL:
 		return S("FilterRelease");
-	case GATK:
-		return S("GenAttack");
-	case GDEC:
-		return S("GenDecay");
-	case GSUS:
-		return S("GenSustain");
-	case GSUST:
-		return S("GenSustainTime");
-	case GREL:
-		return S("GenRelease");
-	case GAMT:
-		return S("GenEnvAmount");
+	case GATK_NOTUSED:
+		return S("GenAttack_NOTUSED");
+	case GDEC_NOTUSED:
+		return S("GenDecay_NOTUSED");
+	case GSUS_NOTUSED:
+		return S("GenSustain_NOTUSED");
+	case GSUST_NOTUSED:
+		return S("GenSustainTime_NOTUSED");
+	case GREL_NOTUSED:
+		return S("GenRelease_NOTUSED");
+	case GAMT_NOTUSED:
+		return S("GenEnvAmount_NOTUSED");
 		break;
-	case GDEST:
-		return S("GenEnvDest");
+	case GDEST_NOTUSED:
+		return S("GenEnvDest_NOTUSED");
 		break;
-	case GUNI:
-		return S("GenEnvUnipol");
+	case GUNI_NOTUSED:
+		return S("GenEnvUnipol_NOTUSED");
 		break;
-	case GINV:
-		return S("GenEnvInvert");
+	case GINV_NOTUSED:
+		return S("GenEnvInvert_NOTUSED");
 		break;
 	case OSC1FLTMOD:
 		return S("Osc1FilterMod");

@@ -227,13 +227,6 @@ public:
 			synth.voices[i].vflt= val;
 		}
 	}
-	void procGenVelocityAmount(float val)
-	{
-		for(int i = 0 ; i < synth.MAX_VOICES;i++)
-		{
-			synth.voices[i].vgen= val;
-		}
-	}
 	void procVelocityScale(float scale)
 	{
 		scale = 1 - 2 * scale; // 0..1 -> 1..0..-1
@@ -402,10 +395,10 @@ public:
 	void procLfo1Controller(float val)
 	{
 		int intval = roundToInt(val*3);
-		// off - modwheel - aftertouch - genv
+		// off - modwheel - aftertouch - lfo2
 		ForEachVoice(lfo1modw = (intval == 1));
 		ForEachVoice(lfo1after = (intval == 2));
-		ForEachVoice(lfo1genv = (intval == 3));
+		ForEachVoice(lfo1vel = (intval == 3));
 	}
 	void procLfo1ControllerAmt(float val)
 	{
@@ -414,10 +407,10 @@ public:
 	void procLfo2Controller(float val)
 	{
 		int intval = roundToInt(val*3);
-		// off - modwheel - aftertouch - genv
+		// off - modwheel - aftertouch - lfo1
 		ForEachVoice(lfo2modw = (intval == 1));
 		ForEachVoice(lfo2after = (intval == 2));
-		ForEachVoice(lfo2genv = (intval == 3));
+		ForEachVoice(lfo2vel = (intval == 3));
 	}
 	void procLfo2ControllerAmt(float val)
 	{
@@ -702,87 +695,6 @@ public:
 		for(int i = 0 ; i < synth.MAX_VOICES;i++)
 		{
 			synth.voices[i].fenv.setSustain(param);
-		}
-	}
-	void processGenEnvelopeAttack(float param)
-	{
-		for(int i = 0 ; i < synth.MAX_VOICES;i++)
-		{
-			synth.voices[i].genv.setAttack(logsc(param,1,60000,900));
-		}
-	}
-	void processGenEnvelopeDecay(float param)
-	{
-		for(int i = 0 ; i < synth.MAX_VOICES;i++)
-		{
-			synth.voices[i].genv.setDecay(logsc(param,1,60000,900));
-		}
-	}
-	void processGenEnvelopeSustainTime(float param)
-	{
-		for(int i = 0 ; i < synth.MAX_VOICES;i++)
-		{
-			synth.voices[i].genv.setSustainTime(logsc(param,1,60000,900));
-			// When time is set to 1.0, sustain time is infinite
-			synth.voices[i].genv.setAdsr(param > 0.991);
-		}
-	}
-	void processGenEnvelopeRelease(float param)
-	{
-		for(int i = 0 ; i < synth.MAX_VOICES;i++)
-		{
-			synth.voices[i].genv.setRelease(logsc(param,1,60000,900));
-		}
-	}
-	void processGenEnvelopeSustain(float param)
-	{
-		for(int i = 0 ; i < synth.MAX_VOICES;i++)
-		{
-			synth.voices[i].genv.setSustain(param);
-		}
-	}
-	void processGenEnvelopeAmount(float param)
-	{
-		for(int i = 0 ; i < synth.MAX_VOICES;i++)
-		{
-			// Like LFOs, log scale to +/- 60 semitones
-			//synth.voices[i].genvpitchamt = logsc(logsc(param,0,1,60),0,60,10);
-			synth.voices[i].genvpitchamt = logsc(param,0,800);
-			// PW modulated +/- 1.0 (full range)
-			synth.voices[i].genvpwamt = param;
-		}
-	}
-	void processGenEnvelopeDest(float param)
-	{
-		int intparam = roundToInt(param*7);
-		// off, osc1, osc1+2, osc2, pw1, pw1+2, pw2, resonance
-		// 0    1     2       3     4    5      6    7
-		bool genvo1 = intparam == 1 || intparam == 2;
-		bool genvo2 = intparam == 2 || intparam == 3;
-		bool genvpw1 = intparam == 4 || intparam == 5;
-		bool genvpw2 = intparam == 5 || intparam == 6;
-		bool genvres = intparam == 7;
-		for(int i = 0 ; i < synth.MAX_VOICES;i++)
-		{
-			synth.voices[i].genvo1 = genvo1;
-			synth.voices[i].genvo2 = genvo2;
-			synth.voices[i].genvpw1 = genvpw1;
-			synth.voices[i].genvpw2 = genvpw2;
-			synth.voices[i].genvres = genvres;
-		}
-	}
-	void processGenEnvelopeUnipol(float param)
-	{
-		for(int i = 0 ; i < synth.MAX_VOICES;i++)
-		{
-			synth.voices[i].unipolGenv = param > 0.5;
-		}
-	}
-	void processGenEnvelopeInvert(float param)
-	{
-		for(int i = 0 ; i < synth.MAX_VOICES;i++)
-		{
-			synth.voices[i].invertGenv = param > 0.5;
 		}
 	}
 	void processEnvelopeSpread(float param)

@@ -57,7 +57,6 @@ public:
 
 	AdssrEnvelope env;
 	AdssrEnvelope fenv;
-	AdssrEnvelope genv;
 	Lfo lfo1;
 	Lfo lfo2;
 	Oscillators osc;
@@ -66,7 +65,7 @@ public:
 
 	Random ng;
 
-	float vamp,vflt,vgen;
+	float vamp,vflt;
 	float velscale;
 
 	float cutoff;
@@ -75,7 +74,6 @@ public:
 
 	float EnvSpread;
 	float FenvSpread;
-	float GenvSpread;
 
 	float Lfo1Spread;
 	float Lfo2Spread;
@@ -120,18 +118,14 @@ public:
 
 	bool selfOscPush;
 
-	float genvpitchamt,genvpwamt;
-	bool genvo1, genvo2, genvpw1, genvpw2, genvres;
 	bool invertFenv;
-	bool unipolGenv;
-	bool invertGenv;
-	bool lfo1modw, lfo1after, lfo1genv;
-	bool lfo2modw, lfo2after, lfo2genv;
+	bool lfo1modw, lfo1after, lfo1vel;
+	bool lfo2modw, lfo2after, lfo2vel;
 
 	bool fourpole;
 
 
-	DelayLine<Samples*2> lenvd,fenvd,genvd,lfo1d,lfo2d,lfo1m,lfo2m;
+	DelayLine<Samples*2> lenvd,fenvd,lfo1d,lfo2d;
 
 	float oscpsw;
 	float briHold;
@@ -146,12 +140,10 @@ public:
 	{
 		selfOscPush = false;
 		invertFenv = false;
-		unipolGenv = false;
-		invertGenv = false;
 		ng = Random(Random::getSystemRandom().nextInt64());
 		sustainHold = false;
 		shouldProcessed = false;
-		vamp=vflt=vgen=0;
+		vamp=vflt=0;
 		velscale=1;
 		velocityValue=0;
 		fourpole = false;
@@ -177,7 +169,6 @@ public:
 		levelSpread = Random::getSystemRandom().nextFloat()-0.5;
 		EnvSpread = Random::getSystemRandom().nextFloat()-0.5;
 		FenvSpread = Random::getSystemRandom().nextFloat()-0.5;
-		GenvSpread = Random::getSystemRandom().nextFloat()-0.5;
 		Lfo1Spread = Random::getSystemRandom().nextFloat()-0.5;
 		Lfo2Spread = Random::getSystemRandom().nextFloat()-0.5;
 		FltSpread = Random::getSystemRandom().nextFloat()-0.5;
@@ -204,11 +195,9 @@ public:
 			envm = -envm;
 
 		//filter envelope undelayed
-		float genvm = genv.processSample() * (1 - (1-2*velocityValue)*vgen);
-		if (!unipolGenv) // Bipolar
-			genvm = 2 * genvm - 1;
-		if (invertGenv)
-			genvm = -genvm;
+
+		float lfo1In = lfo1.getVal();
+		float lfo2In = lfo2.getVal();
 
 		//Multiplying modamt with (1-lfoamt) scales
 		//the modulation so that the total value never goes above 1.0
@@ -217,17 +206,15 @@ public:
 		float lfo1totalamt = lfo1amt +
 				     ((lfo1modw ? modw : 0) +
 				      (lfo1after ? aftert : 0) +
-				      (lfo1genv ? genvm*genvpwamt : 0)) *
+				      (lfo1vel ? velocityValue : 0)) *
 					lfo1modamt * (1 - lfo1amt);
 		float lfo2totalamt = lfo2amt +
 				     ((lfo2modw ? modw : 0) +
 				      (lfo2after ? aftert : 0) +
-				      (lfo2genv ? genvm*genvpwamt : 0)) *
+				      (lfo2vel ? velocityValue : 0)) *
 					 lfo2modamt * (1 - lfo2amt);
 
-		float lfo1In = lfo1.getVal();
 		float lfo1mod = lfo1In * lfo1totalamt;
-		float lfo2In = lfo2.getVal();
 		float lfo2mod = lfo2In * lfo2totalamt;
 
 		//portamento on osc input voltage
@@ -236,16 +223,16 @@ public:
 		float ptNote  =tptlpupw(prtst, midiIndx-81, porta * (1+PortaSpread*PortaSpreadAmt),sampleRateInv);
 		osc.notePlaying = ptNote;
 		//both envelopes and filter cv need a delay equal to osc internal delay
-		float lfo1Delayed = lfo1d.feedReturn(lfo1In) * lfo1m.feedReturn(lfo1totalamt);
-		float lfo2Delayed = lfo2d.feedReturn(lfo2In) * lfo2m.feedReturn(lfo2totalamt);
+		float lfo1Delayed = lfo1d.feedReturn(lfo1mod);
+		float lfo2Delayed = lfo2d.feedReturn(lfo2mod);
 
 		//PW modulation
-		osc.pw1 = (lfo1pw1?lfo1mod:0) + (lfo2pw1?lfo2mod:0) + (genvpw1?(genvm*genvpwamt):0);
-		osc.pw2 = (lfo1pw2?lfo1mod:0) + (lfo2pw2?lfo2mod:0) + (genvpw2?(genvm*genvpwamt):0);
+		osc.pw1 = (lfo1pw1?lfo1mod:0) + (lfo2pw1?lfo2mod:0);
+		osc.pw2 = (lfo1pw2?lfo1mod:0) + (lfo2pw2?lfo2mod:0);
 
 		//Pitch modulation
-		osc.pto1 =   pitchWheel*pitchWheelAmt + (lfo1o1?lfo1mod*12:0) + (lfo2o1?lfo2mod*12:0) + (genvo1?(genvm*genvpitchamt):0);
-		osc.pto2 =  (!pitchWheelOsc1Only?(pitchWheel*pitchWheelAmt):0) + (lfo1o2?lfo1mod*12:0) + (lfo2o2?lfo2mod*12:0) + (genvo2?(genvm*genvpitchamt):0);
+		osc.pto1 =   pitchWheel*pitchWheelAmt + (lfo1o1?lfo1mod*12:0) + (lfo2o1?lfo2mod*12:0);
+		osc.pto2 =  (!pitchWheelOsc1Only?(pitchWheel*pitchWheelAmt):0) + (lfo1o2?lfo1mod*12:0) + (lfo2o2?lfo2mod*12:0);
 
 		//variable sort magic - upsample trick
 		float envVal = lenvd.feedReturn(env.processSample() * (1 - (1-velocityValue)*vamp));
@@ -308,9 +295,8 @@ public:
 
 		float x1 = oscps;
 		//TODO: filter oscmod as well to reduce aliasing?
-		float genvmdelayed = genvd.feedReturn(genvm);
 		// Cap resonance at 0 and +1 to avoid nasty artefacts
-		float rescalc = jmin(jmax(res + (genvres?(genvpwamt*genvmdelayed):0), 0.0f), 1.0f);
+		float rescalc = jmin(jmax(res, 0.0f), 1.0f);
 
 		if(fourpole)
 			x1 = flt.Apply4Pole(x1, cutoffcalc, rescalc);
@@ -353,7 +339,6 @@ public:
 		// The total range will then be 0.67 .. 1.5 .
 		env.setSpread(expf(EnvSpread*d * 2 * logf(1.5)));
 		fenv.setSpread(expf(EnvSpread*d * 2 * logf(1.5)));
-		genv.setSpread(expf(EnvSpread*d * 2 * logf(1.5)));
 	}
 	void setLfoSpreadAmt(float d)
 	{
@@ -378,7 +363,6 @@ public:
 		osc.setSampleRate(sr);
 		env.setSampleRate(sr);
 		fenv.setSampleRate(sr);
-		genv.setSampleRate(sr);
 		lfo1.setSampleRate(sr);
 		lfo2.setSampleRate(sr);
 		SampleRate = sr;
@@ -394,7 +378,6 @@ public:
 	{
 		env.ResetEnvelopeState();
 		fenv.ResetEnvelopeState();
-		genv.ResetEnvelopeState();
 	}
 	void NoteOn(int mididx,float velocity,bool multiTrig)
 	{
@@ -404,7 +387,6 @@ public:
 			//Not doing this will cause clicks or glitches
 			lenvd.fillZeroes();
 			fenvd.fillZeroes();
-			genvd.fillZeroes();
 			ResetEnvelope();
 		}
 		shouldProcessed = true;
@@ -416,9 +398,8 @@ public:
 		if(!Active || multiTrig) {
 			env.triggerAttack();
 			fenv.triggerAttack();
-			genv.triggerAttack();
-			lfo1.keyResetPhase(); // TODO: Always?
-			lfo2.keyResetPhase(); // TODO: Always?
+			lfo1.keyResetPhase();
+			lfo2.keyResetPhase();
 		}
 		Active = true;
 	}
@@ -427,7 +408,6 @@ public:
 		if(!sustainHold) {
 			env.triggerRelease();
 			fenv.triggerRelease();
-			genv.triggerRelease();
 		}
 		Active = false;
 	}
@@ -442,7 +422,6 @@ public:
 		{
 			env.triggerRelease();
 			fenv.triggerRelease();
-			genv.triggerRelease();
 		}
 
 	}
