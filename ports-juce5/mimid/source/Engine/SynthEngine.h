@@ -356,14 +356,16 @@ public:
 	}
 	void processLfo1Dest(float param)
 	{
-		int intparam = roundToInt(param*7);
-		// off, osc1, osc1+2, osc2, pw1, pw1+2, pw2, filt
-		// 0    1     2       3     4    5      6    7
+		int intparam = roundToInt(param*9);
+		// off, osc1, osc1+2, osc2, pw1, pw1+2, pw2, filt, res, bmod
+		// 0    1     2       3     4    5      6    7     8    9
 		bool lfo1o1 = intparam == 1 || intparam == 2;
 		bool lfo1o2 = intparam == 2 || intparam == 3;
 		bool lfo1pw1 = intparam == 4 || intparam == 5;
 		bool lfo1pw2 = intparam == 5 || intparam == 6;
 		bool lfo1filt = intparam == 7;
+		bool lfo1res = intparam == 8;
+		bool lfo1bmod = intparam == 9;
 		for(int i = 0 ; i < synth.MAX_VOICES;i++)
 		{
 			synth.voices[i].lfo1o1 = lfo1o1;
@@ -371,18 +373,22 @@ public:
 			synth.voices[i].lfo1pw1 = lfo1pw1;
 			synth.voices[i].lfo1pw2 = lfo1pw2;
 			synth.voices[i].lfo1f = lfo1filt;
+			synth.voices[i].lfo1res = lfo1res;
+			synth.voices[i].lfo1bmod = lfo1bmod;
 		}
 	}
 	void processLfo2Dest(float param)
 	{
-		int intparam = roundToInt(param*7);
-		// off, osc1, osc1+2, osc2, pw1, pw1+2, pw2, filt
-		// 0    1     2       3     4    5      6    7
+		int intparam = roundToInt(param*9);
+		// off, osc1, osc1+2, osc2, pw1, pw1+2, pw2, filt, res, bmod
+		// 0    1     2       3     4    5      6    7     8    9
 		bool lfo2o1 = intparam == 1 || intparam == 2;
 		bool lfo2o2 = intparam == 2 || intparam == 3;
 		bool lfo2pw1 = intparam == 4 || intparam == 5;
 		bool lfo2pw2 = intparam == 5 || intparam == 6;
 		bool lfo2filt = intparam == 7;
+		bool lfo2res = intparam == 8;
+		bool lfo2bmod = intparam == 9;
 		for(int i = 0 ; i < synth.MAX_VOICES;i++)
 		{
 			synth.voices[i].lfo2o1 = lfo2o1;
@@ -390,6 +396,8 @@ public:
 			synth.voices[i].lfo2pw1 = lfo2pw1;
 			synth.voices[i].lfo2pw2 = lfo2pw2;
 			synth.voices[i].lfo2f = lfo2filt;
+			synth.voices[i].lfo2res = lfo2res;
+			synth.voices[i].lfo2bmod = lfo2bmod;
 		}
 	}
 	void procLfo1Controller(float val)

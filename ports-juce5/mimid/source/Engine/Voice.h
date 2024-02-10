@@ -111,10 +111,8 @@ public:
 	float lfo1amt, lfo2amt;
 	float lfo1modamt, lfo2modamt;
 	float modw, aftert;
-	bool lfo1o1,lfo1o2,lfo1f;
-	bool lfo1pw1,lfo1pw2;
-	bool lfo2o1,lfo2o2,lfo2f;
-	bool lfo2pw1,lfo2pw2;
+	bool lfo1o1,lfo1o2,lfo1pw1,lfo1pw2,lfo1f,lfo1bmod,lfo1res;
+	bool lfo2o1,lfo2o2,lfo2pw1,lfo2pw2,lfo2f,lfo2bmod,lfo2res;
 
 	bool selfOscPush;
 
@@ -272,7 +270,7 @@ public:
 			// us a bit of extra margin, as the final offset is
 			// in fact negative).
 			float maxcutoff = cutoffnote + oscmod_maxpeak * osc1FltMod;
-			float osc1FltModTmp = osc1FltMod;
+			float osc1FltModTmp = osc1FltMod + (lfo1bmod?(lfo1Delayed*100):0) + (lfo2bmod?(lfo2Delayed*100):0);
 			if (cutoffnote > maxallowednote)
 				// outside range; disable modulation
 				osc1FltModTmp = 0;
@@ -296,7 +294,7 @@ public:
 		float x1 = oscps;
 		//TODO: filter oscmod as well to reduce aliasing?
 		// Cap resonance at 0 and +1 to avoid nasty artefacts
-		float rescalc = jmin(jmax(res, 0.0f), 1.0f);
+		float rescalc = jmin(jmax(res + (lfo1res?lfo1Delayed:0) + (lfo2res?lfo2Delayed:0), 0.0f), 1.0f);
 
 		if(fourpole)
 			x1 = flt.Apply4Pole(x1, cutoffcalc, rescalc);
