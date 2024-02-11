@@ -143,5 +143,7 @@ enum Parameters
 	LFO1_POLARITY, // 117
 	LFO2_POLARITY,
 
+	OSC_KEY_SYNC, // 119
+
 	PARAM_COUNT,
 };

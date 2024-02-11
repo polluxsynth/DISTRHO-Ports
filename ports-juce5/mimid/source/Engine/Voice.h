@@ -97,6 +97,8 @@ public:
 	bool Active;
 	bool shouldProcessed;
 
+	bool oscKeySync;
+
 	float fltKF;
 
 	float porta;
@@ -122,7 +124,6 @@ public:
 
 	bool fourpole;
 
-
 	DelayLine<Samples*2> lenvd,fenvd,lfo1d,lfo2d;
 
 	float oscpsw;
@@ -145,6 +146,7 @@ public:
 		velscale=1;
 		velocityValue=0;
 		fourpole = false;
+		oscKeySync = false;
 		brightCoef =briHold= 1;
 		hpffreq=4;
 		hpfcutoff=0;
@@ -399,6 +401,8 @@ public:
 			lfo1.keyResetPhase();
 			lfo2.keyResetPhase();
 		}
+		if (oscKeySync)
+			osc.keyReset = true;
 		Active = true;
 	}
 	void NoteOff()

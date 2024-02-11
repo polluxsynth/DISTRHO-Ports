@@ -737,6 +737,9 @@ for(int i = 0 ; i < synth.MAX_VOICES;i++)
 	{
 		ForEachVoice(levelSpreadAmt = linsc(param,0.0,0.67));
 	}
-
+	void procOscKeySync(float param)
+	{
+		ForEachVoice(oscKeySync = param > 0.5);
+	}
 		 
 };

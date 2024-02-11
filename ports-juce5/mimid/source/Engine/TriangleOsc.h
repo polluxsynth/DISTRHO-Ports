@@ -67,8 +67,17 @@ public:
 	{
 		return -getNextBlep(buffer1,bP1);
 	}
-	inline void processMaster(float x,float delta)
+	inline void processMaster(float x,float delta,bool waveformReset)
 	{
+		if(waveformReset)
+		{
+			float trans = x - delta;
+			float mix = trans < 0.5 ? 2*trans-0.5 : 1.5-2*trans;
+			if(trans >0.5)
+				mixInBlampCenter(buffer1,bP1,1,-4*Samples*delta);
+			mixInImpulseCenter(buffer1,bP1,1,mix+0.5);
+			return;
+		}
 		if(x >= 1.0)
 		{
 			x-=1.0;

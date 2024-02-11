@@ -356,6 +356,9 @@ void MimidAudioProcessor::setParameter (int index, float newValue)
 	case LFO2_AMT_CTRL:
 		synth.procLfo2Controller(newValue);
 		break;
+	case OSC_KEY_SYNC:
+		synth.procOscKeySync(newValue);
+		break;
 	case PAN1_NOTUSED:
 		break;
 	case PAN2_NOTUSED:
@@ -614,6 +617,8 @@ const String MimidAudioProcessor::getParameterName (int index)
 		return S("Lfo1AmtCont");
 	case LFO2_AMT_CTRL:
 		return S("Lfo2AmtCont");
+	case OSC_KEY_SYNC:
+		return S("OscKeySync");
 	}
 	return String();
 }

@@ -53,7 +53,7 @@ private:
 	const int hsam;
 	//delay line implements fixed sample delay
 	DelayLine<Samples> osc2d;
-	DelayLineBoolean<Samples> syncd;
+	DelayLineInt<Samples> syncd;
 	DelayLine<Samples> syncFracd;
 	DelayLine<Samples> cvd;
 	Random wn;
@@ -92,6 +92,8 @@ public:
 	float xmod;
 	bool osc2modout;
 
+	bool keyReset;
+
 	float unused1, unused2; //TODO remove
 
 	Oscillators() :
@@ -124,6 +126,7 @@ public:
 		x1=wn.nextFloat();
 		x2=wn.nextFloat(); // osc2 and 3 start in phase
 		osc3Waveform = 0; // off
+		keyReset = false;
 	}
 	~Oscillators()
 	{
@@ -158,24 +161,31 @@ public:
 		// osc 2 = master oscillator
 		float noiseGen = wn.nextFloat()-0.5;
 		float pitch2 = getPitch(dirt * noiseGen + notePlaying + osc2Det + osc2p + pto2 + tune + oct+totalSpread*osc2Factor);
-		bool hsr = false;
+		// hard sync is subject to sync level parameter
+		// osc key sync results in unconditional hard sync
+		int hsr = 0; // 1 => hard sync, -1 => unconditional hard sync
 		float hsfrac=0;
 		float fs = jmin(pitch2*(sampleRateInv),0.45f);
 		x2+=fs;
 		float osc2mix=0.0f;
 		float pwcalc =jlimit<float>(0.1f,1.0f,(osc2pw + pw2)*0.5f + 0.5f);
 		if(osc2Pul)
-			o2p.processMaster(x2,fs,pwcalc,pw2w);
+			o2p.processMaster(x2,fs,pwcalc,pw2w,keyReset);
 		else if(osc2Saw)
-			o2s.processMaster(x2,fs);
+			o2s.processMaster(x2,fs,keyReset);
 		else if(osc2Tri)
-			o2t.processMaster(x2,fs);
+			o2t.processMaster(x2,fs,keyReset);
 
-		if(x2 >= 1.0f)
+		if(keyReset) {
+			x2 = 0;
+			hsfrac = 1;
+			hsr = -1; // unconditional hard sync
+		}
+		else if(x2 >= 1.0f)
 		{
 			x2-=1.0f;
 			hsfrac = x2/fs;
-			hsr = true;
+			hsr = 1; // hard sync governed by sync level
 		}
 
 		pw2w = pwcalc;
@@ -237,7 +247,9 @@ public:
 		// If the sync level is high enough, disable completely,
 		// to avoid artefacts when osc2 is running at an insanely
 		// high frequency (empirically).
-		hsr &= (syncLevel <= 0.99) && (x1 - hsfrac*fs >= syncLevel);
+		// For osc key sync, hard sync is unconditional
+		if (hsr > 0) // hard sync
+			hsr &= (syncLevel <= 0.99) && (x1 - hsfrac*fs >= syncLevel);
 
 		if(osc1Pul)
 			o1p.processSlave(x1,fs,hsr,hsfrac,pwcalc,pw1w);
@@ -276,5 +288,7 @@ public:
 		float res =o1mx*osc1mix + o2mx*osc2mix + o3mx*osc3mix + noiseGen*0.0006;
 		audioOutput = res*3;
 		modOutput = osc2mix;
+
+		keyReset = false;
 	}
 };
