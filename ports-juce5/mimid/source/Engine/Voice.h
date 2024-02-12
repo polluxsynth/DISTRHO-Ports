@@ -98,6 +98,7 @@ public:
 	bool shouldProcessed;
 
 	bool oscKeySync;
+	bool envRst;
 
 	float fltKF;
 
@@ -147,6 +148,7 @@ public:
 		velocityValue=0;
 		fourpole = false;
 		oscKeySync = false;
+		envRst = false;
 		brightCoef =briHold= 1;
 		hpffreq=4;
 		hpfcutoff=0;
@@ -396,6 +398,8 @@ public:
 			velocityValue = powf(velocity, velscale);
 		midiIndx = mididx;
 		if(!Active || multiTrig) {
+			if (envRst)
+				ResetEnvelopes();
 			env.triggerAttack();
 			fenv.triggerAttack();
 			lfo1.keyResetPhase();

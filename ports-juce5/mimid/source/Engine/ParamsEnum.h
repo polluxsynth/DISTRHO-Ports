@@ -144,6 +144,7 @@ enum Parameters
 	LFO2_POLARITY,
 
 	OSC_KEY_SYNC, // 119
+	ENV_RST,
 
 	PARAM_COUNT,
 };

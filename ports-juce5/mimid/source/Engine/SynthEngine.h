@@ -741,5 +741,9 @@ for(int i = 0 ; i < synth.MAX_VOICES;i++)
 	{
 		ForEachVoice(oscKeySync = param > 0.5);
 	}
+	void procEnvRst(float param)
+	{
+		ForEachVoice(envRst = param > 0.5);
+	}
 		 
 };
