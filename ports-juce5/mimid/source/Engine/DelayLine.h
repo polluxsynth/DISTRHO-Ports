@@ -31,7 +31,7 @@ private:
 	float dl[DEMAX];
 	int iidx;
 public:
-		DelayLine() 
+	DelayLine()
 	{
 		iidx = 0;
 		zeromem(dl,sizeof(float)*DEMAX);
@@ -55,12 +55,32 @@ private:
 	bool dl[DEMAX];
 	int iidx;
 public:
-		DelayLineBoolean() 
+	DelayLineBoolean()
 	{
 		iidx = 0;
 		zeromem(dl,sizeof(bool)*DEMAX);
 	}
-		inline float feedReturn(bool sm)
+	inline bool feedReturn(bool sm)
+	{
+		dl[iidx] = sm;
+		iidx--;
+		iidx=(iidx&(DEMAX-1));
+		return dl[(iidx + DM)&(DEMAX-1)];
+	}
+
+};
+template<unsigned int DM> class DelayLineInt
+{
+private:
+	int dl[DEMAX];
+	int iidx;
+public:
+	DelayLineInt()
+	{
+		iidx = 0;
+		zeromem(dl,sizeof(bool)*DEMAX);
+	}
+	inline int feedReturn(int sm)
 	{
 		dl[iidx] = sm;
 		iidx--;
