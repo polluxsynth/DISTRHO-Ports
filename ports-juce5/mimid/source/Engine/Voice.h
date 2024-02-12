@@ -125,7 +125,8 @@ public:
 
 	bool fourpole;
 
-	DelayLine<Samples*2> lenvd,fenvd,lfo1d,lfo2d;
+	DelayLineRampable<Samples*2> lenvd,fenvd;
+	DelayLine<Samples*2> lfo1d,lfo2d;
 
 	float oscpsw;
 	float briHold;
@@ -398,8 +399,14 @@ public:
 			velocityValue = powf(velocity, velscale);
 		midiIndx = mididx;
 		if(!Active || multiTrig) {
-			if (envRst)
+			if (envRst) {
 				ResetEnvelopes();
+				// Ramp down whatever is in the env delay lines
+				// to zero to minimize clicking when envelopes
+				// are reset.
+				lenvd.decayLine();
+				fenvd.decayLine();
+			}
 			env.triggerAttack();
 			fenv.triggerAttack();
 			lfo1.keyResetPhase();
