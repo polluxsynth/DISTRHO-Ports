@@ -97,7 +97,7 @@ public:
 		for(int i = count ; i < MAX_VOICES;i++)
 		{
 			voices[i].NoteOff();
-			voices[i].ResetEnvelope();
+			voices[i].ResetEnvelopes();
 		}
 		// If the number of voices is increased, any free running
 		// LFOs need to be synced with the rest. Since the first

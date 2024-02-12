@@ -374,7 +374,7 @@ public:
 	{
 		shouldProcessed = env.isActive();
 	}
-	void ResetEnvelope()
+	void ResetEnvelopes()
 	{
 		env.ResetEnvelopeState();
 		fenv.ResetEnvelopeState();
@@ -387,7 +387,7 @@ public:
 			//Not doing this will cause clicks or glitches
 			lenvd.fillZeroes();
 			fenvd.fillZeroes();
-			ResetEnvelope();
+			ResetEnvelopes();
 		}
 		shouldProcessed = true;
 		if(velocity!=-0.5)

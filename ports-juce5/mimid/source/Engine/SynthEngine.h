@@ -105,7 +105,7 @@ public:
 		allNotesOff();
 		for(int i = 0 ; i < Motherboard::MAX_VOICES;i++)
 			{
-				synth.voices[i].ResetEnvelope();
+				synth.voices[i].ResetEnvelopes();
 			}
 	}
 	void sustainOn()
