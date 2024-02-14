@@ -284,16 +284,17 @@ public:
 	}
 	void procPitchWheelAmount(float param)
 	{
-		for(int i = 0 ; i < synth.MAX_VOICES;i++)
-		{
-			synth.voices[i].pitchWheelAmt = param>0.5?12:2;
-		}
+		int intparam = roundToInt(param * 12);
+		ForEachVoice(pitchWheelAmt = intparam);
 	}
-	void procPitchWheelOsc1Only(float param)
+	void procPitchWheelDest(float param)
 	{
+		// OFF - OSC1 - OSC1+2
+		int intparam = roundToInt(param * 2);
 		for(int i = 0 ; i < synth.MAX_VOICES;i++)
 		{
-			synth.voices[i].pitchWheelOsc1Only = param>0.5;
+			synth.voices[i].pitchWheelOsc1 = intparam >= 1;
+			synth.voices[i].pitchWheelOsc2 = intparam == 2;
 		}
 	}
 	void processPanSpread(float param)

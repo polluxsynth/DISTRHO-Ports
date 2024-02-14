@@ -107,9 +107,8 @@ public:
 
 	float cutoffwas,envelopewas;
 
-	float pitchWheel;
-	float pitchWheelAmt;
-	bool pitchWheelOsc1Only;
+	bool pitchWheelOsc1, pitchWheelOsc2;
+	float pitchWheel,pitchWheelAmt;
 
 	float lfo1amt, lfo2amt;
 	float lfo1modamt, lfo2modamt;
@@ -234,8 +233,8 @@ public:
 		osc.pw2 = (lfo1pw2?lfo1mod:0) + (lfo2pw2?lfo2mod:0);
 
 		//Pitch modulation
-		osc.pto1 =   pitchWheel*pitchWheelAmt + (lfo1o1?lfo1mod*12:0) + (lfo2o1?lfo2mod*12:0);
-		osc.pto2 =  (!pitchWheelOsc1Only?(pitchWheel*pitchWheelAmt):0) + (lfo1o2?lfo1mod*12:0) + (lfo2o2?lfo2mod*12:0);
+		osc.pto1 = (pitchWheelOsc1?(pitchWheel*pitchWheelAmt):0) + (lfo1o1?lfo1mod*12:0) + (lfo2o1?lfo2mod*12:0);
+		osc.pto2 = (pitchWheelOsc2?(pitchWheel*pitchWheelAmt):0) + (lfo1o2?lfo1mod*12:0) + (lfo2o2?lfo2mod*12:0);
 
 		//variable sort magic - upsample trick
 		float envVal = lenvd.feedReturn(env.processSample() * (1 - (1-velocityValue)*vamp));
