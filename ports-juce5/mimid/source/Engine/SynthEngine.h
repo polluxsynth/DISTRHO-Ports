@@ -425,27 +425,6 @@ public:
 	{
 		ForEachVoice(lfo2modamt = val);
 	}
-	void processLfoFilter_unused(float param)
-	{
-		for(int i = 0 ; i < synth.MAX_VOICES;i++)
-		{
-			synth.voices[i].lfo1f = param>0.5;
-		}
-	}
-	void processLfoPw1_unused(float param)
-	{
-		for(int i = 0 ; i < synth.MAX_VOICES;i++)
-		{
-			synth.voices[i].lfo1pw1 = param>0.5;
-		}
-	}
-	void processLfoPw2_unused(float param)
-	{
-		for(int i = 0 ; i < synth.MAX_VOICES;i++)
-		{
-			synth.voices[i].lfo1pw2 = param>0.5;
-		}
-	}
 	void processLfo2Amt(float param)
 	{
 		ForEachVoice(lfo2amt = param);
