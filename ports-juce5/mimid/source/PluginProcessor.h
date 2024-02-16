@@ -193,6 +193,13 @@ public:
 
 private:
 	//==============================================================================
+
+	typedef void (SynthEngine::*setFuncType)(float);
+	struct ParamDef {
+		String name;
+		setFuncType setFunc;
+	};
+
 	bool isHostAutomatedChange;
 
         MidiMessage nextMidi, midiMsg;
@@ -200,6 +207,7 @@ private:
 	bool hasMidiMessage;
 	int midiEventPos;
 
+	ParamDef paramdef[PARAM_COUNT] = {};
 	SynthEngine synth;
 	Bank programs;
 

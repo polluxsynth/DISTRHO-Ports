@@ -17,6 +17,16 @@ Copyright 2023 Ricard Wanderlof
 //==============================================================================
 #define S(T) (juce::String(T))
 
+#define SE(FUNCNAME) &SynthEngine::FUNCNAME
+
+#define PARAM(PARAMNO, NAME, SETFUNC) \
+	paramdef[PARAMNO].name = S(NAME); \
+	paramdef[PARAMNO].setFunc = SE(SETFUNC);
+
+#define PARAM_NULL(PARAMNO, NAME) \
+	paramdef[PARAMNO].name = S(NAME); \
+	paramdef[PARAMNO].setFunc = NULL;
+
 //==============================================================================
 MimidAudioProcessor::MimidAudioProcessor()
 	: programs()
@@ -37,6 +47,125 @@ MimidAudioProcessor::MimidAudioProcessor()
 	currentBank = "Init";
 
 	scanAndUpdateBanks();
+
+	PARAM(OSC2PW, "Osc2PW", processOsc2PulseWidth);
+	PARAM_NULL(PW_ENV_BOTH_NOTUSED, "PwEnvBoth_NOTUSED");
+	PARAM_NULL(ENV_PITCH_BOTH_NOTUSED, "EnvPitchBoth_NOTUSED");
+	PARAM(FENV_INVERT, "FenvInvert", processInvertFenv);
+	PARAM(LEVEL_DIF, "LevelSpread", processLoudnessSpread);
+	PARAM_NULL(PW_ENV_NOTUSED, "PwEnv_NOTUSED");
+	PARAM(LFO1SYNC, "Lfo1Sync", procLfo1Sync);
+	PARAM(LFO2SYNC, "Lfo2Sync", procLfo2Sync);
+	PARAM(ECONOMY_MODE, "EconomyMode", procEconomyMode);
+	PARAM(VAMPENV, "VAmpFactor", procAmpVelocityAmount);
+	// TODO Remove
+	PARAM(UNUSED_1, "Unused 1", procUnused1);
+	PARAM(UNUSED_2, "Unused 2", procUnused2);
+	PARAM(VFLTENV, "VFltFactor", procFltVelocityAmount);
+	PARAM_NULL(VGENENV_NOTUSED, "VGenFactor_NOTUSED");
+	PARAM_NULL(ASPLAYEDALLOCATION_NOTUSED, "AsPlayedAllocation_NOTUSED");
+	PARAM(LFO2FREQ, "Lfo2Frequency", processLfo2Frequency);
+	PARAM_NULL(LEGATOMODE_NOTUSED, "LegatoMode_NOTUSED");
+	PARAM_NULL(ENVPITCH_NOTUSED, "EnvelopeToPitch_NOTUSED");
+	PARAM_NULL(OSCQuantize_NOTUSED, "PitchQuant_NOTUSED");
+	PARAM(VOICE_COUNT, "VoiceCount", setVoiceCount);
+	PARAM(OVERSAMPLE, "Oversample", processOversampling);
+	PARAM(FILTER_TYPE, "FilterType", processFilterType);
+	PARAM(BENDDEST, "BendDest", procPitchWheelDest);
+	PARAM(BENDRANGE, "BendRange", procPitchWheelAmount);
+	PARAM(OSC3MIX, "Osc3Mix", processOsc3Mix);
+	PARAM(OCTAVE, "Octave", processOctave);
+	PARAM(TUNE, "Tune", processTune);
+	PARAM(HPFFREQ, "HPFfreq", processHPFfreq);
+	PARAM(OSC1FLTMOD, "Osc1FilterMod", processOsc1FltMod);
+	PARAM(RESPONSE, "Response", processResponse);
+	PARAM(LFO1FREQ, "Lfo1Frequency", processLfo1Frequency);
+	PARAM(LFO1AMT, "Lfo1Amount", processLfo1Amt);
+	PARAM(LFO2AMT, "Lfo2Amount", processLfo2Amt);
+	PARAM(LFO1WAVE, "Lfo1Wave", processLfo1Wave);
+	PARAM(LFO2WAVE, "Lfo2Wave", processLfo2Wave);
+	PARAM_NULL(LFOSHWAVE_UNUSED, "LfoSampleHoldWave");
+	PARAM(LFOFILTER_UNUSED, "LfoFilter", processLfoFilter_unused);
+	PARAM(LFO1DEST, "Lfo1Dest", processLfo1Dest);
+	PARAM(LFO2DEST, "Lfo2Dest", processLfo2Dest);
+	PARAM(LFOPW1_UNUSED, "LfoPw1", processLfoPw1_unused);
+	PARAM(PORTADER, "PortamentoSpread", processPortamentoSpread);
+	PARAM(FILTERDER, "FilterSpread", processFilterSpread);
+	PARAM(ENVDER, "EnvelopeSpread", processEnvelopeSpread);
+	PARAM(LFOSPREAD, "LfoSpread", processLfoSpread);
+	PARAM(PANSPREAD, "PanSpread", processPanSpread);
+	PARAM(XMOD, "Xmod", processOsc2Xmod);
+	PARAM(OSCSYNC_LEVEL, "SyncLevel", processOsc2SyncLevel);
+	PARAM(OSC2P, "Osc2Pitch", processOsc2Pitch);
+	PARAM(OSC1P, "Osc1Pitch", processOsc1Pitch);
+	PARAM(PORTAMENTO, "Portamento", processPortamento);
+	PARAM(UNISON, "Unison", processUnison); // TODO part of keyasgn?
+	PARAM(FLT_KF, "FilterKeyFollow", processFilterKeyFollow);
+	PARAM(OSC1MIX, "Osc1Mix", processOsc1Mix);
+	PARAM(OSC2MIX, "Osc2Mix", processOsc2Mix);
+	PARAM(OSC1PW, "Osc1PW", processOsc1PulseWidth);
+	PARAM(OSC1WAVE, "Osc1Wave", processOsc1Wave);
+	PARAM(OSC2WAVE, "Osc2Wave", processOsc2Wave);
+	PARAM(VOLUME, "Volume", processVolume);
+	PARAM(UDET, "OscSpread", processOscSpread);
+	PARAM(OSC1_DET, "Oscillator1detune", processOsc1Det);
+	PARAM(OSC2_DET, "Oscillator2detune", processOsc2Det);
+	PARAM(OSC3WAVE, "Osc3Wave", processOsc3Wave);
+	PARAM(CUTOFF, "Cutoff", processCutoff);
+	PARAM(RESONANCE, "Resonance", processResonance);
+	PARAM(ENVELOPE_AMT, "FilterEnvAmount", processFilterEnvelopeAmt);
+	PARAM(LATK, "Attack", processLoudnessEnvelopeAttack);
+	PARAM(LDEC, "Decay", processLoudnessEnvelopeDecay);
+	PARAM(LSUS, "Sustain", processLoudnessEnvelopeSustain);
+	PARAM(LSUST, "SustainTime", processLoudnessEnvelopeSustainTime);
+	PARAM(LREL, "Release", processLoudnessEnvelopeRelease);
+	PARAM(FATK, "FilterAttack", processFilterEnvelopeAttack);
+	PARAM(FDEC, "FilterDecay", processFilterEnvelopeDecay);
+	PARAM(FSUS, "FilterSustain", processFilterEnvelopeSustain);
+	PARAM(FSUST, "FilterSustainTime", processFilterEnvelopeSustainTime);
+	PARAM(FREL, "FilterRelease", processFilterEnvelopeRelease);
+	PARAM_NULL(GATK_NOTUSED, "GenAttack_NOTUSED");
+	PARAM_NULL(GDEC_NOTUSED, "GenDecay_NOTUSED");
+	PARAM_NULL(GSUS_NOTUSED, "GenSustain_NOTUSED");
+	PARAM_NULL(GSUST_NOTUSED, "GenSustainTime_NOTUSED");
+	PARAM_NULL(GREL_NOTUSED, "GenRelease_NOTUSED");
+	PARAM_NULL(GAMT_NOTUSED, "GenEnvAmount_NOTUSED");
+	PARAM_NULL(GDEST_NOTUSED, "GenEnvDest_NOTUSED");
+	PARAM_NULL(GUNI_NOTUSED, "GenEnvUnipol_NOTUSED");
+	PARAM_NULL(GINV_NOTUSED, "GenEnvInvert_NOTUSED");
+	PARAM(ASGN_RSZ, "KeyAssignRsz", procKeyAsgnRsz);
+	PARAM(ASGN_MEM, "KeyAssignMem", procKeyAsgnMem);
+	PARAM(ASGN_ROB, "KeyAssignRob", procKeyAsgnRob);
+	PARAM(ASGN_RES, "KeyAssignRes", procKeyAsgnRes);
+	PARAM(ASGN_STRG, "KeyAssignStrg", procKeyAsgnStrg);
+	PARAM(VCADRIVE, "VCADrive", processVCADrive);
+	PARAM(LFO1_CONTRAMT, "Lfo1ContrAmt", procLfo1ControllerAmt);
+	PARAM(LFO2_CONTRAMT, "Lfo2ContrAmt", procLfo2ControllerAmt);
+	PARAM(LFO1_POLARITY, "Lfo1Polarity", procLfo1Polarity);
+	PARAM(LFO2_POLARITY, "Lfo2Polarity", procLfo2Polarity);
+	PARAM(VEL_SCALE, "VelocityScale", procVelocityScale);
+	PARAM(AT_SCALE, "AfterTouchScale", procAfterTouchScale);
+	PARAM(LFO1_AMT_CTRL, "Lfo1AmtCont", procLfo1Controller);
+	PARAM(LFO2_AMT_CTRL, "Lfo2AmtCont", procLfo2Controller);
+	PARAM(OSC_KEY_SYNC, "OscKeySync", procOscKeySync);
+	PARAM(ENV_RST, "EnvRst", procEnvRst);
+	PARAM_NULL(PAN1_NOTUSED, "Pan1_NOTUSED");
+	PARAM_NULL(PAN2_NOTUSED, "Pan2_NOTUSED");
+	PARAM_NULL(PAN3_NOTUSED, "Pan3_NOTUSED");
+	PARAM_NULL(PAN4_NOTUSED, "Pan4_NOTUSED");
+	PARAM_NULL(PAN5_NOTUSED, "Pan5_NOTUSED");
+	PARAM_NULL(PAN6_NOTUSED, "Pan6_NOTUSED");
+	PARAM_NULL(PAN7_NOTUSED, "Pan7_NOTUSED");
+	PARAM_NULL(PAN8_NOTUSED, "Pan8_NOTUSED");
+	PARAM_NULL(SELF_OSC_PUSH_NOTUSED, "SelfOscPush_NOTUSED");
+	PARAM_NULL(FOURPOLE_NOTUSED, "FourPole_NOTUSED");
+	PARAM_NULL(BANDPASS_NOTUSED, "BandpassBlend_NOTUSED");
+	PARAM_NULL(LFOPW2_UNUSED, "LfoPw2_NOTUSED");
+	PARAM_NULL(OSC2Saw_NOTUSED, "Osc2Saw_NOTUSED");
+	PARAM_NULL(OSC1Saw_NOTUSED, "Osc1Saw_NOTUSED");
+	PARAM_NULL(OSC1Pul_NOTUSED, "Osc1Pulse_NOTUSED");
+	PARAM_NULL(OSC2Pul_NOTUSED, "Osc2Pulse_NOTUSED");
+
 	initAllParams();
 
 	if (bankFiles.size() > 0)
@@ -74,311 +203,10 @@ float MimidAudioProcessor::getParameter (int index)
 void MimidAudioProcessor::setParameter (int index, float newValue)
 {
 	programs.currentProgramPtr->values[index] = newValue;
-	switch(index)
-	{
-	case PW_ENV_BOTH_NOTUSED:
-		break;
-	case OSC2PW:
-		synth.processOsc2PulseWidth(newValue);
-		break;
-	case ENV_PITCH_BOTH_NOTUSED:
-		break;
-	case FENV_INVERT:
-		synth.processInvertFenv(newValue);
-		break;
-	case LEVEL_DIF:
-		synth.processLoudnessSpread(newValue);
-		break;
-	case PW_ENV_NOTUSED:
-		break;
-	case LFO1SYNC:
-		synth.procLfo1Sync(newValue);
-		break;
-	case LFO2SYNC:
-		synth.procLfo2Sync(newValue);
-		break;
-	case ECONOMY_MODE:
-		synth.procEconomyMode(newValue);
-		break;
-	case VAMPENV:
-		synth.procAmpVelocityAmount(newValue);
-		break;
-	// TODO: Remove
-	case UNUSED_1:
-		synth.procUnused1(newValue);
-		break;
-	case UNUSED_2:
-		synth.procUnused2(newValue);
-		break;
-	case VFLTENV:
-		synth.procFltVelocityAmount(newValue);
-		break;
-	case VGENENV_NOTUSED:
-		break;
-	case ASPLAYEDALLOCATION_NOTUSED:
-		break;
-	case LFO2FREQ:
-		synth.processLfo2Frequency(newValue);
-		break;
-	case LEGATOMODE_NOTUSED:
-		break;
-	case ENVPITCH_NOTUSED:
-		break;
-	case OSCQuantize_NOTUSED:
-		break;
-	case VOICE_COUNT:
-		synth.setVoiceCount(newValue);
-		break;
-	case OVERSAMPLE:
-		synth.processOversampling(newValue);
-		break;
-	case FILTER_TYPE:
-		synth.processFilterType(newValue);
-		break;
-	case BENDDEST:
-		synth.procPitchWheelDest(newValue);
-		break;
-	case BENDRANGE:
-		synth.procPitchWheelAmount(newValue);
-		break;
-	case OSC3MIX:
-		synth.processOsc3Mix(newValue);
-		break;
-	case OCTAVE:
-		synth.processOctave(newValue);
-		break;
-	case TUNE:
-		synth.processTune(newValue);
-		break;
-	case HPFFREQ:
-		synth.processHPFfreq(newValue);
-		break;
-	case OSC1FLTMOD:
-		synth.processOsc1FltMod(newValue);
-		break;
-	case RESPONSE:
-		synth.processResponse(newValue);
-		break;
-	case LFO1FREQ:
-		synth.processLfo1Frequency(newValue);
-		break;
-	case LFO1AMT:
-		synth.processLfo1Amt(newValue);
-		break;
-	case LFO2AMT:
-		synth.processLfo2Amt(newValue);
-		break;
-	case LFO1WAVE:
-		synth.processLfo1Wave(newValue);
-		break;
-	case LFO2WAVE:
-		synth.processLfo2Wave(newValue);
-		break;
-	case LFOSHWAVE_UNUSED:
-		break;
-	case LFOFILTER_UNUSED:
-		synth.processLfoFilter_unused(newValue);
-		break;
-	case LFO1DEST:
-		synth.processLfo1Dest(newValue);
-		break;
-	case LFO2DEST:
-		synth.processLfo2Dest(newValue);
-		break;
-	case LFOPW1_UNUSED:
-		synth.processLfoPw1_unused(newValue);
-		break;
-	case LFOPW2_UNUSED:
-		synth.processLfoPw2_unused(newValue);
-		break;
-	case PORTADER:
-		synth.processPortamentoSpread(newValue);
-		break;
-	case FILTERDER:
-		synth.processFilterSpread(newValue);
-		break;
-	case ENVDER:
-		synth.processEnvelopeSpread(newValue);
-		break;
-	case LFOSPREAD:
-		synth.processLfoSpread(newValue);
-		break;
-	case PANSPREAD:
-		synth.processPanSpread(newValue);
-		break;
-	case XMOD:
-		synth.processOsc2Xmod(newValue);
-		break;
-	case OSCSYNC_LEVEL:
-		synth.processOsc2SyncLevel(newValue);
-		break;
-	case OSC2P:
-		synth.processOsc2Pitch(newValue);
-		break;
-	case OSC1P:
-		synth.processOsc1Pitch(newValue);
-		break;
-	case PORTAMENTO:
-		synth.processPortamento(newValue);
-		break;
-	case UNISON:
-		synth.processUnison(newValue);
-		break;
-	case FLT_KF:
-		synth.processFilterKeyFollow(newValue);
-		break;
-	case OSC1MIX:
-		synth.processOsc1Mix(newValue);
-		break;
-	case OSC2MIX:
-		synth.processOsc2Mix(newValue);
-		break;
-	case OSC1PW:
-		synth.processOsc1PulseWidth(newValue);
-		break;
-	case OSC1WAVE:
-		synth.processOsc1Wave(newValue);
-		break;
-	case OSC2WAVE:
-		synth.processOsc2Wave(newValue);
-		break;
-	case VOLUME:
-		synth.processVolume(newValue);
-		break;
-	case UDET:
-		synth.processOscSpread(newValue);
-		break;
-	case OSC1_DET:
-		synth.processOsc1Det(newValue);
-		break;
-	case OSC2_DET:
-		synth.processOsc2Det(newValue);
-		break;
-	case OSC3WAVE:
-		synth.processOsc3Wave(newValue);
-		break;
-	case CUTOFF:
-		synth.processCutoff(newValue);
-		break;
-	case RESONANCE:
-		synth.processResonance(newValue);
-		break;
-	case ENVELOPE_AMT:
-		synth.processFilterEnvelopeAmt(newValue);
-		break;
-	case LATK:
-		synth.processLoudnessEnvelopeAttack(newValue);
-		break;
-	case LDEC:
-		synth.processLoudnessEnvelopeDecay(newValue);
-		break;
-	case LSUS:
-		synth.processLoudnessEnvelopeSustain(newValue);
-		break;
-	case LSUST:
-		synth.processLoudnessEnvelopeSustainTime(newValue);
-		break;
-	case LREL:
-		synth.processLoudnessEnvelopeRelease(newValue);
-		break;
-	case FATK:
-		synth.processFilterEnvelopeAttack(newValue);
-		break;
-	case FDEC:
-		synth.processFilterEnvelopeDecay(newValue);
-		break;
-	case FSUS:
-		synth.processFilterEnvelopeSustain(newValue);
-		break;
-	case FSUST:
-		synth.processFilterEnvelopeSustainTime(newValue);
-		break;
-	case FREL:
-		synth.processFilterEnvelopeRelease(newValue);
-		break;
-	case GATK_NOTUSED:
-		break;
-	case GDEC_NOTUSED:
-		break;
-	case GSUS_NOTUSED:
-		break;
-	case GSUST_NOTUSED:
-		break;
-	case GREL_NOTUSED:
-		break;
-	case GAMT_NOTUSED:
-		break;
-	case GDEST_NOTUSED:
-		break;
-	case GUNI_NOTUSED:
-		break;
-	case GINV_NOTUSED:
-		break;
-	case ASGN_RSZ:
-		synth.procKeyAsgnRsz(newValue);
-		break;
-	case ASGN_MEM:
-		synth.procKeyAsgnMem(newValue);
-		break;
-	case ASGN_ROB:
-		synth.procKeyAsgnRob(newValue);
-		break;
-	case ASGN_RES:
-		synth.procKeyAsgnRes(newValue);
-		break;
-	case ASGN_STRG:
-		synth.procKeyAsgnStrg(newValue);
-		break;
-	case VCADRIVE:
-		synth.processVCADrive(newValue);
-		break;
-	case LFO1_CONTRAMT:
-		synth.procLfo1ControllerAmt(newValue);
-		break;
-	case LFO2_CONTRAMT:
-		synth.procLfo2ControllerAmt(newValue);
-		break;
-	case LFO1_POLARITY:
-		synth.procLfo1Polarity(newValue);
-		break;
-	case LFO2_POLARITY:
-		synth.procLfo2Polarity(newValue);
-		break;
-	case VEL_SCALE:
-		synth.procVelocityScale(newValue);
-		break;
-	case AT_SCALE:
-		synth.procAfterTouchScale(newValue);
-		break;
-	case LFO1_AMT_CTRL:
-		synth.procLfo1Controller(newValue);
-		break;
-	case LFO2_AMT_CTRL:
-		synth.procLfo2Controller(newValue);
-		break;
-	case OSC_KEY_SYNC:
-		synth.procOscKeySync(newValue);
-		break;
-	case ENV_RST:
-		synth.procEnvRst(newValue);
-		break;
-	case PAN1_NOTUSED:
-		break;
-	case PAN2_NOTUSED:
-		break;
-	case PAN3_NOTUSED:
-		break;
-	case PAN4_NOTUSED:
-		break;
-	case PAN5_NOTUSED:
-		break;
-	case PAN6_NOTUSED:
-		break;
-	case PAN7_NOTUSED:
-		break;
-	case PAN8_NOTUSED:
-		break;
-	}
+	//setFuncType setFunc = paramdef[index].setFunc;
+	//(synth.*setFunc)(newValue);
+	if (index >= 0 && index < PARAM_COUNT && paramdef[index].setFunc)
+		(synth.*paramdef[index].setFunc)(newValue);
 	//DIRTY HACK
 	//This should be checked to avoid stalling on gui update
 	//It is needed because some hosts do  wierd stuff
@@ -388,243 +216,8 @@ void MimidAudioProcessor::setParameter (int index, float newValue)
 
 const String MimidAudioProcessor::getParameterName (int index)
 {
-	switch(index)
-	{
-	case SELF_OSC_PUSH_NOTUSED:
-		return S("SelfOscPush_NOTUSED");
-	case ENV_PITCH_BOTH_NOTUSED:
-		return S("EnvPitchBoth");
-	case FENV_INVERT:
-		return S("FenvInvert");
-	case OSC2PW:
-		return S("Osc2PW");
-	case LEVEL_DIF:
-		return S("LevelSpread");
-	case PW_ENV_BOTH_NOTUSED:
-		return S("PwEnvBoth_NOTUSED");
-	case PW_ENV_NOTUSED:
-		return S("PwEnv_NOTUSED");
-	case LFO1SYNC:
-		return S("Lfo1Sync");
-	case LFO2SYNC:
-		return S("Lfo2Sync");
-	case ECONOMY_MODE:
-		return S("EconomyMode");
-	case UNUSED_1:
-		return S("Unused 1");
-	case UNUSED_2:
-		return S("Unused 2");
-	case VAMPENV:
-		return S("VAmpFactor");
-	case VFLTENV:
-		return S("VFltFactor");
-	case VGENENV_NOTUSED:
-		return S("VGenFactor_NOTUSED");
-	case ASPLAYEDALLOCATION_NOTUSED:
-		return S("AsPlayedAllocation_NOTUSED");
-	case LFO2FREQ:
-		return S("Lfo2Frequency");
-	case FOURPOLE_NOTUSED:
-		return S("FourPole_NOTUSED");
-	case LEGATOMODE_NOTUSED:
-		return S("LegatoMode_NOTUSED");
-	case ENVPITCH_NOTUSED:
-		return S("EnvelopeToPitch_NOTUSED");
-	case OSCQuantize_NOTUSED:
-		return S("PitchQuant_NOTUSED");
-	case VOICE_COUNT:
-		return S("VoiceCount");
-	case BANDPASS_NOTUSED:
-		return S("BandpassBlend_NOTUSED");
-	case OVERSAMPLE:
-		return S("Oversample");
-	case FILTER_TYPE:
-		return S("FilterType");
-	case BENDRANGE:
-		return S("BendRange");
-	case BENDDEST:
-		return S("BendDest");
-	case OCTAVE:
-		return S("Octave");
-	case TUNE:
-		return S("Tune");
-	case HPFFREQ:
-		return S("HPFfreq");
-	case OSC3MIX:
-		return S("Osc3Mix");
-	case OSC1MIX:
-		return S("Osc1Mix");
-	case OSC2MIX:
-		return S("Osc2Mix");
-	case RESPONSE:
-		return S("Response");
-	case LFO1WAVE:
-		return S("Lfo1Wave");
-	case LFO2WAVE:
-		return S("Lfo2Wave");
-	case LFOSHWAVE_UNUSED:
-		return S("LfoSampleHoldWave");
-	case LFO1AMT:
-		return S("Lfo1Amount");
-	case LFO2AMT:
-		return S("Lfo2Amount");
-	case LFOFILTER_UNUSED:
-		return S("LfoFilter");
-	case LFO1DEST:
-		return S("Lfo1Dest");
-	case LFO2DEST:
-		return S("Lfo2Dest");
-	case LFO1FREQ:
-		return S("Lfo1Frequency");
-	case LFOPW1_UNUSED:
-		return S("LfoPw1");
-	case LFOPW2_UNUSED:
-		return S("LfoPw2");
-	case PORTADER:
-		return S("PortamentoSpread");
-	case FILTERDER:
-		return S("FilterSpread");
-	case ENVDER:
-		return S("EnvelopeSpread");
-	case LFOSPREAD:
-		return S("LfoSpread");
-	case PANSPREAD:
-		return S("PanSpread");
-	case ASGN_RSZ:
-		return S("KeyAssignRsz");
-	case ASGN_MEM:
-		return S("KeyAssignMem");
-	case ASGN_ROB:
-		return S("KeyAssignRob");
-	case ASGN_RES:
-		return S("KeyAssignRes");
-	case ASGN_STRG:
-		return S("KeyAssignStrg");
-	case PAN1_NOTUSED:
-		return S("Pan1_NOTUSED");
-	case PAN2_NOTUSED:
-		return S("Pan2_NOTUSED");
-	case PAN3_NOTUSED:
-		return S("Pan3_NOTUSED");
-	case PAN4_NOTUSED:
-		return S("Pan4_NOTUSED");
-	case PAN5_NOTUSED:
-		return S("Pan5_NOTUSED");
-	case PAN6_NOTUSED:
-		return S("Pan6_NOTUSED");
-	case PAN7_NOTUSED:
-		return S("Pan7_NOTUSED");
-	case PAN8_NOTUSED:
-		return S("Pan8_NOTUSED");
-	case XMOD:
-		return S("Xmod");
-	case OSCSYNC_LEVEL:
-		return S("SyncLevel");
-	case OSC1P:
-		return S("Osc1Pitch");
-	case OSC2P:
-		return S("Osc2Pitch");
-	case PORTAMENTO:
-		return S("Portamento");
-	case UNISON:
-		return S("Unison");
-	case FLT_KF:
-		return S("FilterKeyFollow");
-	case OSC1PW:
-		return S("Osc1PW");
-	case OSC2Saw_NOTUSED:
-		return S("Osc2Saw_NOTUSED");
-	case OSC1Saw_NOTUSED:
-		return S("Osc1Saw_NOTUSED");
-	case OSC1Pul_NOTUSED:
-		return S("Osc1Pulse_NOTUSED");
-	case OSC2Pul_NOTUSED:
-		return S("Osc2Pulse_NOTUSED");
-	case OSC1WAVE:
-		return S("Osc1Wave");
-	case OSC2WAVE:
-		return S("Osc2Wave");
-	case VOLUME:
-		return S("Volume");
-	case UDET:
-		return S("OscSpread");
-	case OSC1_DET:
-		return S("Oscillator1detune");
-	case OSC2_DET:
-		return S("Oscillator2detune");
-	case CUTOFF:
-		return S("Cutoff");
-	case RESONANCE:
-		return S("Resonance");
-	case ENVELOPE_AMT:
-		return S("FilterEnvAmount");
-	case LATK:
-		return S("Attack");
-	case LDEC:
-		return S("Decay");
-	case LSUS:
-		return S("Sustain");
-	case LSUST:
-		return S("SustainTime");
-	case LREL:
-		return S("Release");
-	case FATK:
-		return S("FilterAttack");
-	case FDEC:
-		return S("FilterDecay");
-	case FSUS:
-		return S("FilterSustain");
-	case FSUST:
-		return S("FilterSustainTime");
-	case FREL:
-		return S("FilterRelease");
-	case GATK_NOTUSED:
-		return S("GenAttack_NOTUSED");
-	case GDEC_NOTUSED:
-		return S("GenDecay_NOTUSED");
-	case GSUS_NOTUSED:
-		return S("GenSustain_NOTUSED");
-	case GSUST_NOTUSED:
-		return S("GenSustainTime_NOTUSED");
-	case GREL_NOTUSED:
-		return S("GenRelease_NOTUSED");
-	case GAMT_NOTUSED:
-		return S("GenEnvAmount_NOTUSED");
-		break;
-	case GDEST_NOTUSED:
-		return S("GenEnvDest_NOTUSED");
-		break;
-	case GUNI_NOTUSED:
-		return S("GenEnvUnipol_NOTUSED");
-		break;
-	case GINV_NOTUSED:
-		return S("GenEnvInvert_NOTUSED");
-		break;
-	case OSC1FLTMOD:
-		return S("Osc1FilterMod");
-	case VCADRIVE:
-		return S("VCADrive");
-	case LFO1_CONTRAMT:
-		return S("Lfo1ContrAmt");
-	case LFO2_CONTRAMT:
-		return S("Lfo2ContrAmt");
-	case LFO1_POLARITY:
-		return S("Lfo1Polarity");
-	case LFO2_POLARITY:
-		return S("Lfo2Polarity");
-	case VEL_SCALE:
-		return S("VelocityScale");
-	case AT_SCALE:
-		return S("AfterTouchScale");
-	case LFO1_AMT_CTRL:
-		return S("Lfo1AmtCont");
-	case LFO2_AMT_CTRL:
-		return S("Lfo2AmtCont");
-	case OSC_KEY_SYNC:
-		return S("OscKeySync");
-	case ENV_RST:
-		return S("EnvRst");
-	}
+	if (index >= 0 && index < PARAM_COUNT)
+		return paramdef[index].name;
 	return String();
 }
 
