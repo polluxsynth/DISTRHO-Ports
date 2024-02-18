@@ -145,7 +145,7 @@ public:
 		switch (state)
 		{
 		case ATK:
-			if (Value - 1  > -0.1)
+			if (Value > 0.99f)
 			{
 				Value = jmin(Value, 0.99f);
 				state = DEC;
@@ -159,7 +159,7 @@ public:
 dec:
 			if (Value - sustain < 10e-6)
 			{
-				Value = jmin(sustain, 0.9f); // TODO? ok?
+				Value = jmin(sustain, 0.99f);
 				state = SUS;
 				if (!adsrMode)
 				{
