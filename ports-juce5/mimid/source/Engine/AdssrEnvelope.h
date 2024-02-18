@@ -153,7 +153,7 @@ public:
 				goto dec;
 			}
 			else
-				Value = Value + (1-Value)*(coef);
+				Value = Value + (1.3-Value)*(coef);
 			break;
 		case DEC:
 dec:
