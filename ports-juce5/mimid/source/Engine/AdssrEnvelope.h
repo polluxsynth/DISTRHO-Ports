@@ -39,15 +39,15 @@ private:
 
 	inline float coef_atk(float timeparam)
 	{
-		return (float)((log(1.3) - log(0.001)) / (SampleRate * (timeparam)/1000 ));
+		return 7.0f / (SampleRate * (timeparam)/1000);
 	}
-	inline float coef_dec(float timeparam, float suslvl)
+	inline float coef_dec(float timeparam)
 	{
-		return (float)(log(1.0) - (log(jmin(suslvl + 0.0001,0.99))) / (SampleRate * (timeparam) / 1000));
+		return 7.0f / (SampleRate * (timeparam) / 1000);
 	}
 	inline float coef_rel(float timeparam)
 	{
-		return (float)((log(Value+0.0001) - log(0.00001)) / (SampleRate * (timeparam) / 1000));
+		return 7.0f / (SampleRate * (timeparam) / 1000);
 	}
 public:
 	float unused1; // TODO: remove
@@ -97,13 +97,11 @@ public:
 		ud = dec;
 		decay = dec*uf;
 		if (state == DEC)
-			coef = coef_dec(dec, sustain);
+			coef = coef_dec(dec);
 	}
 	void setSustain(float sus)
 	{
 		sustain = sus;
-		if (state == DEC)
-			coef = coef_dec(decay, sus);
 	}
 	void setSustainTime(float sust)
 	{
@@ -144,7 +142,7 @@ public:
 			{
 				Value = jmin(Value, 0.99f);
 				state = DEC;
-				coef = coef_dec(decay, sustain);
+				coef = coef_dec(decay);
 				goto dec;
 			}
 			else
