@@ -150,7 +150,7 @@ public:
 			break;
 		case DEC:
 dec:
-			if (!adsrMode && Value - sustain < 0.01)
+			if (!adsrMode && Value - sustain < unused2*0.1)
 			{
 				state = SUS;
 				coef = coef_rel(sustainTime);
