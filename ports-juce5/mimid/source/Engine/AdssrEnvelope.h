@@ -36,6 +36,12 @@ private:
 	enum { ATK, DEC, SUS, REL, OFF } state;
 	float SampleRate;
 	float uf;
+	// In ADSSR mode, the asymptote is lower than the sustain level,
+	// partly in order to get a trigger point at all (an exponential decay
+	// theoretically never reaches its asymptote), and partly to trigger
+	// the sustain phase before too much of the exponential 'tail' of the
+	// decay curve has passed.
+	float sustain_delta = 0.20; // TODO: Make const
 
 	inline float coef_atk(float timeparam)
 	{
@@ -43,7 +49,17 @@ private:
 	}
 	inline float coef_dec(float timeparam)
 	{
-		return 7.0f / (SampleRate * (timeparam) / 1000);
+		float coef = 7.0f / (SampleRate * (timeparam) / 1000);
+		// In ADSSR mode, compensate for the fact
+		// that the sustain asymptote is lower than
+		// in ADSR mode: The coefficient needs to
+		// be decreased to get the curve (above the
+		// asymptote) to be the same as in ADSR mode.
+		if (!adsrMode) {
+			coef *= 1 - sustain;
+			coef /= 1 - sustain + sustain_delta;
+		}
+		return coef;
 	}
 	inline float coef_rel(float timeparam)
 	{
@@ -135,6 +151,7 @@ public:
 	}
 	inline float processSample()
 	{
+		sustain_delta = unused2; // TODO: temporary, remove
 		switch (state)
 		{
 		case ATK:
@@ -150,14 +167,19 @@ public:
 			break;
 		case DEC:
 dec:
-			if (!adsrMode && Value - sustain < unused2*0.1)
+			if (adsrMode)
+				// No fuss, just aim for sustain level as
+				// asymptote.
+				Value = Value - (Value - sustain) * coef;
+			else if (Value - sustain < 0)
 			{
 				state = SUS;
 				coef = coef_rel(sustainTime);
 				goto sus;
 			}
 			else
-				Value = Value - (Value - sustain) * coef;
+				// Aim for sustain level minus asymptote delta
+				Value = Value - (Value - (sustain - sustain_delta)) * coef;
 			break;
 		case SUS:
 sus:
