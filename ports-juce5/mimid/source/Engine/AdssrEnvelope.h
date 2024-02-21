@@ -152,7 +152,6 @@ public:
 dec:
 			if (!adsrMode && Value - sustain < 0.01)
 			{
-				Value = jmin(sustain, 0.99f);
 				state = SUS;
 				coef = coef_rel(sustainTime);
 				goto sus;
