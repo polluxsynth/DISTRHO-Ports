@@ -108,3 +108,8 @@ inline static float logsc(float param, const float min,const float max,const flo
 	return ((expf(param * logf(rolloff+1)) - 1.0f) / (rolloff)) * (max-min) + min;
 }
 
+inline static float cubesc(float param, const float min, const float max)
+{
+	param *= param * param; // param ** 3
+	return param * (max - min) + min;
+}
