@@ -600,21 +600,21 @@ public:
 	{
 		for(int i = 0 ; i < synth.MAX_VOICES;i++)
 		{
-			synth.voices[i].env.setAttack(cubesc(param,4,60000));
+			synth.voices[i].env.setAttack(cubesc(param,1,8500));
 		}
 	}
 	void processLoudnessEnvelopeDecay(float param)
 	{
 		for(int i = 0 ; i < synth.MAX_VOICES;i++)
 		{
-			synth.voices[i].env.setDecay(cubesc(param,4,60000));
+			synth.voices[i].env.setDecay(cubesc(param,1,8500));
 		}
 	}
 	void processLoudnessEnvelopeSustainTime(float param)
 	{
 		for(int i = 0 ; i < synth.MAX_VOICES;i++)
 		{
-			synth.voices[i].env.setSustainTime(cubesc(param,4,60000));
+			synth.voices[i].env.setSustainTime(cubesc(param,1,8500));
 			// When time is set to 1.0, sustain time is infinite
 			synth.voices[i].env.setAdsr(param > 0.991);
 		}
@@ -623,7 +623,7 @@ public:
 	{
 		for(int i = 0 ; i < synth.MAX_VOICES;i++)
 		{
-			synth.voices[i].env.setRelease(cubesc(param,8,60000));
+			synth.voices[i].env.setRelease(cubesc(param,1,8500));
 		}
 	}
 	void processLoudnessEnvelopeSustain(float param)
@@ -637,21 +637,21 @@ public:
 	{
 		for(int i = 0 ; i < synth.MAX_VOICES;i++)
 		{
-			synth.voices[i].fenv.setAttack(cubesc(param,1,60000));
+			synth.voices[i].fenv.setAttack(cubesc(param,1,8500));
 		}
 	}
 	void processFilterEnvelopeDecay(float param)
 	{
 		for(int i = 0 ; i < synth.MAX_VOICES;i++)
 		{
-			synth.voices[i].fenv.setDecay(cubesc(param,1,60000));
+			synth.voices[i].fenv.setDecay(cubesc(param,1,8500));
 		}
 	}
 	void processFilterEnvelopeSustainTime(float param)
 	{
 		for(int i = 0 ; i < synth.MAX_VOICES;i++)
 		{
-			synth.voices[i].fenv.setSustainTime(cubesc(param,1,60000));
+			synth.voices[i].fenv.setSustainTime(cubesc(param,1,8500));
 			// When time is set to 1.0, sustain time is infinite
 			synth.voices[i].fenv.setAdsr(param > 0.991);
 		}
@@ -660,7 +660,7 @@ public:
 	{
 		for(int i = 0 ; i < synth.MAX_VOICES;i++)
 		{
-			synth.voices[i].fenv.setRelease(cubesc(param,1,60000));
+			synth.voices[i].fenv.setRelease(cubesc(param,1,8500));
 		}
 	}
 	void processFilterEnvelopeSustain(float param)

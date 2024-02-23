@@ -45,11 +45,11 @@ private:
 
 	inline float coef_atk(float timeparam)
 	{
-		return 7.0f / (SampleRate * (timeparam)/1000);
+		return 1.0f / (SampleRate * (timeparam)/1000);
 	}
 	inline float coef_dec(float timeparam)
 	{
-		float coef = 7.0f / (SampleRate * (timeparam) / 1000);
+		float coef = 1.0f / (SampleRate * (timeparam) / 1000);
 		// In ADSSR mode, compensate for the fact
 		// that the sustain asymptote is lower than
 		// in ADSR mode: The coefficient needs to
@@ -63,7 +63,7 @@ private:
 	}
 	inline float coef_rel(float timeparam)
 	{
-		return 7.0f / (SampleRate * (timeparam) / 1000);
+		return 1.0f / (SampleRate * (timeparam) / 1000);
 	}
 public:
 	float unused1; // TODO: remove
