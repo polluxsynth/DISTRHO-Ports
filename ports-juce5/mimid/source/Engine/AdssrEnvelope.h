@@ -155,34 +155,31 @@ public:
 		switch (state)
 		{
 		case ATK:
-			if (Value > 0.99f)
-			{
+			if (Value < 0.99f) {
+				Value = Value + (1.3-Value) * coef;
+				break;
+			} else {
 				Value = jmin(Value, 0.99f);
 				state = DEC;
 				coef = coef_dec(decay);
-				goto dec;
+				// Fallthrough
 			}
-			else
-				Value = Value + (1.3-Value)*(coef);
-			break;
 		case DEC:
-dec:
-			if (adsrMode)
+			if (adsrMode) {
 				// No fuss, just aim for sustain level as
 				// asymptote.
 				Value = Value - (Value - sustain) * coef;
-			else if (Value - sustain < 0)
-			{
-				state = SUS;
-				coef = coef_rel(sustainTime);
-				goto sus;
-			}
-			else
+				break;
+			} else if (Value - sustain > 0) {
 				// Aim for sustain level minus asymptote delta
 				Value = Value - (Value - (sustain - sustain_delta)) * coef;
-			break;
+				break;
+			} else {
+				state = SUS;
+				coef = coef_rel(sustainTime);
+				// Fallthrough
+			}
 		case SUS:
-sus:
 			if (Value > 20e-6)
 				Value = Value - Value * coef + dc;
 			break;
