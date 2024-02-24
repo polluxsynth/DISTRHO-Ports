@@ -172,4 +172,4 @@
 
 	// 121
 	PARAM(FENV_LINEAR, "FenvLinear", procFenvLinear)
-	PARAM(ENV_LINEAR, "EnvLinear", procEnvLinear)
+	PARAM(ENV_MODE, "EnvMode", procEnvMode)

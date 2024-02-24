@@ -130,6 +130,8 @@ public:
 
 	bool oscmodEnable; // Oscillator modulation output enabled
 
+	bool expvca;
+
 	int voiceNumber; // Handy to have in the voice itself
 
 	float unused1, unused2; // TODO: remove
@@ -175,6 +177,7 @@ public:
 	//	lenvd=new DelayLine(Samples*2);
 	//	fenvd=new DelayLine(Samples*2);
 		oscmodEnable = false;
+		expvca = false;
 		lfo2.waveForm = 1; // Triangle
 		voiceNumber = 0; // Until someone else says something else
 		unused1=unused2=0; // TODO: Remove
@@ -306,7 +309,10 @@ public:
 		x1 = sqdist.Apply(x1);
 
 		// VCA
-		x1 *= (envVal);
+		if (expvca)
+			envval = expf(10*(envVal-1)); // 1..0 -> 0..-87 dB
+			//envVal *= envVal * envVal; // cubic
+		x1 *= envVal;
 		return x1;
 	}
 	void setBrightness(float val)

@@ -454,9 +454,11 @@ public:
 	{
 		ForEachVoice(fenv.setLinear(param>0.5));
 	}
-	void procEnvLinear(float param)
+	void procEnvMode(float param)
 	{
-		ForEachVoice(env.setLinear(param>0.5));
+		// Exp env / Lin VCA - Lin env / Lin VCA - Lin env / Exp VCA
+		ForEachVoice(env.setLinear(param>0.33));
+		ForEachVoice(expvca = (param>0.67));
 	}
 	void processOsc2Xmod(float param)
 	{
