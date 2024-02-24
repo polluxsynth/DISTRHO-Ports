@@ -30,9 +30,12 @@ class AdssrEnvelope
 private:
 	float Value;
 	float attack, decay, sustain, sustainTime, release; // saved parameter values with deriverence
+	float sustain_asymptote;
 	bool adsrMode;
+	bool linear;
 	float ua,ud,us,ur; // saved parameter values (not for sustain)
 	float coef;
+	int dir; // decay curve direction (1 => down, -1 = up)
 	enum { ATK, DEC, SUS, REL, OFF } state;
 	float SampleRate;
 	float uf;
@@ -45,25 +48,31 @@ private:
 
 	inline float coef_atk(float timeparam)
 	{
-		return 1.0f / (SampleRate * (timeparam)/1000);
+		return 1.0f / (SampleRate * (timeparam)/1000) * (linear ? 0.7 : 1);
 	}
 	inline float coef_dec(float timeparam)
 	{
 		float coef = 1.0f / (SampleRate * (timeparam) / 1000);
-		// In ADSSR mode, compensate for the fact
-		// that the sustain asymptote is lower than
-		// in ADSR mode: The coefficient needs to
-		// be decreased to get the curve (above the
-		// asymptote) to be the same as in ADSR mode.
-		if (!adsrMode) {
+		if (linear)
+			coef *= adsrMode ? 0.10 : 0.35;
+		else if (!adsrMode) {
+			// In ADSSR mode, compensate for the fact
+			// that the sustain asymptote is lower than
+			// in ADSR mode: The coefficient needs to
+			// be decreased to get the curve (above the
+			// asymptote) to be the same as in ADSR mode.
 			coef *= 1 - sustain;
-			coef /= 1 - sustain + sustain_delta;
+			coef /= 1 - sustain_asymptote;
 		}
 		return coef;
 	}
 	inline float coef_rel(float timeparam)
 	{
-		return 1.0f / (SampleRate * (timeparam) / 1000);
+		return 1.0f / (SampleRate * (timeparam) / 1000) * (linear ? 0.10 : 1);
+	}
+	inline float calc_sustain_asymptote()
+	{
+		return sustain - (adsrMode ? 0 : sustain_delta);
 	}
 public:
 	float unused1; // TODO: remove
@@ -74,11 +83,14 @@ public:
 		uf = 1;
 		Value = 0.0;
 		attack=decay=sustain=sustainTime=release=0.0001;
+		sustain_asymptote = sustain; // It is, in ADSR mode
 		ua=ud=us=ur=0.0001;
 		coef = 0;
+		dir = 1; // going down
 		state = OFF;
 		SampleRate = 44000;
 		adsrMode = true;
+		linear = false;
 	}
 	void ResetEnvelopeState()
 	{
@@ -100,6 +112,20 @@ public:
 	void setAdsr(bool adsr)
 	{
 		adsrMode = adsr;
+		if (state == DEC || state == SUS) {
+			sustain_asymptote = calc_sustain_asymptote();
+			coef = coef_dec(decay);
+		}
+	}
+	void setLinear(bool lin)
+	{
+		linear = lin;
+		if (state == DEC || state == SUS)
+			coef = coef_dec(decay);
+		else if (state == REL)
+			coef = coef_rel(release);
+		else if (state == ATK)
+			coef = coef_atk(attack);
 	}
 	void setAttack(float atk)
 	{
@@ -112,12 +138,24 @@ public:
 	{
 		ud = dec;
 		decay = dec*uf;
-		if (state == DEC)
+		if (state == DEC || state == SUS)
 			coef = coef_dec(dec);
 	}
 	void setSustain(float sus)
 	{
 		sustain = sus;
+		sustain_asymptote = calc_sustain_asymptote();
+		if (state == DEC || state == SUS) {
+			// Chase sustain level at decay rate, if sustain
+			// level changed in ADSR mode
+			if (Value > sustain) {
+				dir = 1;
+				state = DEC;
+			} else if (Value < sustain) {
+				dir = -1;
+				state = DEC;
+			}
+		}
 	}
 	void setSustainTime(float sust)
 	{
@@ -141,9 +179,10 @@ public:
 	}
 	void triggerRelease()
 	{
-		if (state != REL)
+		if (state != OFF) {
 			coef = coef_rel(release);
-		state = REL;
+			state = REL;
+		}
 	}
 	inline bool isActive()
 	{
@@ -155,40 +194,46 @@ public:
 		switch (state)
 		{
 		case ATK:
-			Value = Value + (1.3-Value) * coef;
+			Value += linear ? coef : (1.3-Value) * coef;
 			if (Value > 1.0f) {
 				Value = 1.0f;
 				state = DEC;
 				coef = coef_dec(decay);
+				dir = 1;
 			}
 			break;
 		case DEC:
-			if (adsrMode) {
-				// No fuss, just aim for sustain level as
-				// asymptote.
-				Value = Value - (Value - sustain) * coef;
-			} else {
-				// Aim for sustain level minus asymptote delta
-				Value = Value - (Value - (sustain - sustain_delta)) * coef;
-				if (Value - sustain < 0) {
-					Value = sustain;
+			// Aim for sustain level
+			Value -= linear ? coef * dir : (Value - sustain_asymptote) * coef;
+			// Trigger sustain phase when we transition across
+			// the sustain level. We need to take into
+			// consideration the case of the sustain level
+			// parameter being increased while the envelope is in
+			// the ADSR sustain phase, hence the decay curve can
+			// actually go upwards, which we handle using the
+			// dir (1 or -1) variable.
+			if ((Value - sustain) * dir < 0) {
+				Value = sustain;
+				if (adsrMode)
 					state = SUS;
+				else {
+					state = REL;
 					coef = coef_rel(sustainTime);
 				}
 			}
 			break;
-		case SUS:
-			if (Value > 20e-6)
-				Value = Value - Value * coef + dc;
+		case SUS: // Used for ADSR Sustain phase
+			// Leave Value as it is
 			break;
-		case REL:
-			if (Value > 20e-6)
-				Value = Value - Value * coef + dc;
-			else
+		case REL: // Used for both Release and ADSSR Sustain phases
+			Value -= linear ? coef : Value * coef + dc;
+			if (Value < 20e-6) {
+				Value = 0;
 				state = OFF;
+			}
 			break;
 		case OFF:
-			Value = 0.0f;
+			Value = 0;
 			break;
 		}
 		return Value;
