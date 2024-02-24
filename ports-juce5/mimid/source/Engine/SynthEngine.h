@@ -450,6 +450,14 @@ public:
 	{
 		ForEachVoice(invertFenv = param>0.5);
 	}
+	void procFenvLinear(float param)
+	{
+		ForEachVoice(fenv.setLinear(param>0.5));
+	}
+	void procEnvLinear(float param)
+	{
+		ForEachVoice(env.setLinear(param>0.5));
+	}
 	void processOsc2Xmod(float param)
 	{
 		for(int i = 0 ; i < synth.MAX_VOICES;i++)

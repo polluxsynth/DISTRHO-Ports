@@ -169,3 +169,7 @@
 	// 119
 	PARAM(OSC_KEY_SYNC, "OscKeySync", procOscKeySync)
 	PARAM(ENV_RST, "EnvRst", procEnvRst)
+
+	// 121
+	PARAM(FENV_LINEAR, "FenvLinear", procFenvLinear)
+	PARAM(ENV_LINEAR, "EnvLinear", procEnvLinear)
