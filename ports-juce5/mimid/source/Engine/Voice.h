@@ -131,6 +131,7 @@ public:
 	bool oscmodEnable; // Oscillator modulation output enabled
 
 	bool expvca;
+	bool expapprox;
 
 	int voiceNumber; // Handy to have in the voice itself
 
@@ -178,6 +179,7 @@ public:
 	//	fenvd=new DelayLine(Samples*2);
 		oscmodEnable = false;
 		expvca = false;
+		expapprox = false;
 		lfo2.waveForm = 1; // Triangle
 		voiceNumber = 0; // Until someone else says something else
 		unused1=unused2=0; // TODO: Remove
@@ -309,9 +311,13 @@ public:
 		x1 = sqdist.Apply(x1);
 
 		// VCA
-		if (expvca)
-			envval = expf(10*(envVal-1)); // 1..0 -> 0..-87 dB
-			//envVal *= envVal * envVal; // cubic
+		if (expvca) {
+			if (expapprox)
+				envVal *= envVal * envVal * envVal * envVal; // x5
+			else
+				//envVal *= envVal * envVal; // cube
+				envVal = expf(7.5*(envVal-1)); // 1..0 -> 0..-65 dB
+		}
 		x1 *= envVal;
 		return x1;
 	}
