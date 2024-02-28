@@ -111,7 +111,7 @@
 	PARAM(OSC2WAVE, "Osc2Wave", processOsc2Wave)
 	PARAM(FREL, "FilterRelease", processFilterEnvelopeRelease)
 	PARAM(LREL, "Release", processLoudnessEnvelopeRelease)
-	PARAM(FILTER_TYPE, "FilterType", processFilterType)
+	PARAM_NULL(FILTER_TYPE, "FilterType_NOTUSED")
 	PARAM(OSC1FLTMOD, "Osc1FilterMod", processOsc1FltMod)
 
         // ReSet to Zero (lowest) voice (default cyclic)

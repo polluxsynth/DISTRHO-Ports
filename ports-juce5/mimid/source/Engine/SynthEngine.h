@@ -569,21 +569,6 @@ public:
 	{
 		ForEachVoice(cutoff=param);
 	}
-	void processFilterType(float param)
-	{
-		int intparam = roundToInt(param*3);
-		// 0 => fourpole, response sets slope 6..24 dB/octave
-		// 1 => SVF: response sets LP - BP - HP
-		// 2 => SVF w/ self osc: response sets LP -BP -HP
-		// 3 => SVF: response sets LP - notch - HP
-		for(int i = 0 ; i < synth.MAX_VOICES;i++)
-		{
-			synth.voices[i].fourpole = intparam == 0;
-			synth.voices[i].flt.bandPassSw = intparam == 1 || intparam == 2;
-			synth.voices[i].selfOscPush = intparam == 2;
-			synth.voices[i].flt.selfOscPush = intparam == 2;
-		}
-	}
 	void processResonance(float param)
 	{
 		for(int i = 0 ; i < synth.MAX_VOICES;i++)

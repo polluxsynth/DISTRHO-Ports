@@ -122,8 +122,6 @@ public:
 	bool lfo1modw, lfo1after, lfo1vel;
 	bool lfo2modw, lfo2after, lfo2vel;
 
-	bool fourpole;
-
 	DelayLineRampable<Samples*2> lenvd,fenvd;
 	DelayLine<Samples*2> lfo1d,lfo2d;
 
@@ -146,7 +144,6 @@ public:
 		vamp=vflt=0;
 		velscale=1;
 		velocityValue=0;
-		fourpole = false;
 		oscKeySync = false;
 		envRst = false;
 		brightCoef =briHold= 1;
@@ -300,10 +297,7 @@ public:
 		// Cap resonance at 0 and +1 to avoid nasty artefacts
 		float rescalc = jmin(jmax(res + (lfo1res?lfo1Delayed:0) + (lfo2res?lfo2Delayed:0), 0.0f), 1.0f);
 
-		if(fourpole)
-			x1 = flt.Apply4Pole(x1, cutoffcalc, rescalc);
-		else
-			x1 = flt.Apply(x1, cutoffcalc, rescalc);
+		x1 = flt.Apply4Pole(x1, cutoffcalc, rescalc);
 
 		// HPF
 		x1 -= tptpc(shpf, x1, hpfcutoff);
