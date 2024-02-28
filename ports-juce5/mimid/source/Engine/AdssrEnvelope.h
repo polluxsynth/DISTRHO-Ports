@@ -36,7 +36,7 @@ private:
 	float ua,ud,us,ur; // saved parameter values (not for sustain)
 	float coef;
 	int dir; // decay curve direction (1 => down, -1 = up)
-	enum { ATK, DEC, SUS, REL, OFF } state;
+	enum { HLD, ATK, DEC, SUS, REL, OFF } state;
 	float SampleRate;
 	float uf;
 	// In ADSSR mode, the asymptote is lower than the sustain level,
@@ -173,7 +173,7 @@ public:
 	}
 	void triggerAttack()
 	{
-		state = ATK;
+		state = HLD;
 		//Value = Value +0.00001f;
 		coef = coef_atk(attack);
 	}
@@ -193,6 +193,12 @@ public:
 		sustain_delta = unused2; // TODO: temporary, remove
 		switch (state)
 		{
+		case HLD:
+			// Do nothing, just delay envelope for one cycle
+			// This causes the output to start at 0 rather than
+			// after the first increment
+			state = ATK;
+			break;
 		case ATK:
 			Value += linear ? coef : (1.3-Value) * coef;
 			if (Value > 1.0f) {
