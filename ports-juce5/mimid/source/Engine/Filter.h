@@ -41,14 +41,12 @@ private:
 public:
 	float SampleRate;
 	float sampleRateInv;
-	bool bandPassSw;
+	bool bandPassSw; // LP->BP->HP instead of LP->notch->HP when set
 	float mm;
-	bool selfOscPush;
 	float unused1, unused2;
 	Filter()
 	{
-		selfOscPush = false;
-		bandPassSw = false;
+		bandPassSw = true;
 		mm=0;
 		s1=s2=s3=s4=0;
 		SampleRate = 44000;
@@ -80,11 +78,8 @@ public:
 	{
 		//calculating feedback non-linear transconducance and compensated for R (-1)
 		//Boosting non-linearity
-		float tCfb;
-		if(!selfOscPush)
-			tCfb = diodePairResistanceApprox(s1*0.0876f) - 1.0f;
-		else
-			tCfb = diodePairResistanceApprox(s1*0.0876f) - 1.035f;
+		//Replace 1.035f with 1.0f to avoid self oscillation
+		float tCfb = diodePairResistanceApprox(s1*0.0876f) - 1.035f;
 		//float tCfb = 0;
 		//disable non-linearity == digital filter
 
