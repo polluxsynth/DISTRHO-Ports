@@ -19,24 +19,8 @@ Copyright 2023 Ricard Wanderlof
 
 //==============================================================================
 MimidAudioProcessor::MimidAudioProcessor()
-	: programs()
-	, configLock("__" JucePlugin_Name "ConfigLock__")
 {
-	isHostAutomatedChange = true;
-
 	synth.setSampleRate(44100);
-
-	PropertiesFile::Options options;
-	options.applicationName = JucePlugin_Name;
-	options.storageFormat = PropertiesFile::storeAsXML;
-	options.millisecondsBeforeSaving = 2500;
-	options.processLock = &configLock;
-	config = new PropertiesFile(getDocumentFolder().getChildFile("Settings.xml"), options);
-
-	currentSkin = config->containsKey("skin") ? config->getValue("skin") : "Pollux Grey";
-	currentBank = "Init";
-
-	scanAndUpdateBanks();
 
 	// Bring in parameter definitions
 
@@ -52,29 +36,20 @@ MimidAudioProcessor::MimidAudioProcessor()
 #include "Engine/ParamDefs.h"
 
 	initAllParams();
-
-	if (bankFiles.size() > 0)
-	{
-		loadFromFXBFile(bankFiles[0]);
-	}
 }
 
 MimidAudioProcessor::~MimidAudioProcessor()
 {
-	config->saveIfNeeded();
-	config = nullptr;
 }
 
 //==============================================================================
+
 void MimidAudioProcessor::initAllParams()
 {
 	for (int i = 0 ; i < PARAM_COUNT; i++)
-	{
-		setParameter(i, programs.currentProgramPtr->values[i]);
-	}
+		setParameter(i, parameters.values[i]);
 }
 
-//==============================================================================
 int MimidAudioProcessor::getNumParameters()
 {
 	return PARAM_COUNT;
@@ -82,21 +57,14 @@ int MimidAudioProcessor::getNumParameters()
 
 float MimidAudioProcessor::getParameter (int index)
 {
-	return programs.currentProgramPtr->values[index];
+	return parameters.values[index];
 }
 
 void MimidAudioProcessor::setParameter (int index, float newValue)
 {
-	programs.currentProgramPtr->values[index] = newValue;
-	//setFuncType setFunc = paramdef[index].setFunc;
-	//(synth.*setFunc)(newValue);
+	parameters.values[index] = newValue;
 	if (index >= 0 && index < PARAM_COUNT && paramdef[index].setFunc)
 		(synth.*paramdef[index].setFunc)(newValue);
-	//DIRTY HACK
-	//This should be checked to avoid stalling on gui update
-	//It is needed because some hosts do  wierd stuff
-	if(isHostAutomatedChange)
-		sendChangeMessage();
 }
 
 const String MimidAudioProcessor::getParameterName (int index)
@@ -108,7 +76,7 @@ const String MimidAudioProcessor::getParameterName (int index)
 
 const String MimidAudioProcessor::getParameterText (int index)
 {
-	return String(programs.currentProgramPtr->values[index],2);
+	return String(parameters.values[index],2);
 }
 
 //==============================================================================
@@ -139,20 +107,12 @@ bool MimidAudioProcessor::isOutputChannelStereoPair (int index) const
 
 bool MimidAudioProcessor::acceptsMidi() const
 {
-#if JucePlugin_WantsMidiInput
 	return true;
-#else
-	return false;
-#endif
 }
 
 bool MimidAudioProcessor::producesMidi() const
 {
-#if JucePlugin_ProducesMidiOutput
-	return true;
-#else
 	return false;
-#endif
 }
 
 bool MimidAudioProcessor::silenceInProducesSilenceOut() const
@@ -168,34 +128,25 @@ double MimidAudioProcessor::getTailLengthSeconds() const
 //==============================================================================
 int MimidAudioProcessor::getNumPrograms()
 {
-	return PROGRAMCOUNT;
+	return 1;
 }
 
 int MimidAudioProcessor::getCurrentProgram()
 {
-	return programs.currentProgram;
+	return 0;
 }
 
 void MimidAudioProcessor::setCurrentProgram (int index)
 {
-	programs.currentProgram = index;
-	programs.currentProgramPtr = programs.programs + programs.currentProgram;
-	isHostAutomatedChange = false;
-	for(int i = 0 ; i < PARAM_COUNT;i++)
-		setParameter(i,programs.currentProgramPtr->values[i]);
-	isHostAutomatedChange = true;
-	sendChangeMessage();
-	updateHostDisplay();
 }
 
 const String MimidAudioProcessor::getProgramName (int index)
 {
-	return programs.programs[index].name;
+	return "Nothing";
 }
 
 void MimidAudioProcessor::changeProgramName (int index, const String& newName)
 {
-	 programs.programs[index].name = newName;
 }
 
 //==============================================================================
@@ -305,259 +256,10 @@ AudioProcessorEditor* MimidAudioProcessor::createEditor()
 //==============================================================================
 void MimidAudioProcessor::getStateInformation (MemoryBlock& destData)
 {
-	XmlElement xmlState = XmlElement("Pollux");
-	xmlState.setAttribute(S("currentProgram"), programs.currentProgram);
-
-	XmlElement* xprogs = new XmlElement("programs");
-	for (int i = 0; i < PROGRAMCOUNT; ++i)
-	{
-		XmlElement* xpr = new XmlElement("program");
-		xpr->setAttribute(S("programName"), programs.programs[i].name);
-
-		for (int k = 0; k < PARAM_COUNT; ++k)
-		{
-			xpr->setAttribute(String(k), programs.programs[i].values[k]);
-		}
-
-		xprogs->addChildElement(xpr);
-	}
-
-	xmlState.addChildElement(xprogs);
-
-	copyXmlToBinary(xmlState,destData);
 }
 
 void MimidAudioProcessor::setStateInformation (const void* data, int sizeInBytes)
 {
-	if (XmlElement* const xmlState = getXmlFromBinary(data,sizeInBytes))
-	{
-		XmlElement* xprogs = xmlState->getFirstChildElement();
-		if (xprogs->hasTagName(S("programs")))
-		{
-			int i = 0;
-			forEachXmlChildElement(*xprogs, e)
-			{
-				programs.programs[i].setDefaultValues();
-
-				for (int k = 0; k < PARAM_COUNT; ++k)
-				{
-					programs.programs[i].values[k] = e->getDoubleAttribute(String(k), programs.programs[i].values[k]);
-				}
-
-				programs.programs[i].name = e->getStringAttribute(S("programName"), S("Default"));
-
-				++i;
-			}
-		}
-
-		setCurrentProgram(xmlState->getIntAttribute(S("currentProgram"), 0));
-
-		delete xmlState;
-	}
-}
-
-void  MimidAudioProcessor::setCurrentProgramStateInformation(const void* data,int sizeInBytes)
-{
-	if (XmlElement* const e = getXmlFromBinary(data, sizeInBytes))
-	{
-		programs.currentProgramPtr->setDefaultValues();
-
-		for (int k = 0; k < PARAM_COUNT; ++k)
-		{
-			programs.currentProgramPtr->values[k] = e->getDoubleAttribute(String(k), programs.currentProgramPtr->values[k]);
-		}
-
-		programs.currentProgramPtr->name =  e->getStringAttribute(S("programName"), S("Default"));
-
-		setCurrentProgram(programs.currentProgram);
-
-		delete e;
-	}
-}
-
-void MimidAudioProcessor::getCurrentProgramStateInformation(MemoryBlock& destData)
-{
-	XmlElement xmlState = XmlElement("Pollux");
-
-	for (int k = 0; k < PARAM_COUNT; ++k)
-	{
-		xmlState.setAttribute(String(k), programs.currentProgramPtr->values[k]);
-	}
-
-	xmlState.setAttribute(S("programName"), programs.currentProgramPtr->name);
-
-	copyXmlToBinary(xmlState, destData);
-}
-
-//==============================================================================
-bool MimidAudioProcessor::loadFromFXBFile(const File& fxbFile)
-{
-	MemoryBlock mb;
-	if (! fxbFile.loadFileAsData(mb))
-		return false;
-
-	const void* const data = mb.getData();
-	const size_t dataSize = mb.getSize();
-
-	if (dataSize < 28)
-		return false;
-
-	const fxSet* const set = (const fxSet*) data;
-
-	if ((! compareMagic (set->chunkMagic, "CcnK")) || fxbSwap (set->version) > fxbVersionNum)
-		return false;
-
-	if (compareMagic (set->fxMagic, "FxBk"))
-	{
-		// bank of programs
-		if (fxbSwap (set->numPrograms) >= 0)
-		{
-			const int oldProg = getCurrentProgram();
-			const int numParams = fxbSwap (((const fxProgram*) (set->programs))->numParams);
-			const int progLen = (int) sizeof (fxProgram) + (numParams - 1) * (int) sizeof (float);
-
-			for (int i = 0; i < fxbSwap (set->numPrograms); ++i)
-			{
-				if (i != oldProg)
-				{
-					const fxProgram* const prog = (const fxProgram*) (((const char*) (set->programs)) + i * progLen);
-					if (((const char*) prog) - ((const char*) set) >= (ssize_t) dataSize)
-						return false;
-
-					if (fxbSwap (set->numPrograms) > 0)
-						setCurrentProgram (i);
-
-					if (! restoreProgramSettings (prog))
-						return false;
-				}
-			}
-
-			if (fxbSwap (set->numPrograms) > 0)
-				setCurrentProgram (oldProg);
-
-			const fxProgram* const prog = (const fxProgram*) (((const char*) (set->programs)) + oldProg * progLen);
-			if (((const char*) prog) - ((const char*) set) >= (ssize_t) dataSize)
-				return false;
-
-			if (! restoreProgramSettings (prog))
-				return false;
-		}
-	}
-	else if (compareMagic (set->fxMagic, "FxCk"))
-	{
-		// single program
-		const fxProgram* const prog = (const fxProgram*) data;
-
-		if (! compareMagic (prog->chunkMagic, "CcnK"))
-			return false;
-
-		changeProgramName (getCurrentProgram(), prog->prgName);
-
-		for (int i = 0; i < fxbSwap (prog->numParams); ++i)
-			setParameter (i, fxbSwapFloat (prog->params[i]));
-	}
-	else if (compareMagic (set->fxMagic, "FBCh"))
-	{
-		// non-preset chunk
-		const fxChunkSet* const cset = (const fxChunkSet*) data;
-
-		if ((size_t) fxbSwap (cset->chunkSize) + sizeof (fxChunkSet) - 8 > (size_t) dataSize)
-			return false;
-
-		setStateInformation(cset->chunk, fxbSwap (cset->chunkSize));
-	}
-	else if (compareMagic (set->fxMagic, "FPCh"))
-	{
-		// preset chunk
-		const fxProgramSet* const cset = (const fxProgramSet*) data;
-
-		if ((size_t) fxbSwap (cset->chunkSize) + sizeof (fxProgramSet) - 8 > (size_t) dataSize)
-			return false;
-
-		setCurrentProgramStateInformation(cset->chunk, fxbSwap (cset->chunkSize));
-
-		changeProgramName (getCurrentProgram(), cset->name);
-	}
-	else
-	{
-		return false;
-	}
-
-	currentBank = fxbFile.getFileName();
-
-	updateHostDisplay();
-
-	return true;
-}
-
-bool MimidAudioProcessor::restoreProgramSettings(const fxProgram* const prog)
-{
-	if (compareMagic (prog->chunkMagic, "CcnK")
-		&& compareMagic (prog->fxMagic, "FxCk"))
-	{
-		changeProgramName (getCurrentProgram(), prog->prgName);
-
-		for (int i = 0; i < fxbSwap (prog->numParams); ++i)
-			setParameter (i, fxbSwapFloat (prog->params[i]));
-
-		return true;
-	}
-
-	return false;
-}
-
-//==============================================================================
-void MimidAudioProcessor::scanAndUpdateBanks()
-{
-	bankFiles.clearQuick();
-
-	DirectoryIterator it(getBanksFolder(), false, "*.fxb", File::findFiles);
-	while (it.next())
-	{
-		bankFiles.add(it.getFile());
-	}
-}
-
-const Array<File>& MimidAudioProcessor::getBankFiles() const
-{
-	return bankFiles;
-}
-
-File MimidAudioProcessor::getCurrentBankFile() const
-{
-	return getBanksFolder().getChildFile(currentBank);
-}
-
-//==============================================================================
-File MimidAudioProcessor::getDocumentFolder() const
-{
-	File folder = File::getSpecialLocation(File::userDocumentsDirectory).getChildFile("Pollux").getChildFile("MiMi-d");
-	if (folder.isSymbolicLink())
-		folder = folder.getLinkedTarget();
-	return folder;
-}
-
-File MimidAudioProcessor::getSkinFolder() const
-{
-	return getDocumentFolder().getChildFile("Skins");
-}
-
-File MimidAudioProcessor::getBanksFolder() const
-{
-	return getDocumentFolder().getChildFile("Banks");
-}
-
-File MimidAudioProcessor::getCurrentSkinFolder() const
-{
-	return getSkinFolder().getChildFile(currentSkin);
-}
-
-void MimidAudioProcessor::setCurrentSkinFolder(const String& folderName)
-{
-	currentSkin = folderName;
-
-	config->setValue("skin", folderName);
-	config->setNeedsToBeSaved(true);
 }
 
 //==============================================================================

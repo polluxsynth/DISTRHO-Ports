@@ -30,7 +30,7 @@
 #include "Engine/SynthEngine.h"
 //#include <stack>
 #include "Engine/midiMap.h"
-#include "Engine/Bank.h"
+#include "Engine/Params.h"
 
 //==============================================================================
 const int fxbVersionNum = 1;
@@ -143,6 +143,8 @@ public:
 
 	int getNumParameters();
 
+	Params parameters;
+
     float getParameter (int index);
     void setParameter (int index, float newValue);
 
@@ -170,27 +172,8 @@ public:
     //==============================================================================
     void getStateInformation (MemoryBlock& destData);
     void setStateInformation (const void* data, int sizeInBytes);
-	void setCurrentProgramStateInformation(const void* data,int sizeInBytes);
-	void getCurrentProgramStateInformation(MemoryBlock& destData);
 
 	//==============================================================================
-	void scanAndUpdateBanks();
-	const Array<File>& getBankFiles() const;
-	bool loadFromFXBFile(const File& fxbFile);
-	bool restoreProgramSettings(const fxProgram* const prog);
-	File getCurrentBankFile() const;
-
-	//==============================================================================
-	const Bank& getPrograms() const { return programs; }
-
-	//==============================================================================
-	File getDocumentFolder() const;
-	File getSkinFolder() const;
-	File getBanksFolder() const;
-
-	File getCurrentSkinFolder() const;
-	void setCurrentSkinFolder(const String& folderName);
-
 private:
 	//==============================================================================
 
@@ -200,8 +183,6 @@ private:
 		setFuncType setFunc;
 	};
 
-	bool isHostAutomatedChange;
-
         MidiMessage nextMidi, midiMsg;
 
 	bool hasMidiMessage;
@@ -209,14 +190,6 @@ private:
 
 	ParamDef paramdef[PARAM_COUNT] = {};
 	SynthEngine synth;
-	Bank programs;
-
-	String currentSkin;
-	String currentBank;
-	Array<File> bankFiles;
-
-	ScopedPointer<PropertiesFile> config;
-	InterProcessLock configLock;
 
 	//==============================================================================
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MimidAudioProcessor)
