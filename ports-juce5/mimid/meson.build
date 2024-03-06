@@ -6,9 +6,7 @@ if linux_embed
     ])
 else
     plugin_srcs = files([
-        'source/PluginEditor.cpp',
         'source/PluginProcessor.cpp',
-        'source/Gui/BinaryData.cpp',
     ])
 endif
 

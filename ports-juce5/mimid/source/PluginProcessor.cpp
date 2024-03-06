@@ -12,7 +12,6 @@ Copyright 2023 Ricard Wanderlof
 ==============================================================================
 */
 #include "PluginProcessor.h"
-#include "PluginEditor.h"
 #include "Engine/Params.h"
 
 //==============================================================================
@@ -668,12 +667,12 @@ void ObxdAudioProcessor::processBlock (AudioSampleBuffer& buffer, MidiBuffer& mi
 //==============================================================================
 bool ObxdAudioProcessor::hasEditor() const
 {
-	return true;
+	return false;
 }
 
 AudioProcessorEditor* ObxdAudioProcessor::createEditor()
 {
-	return new ObxdAudioProcessorEditor (this);
+	return NULL;
 }
 
 //==============================================================================
