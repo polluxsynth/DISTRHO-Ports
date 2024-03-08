@@ -30,7 +30,7 @@ enum Parameters
 {
 	UNDEFINED,
 
-#define PARAM(PARAMNO, NAME, SETFUNC) PARAMNO,
+#define PARAM(PARAMNO, NAME, MIN, MAX, DEFAULT, SETFUNC) PARAMNO,
 #define PARAM_NULL(PARAMNO, NAME) PARAMNO,
 
 // This brings in the parameters as enum members

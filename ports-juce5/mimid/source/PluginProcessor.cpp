@@ -26,7 +26,7 @@ MimidAudioProcessor::MimidAudioProcessor()
 
 #define SEFUNC(FUNCNAME) &SynthEngine::FUNCNAME
 
-#define PARAM(PARAMNO, NAME, SETFUNC) \
+#define PARAM(PARAMNO, NAME, MIN, MAX, DEFAULT, SETFUNC) \
 	paramdef[PARAMNO].name = S(NAME); \
 	paramdef[PARAMNO].setFunc = SEFUNC(SETFUNC);
 

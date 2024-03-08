@@ -26,6 +26,13 @@
 #pragma once
 #include "Voice.h"
 #include "ParamsEnum.h"
+
+#define PARAM(PARAMNO, NAME, MIN, MAX, DEFAULT, SETFUNC) \
+	values[PARAMNO] = DEFAULT;
+
+#define PARAM_NULL(PARAMNO, NAME) \
+	values[PARAMNO] = 0;
+
 class Params
 {
 public:
@@ -34,52 +41,18 @@ public:
 	Params()
 	{
 		name = "Default";
-		//values = new float[PARAM_COUNT];
 		setDefaultValues();
 	}
 	void setDefaultValues()
 	{
-		for(int k = 0 ; k < PARAM_COUNT;++k)
-		{
-			values[k] = 0.0f;
-		}
-		values[VOICE_COUNT] = 1.0f;
-		values[HPFFREQ]=0.0f;
-		values[OCTAVE]=0.5;
-		values[TUNE] = 0.5f;
-		values[OSC1_DET]=0.5;
-		values[OSC2_DET]=0.5;
-		values[LSUS]=1.0f;
-		values[CUTOFF]=1.0f;
-		values[VOLUME]=0.5f;
-		values[OSC1MIX]=1;
-		values[OSC2MIX]=1;
-		values[OSC1WAVE]=0.25;
-		values[OSC2WAVE]=0.25;
-		values[LFO2FREQ]=0.6;
-		values[OSC3WAVE]=0,
-		values[OSC3MIX]=0,
-
-//		values[FILTER_DRIVE]= 0.01;
-		values[PAN1_NOTUSED]=0.5;
-		values[PAN2_NOTUSED]=0.5;
-		values[PAN3_NOTUSED]=0.5;
-		values[PAN4_NOTUSED]=0.5;
-		values[PAN5_NOTUSED]=0.5;
-		values[PAN6_NOTUSED]=0.5;
-		values[PAN7_NOTUSED]=0.5;
-		values[PAN8_NOTUSED]=0.5;
-		values[ECONOMY_MODE] = 1;
-		values[ENVDER] = 0.3;
-		values[FILTERDER]=0.3;
-		values[LEVEL_DIF]=0.3;
-		values[PORTADER]=0.3;
-		values[UDET]=0.2;
-		values[VCADRIVE]=0.0;
+// Including "ParamDefs" with PARAM and PARAM_NULL set as above will initalize
+// all defined parameters to default values
+#include "ParamDefs.h"
+#undef PARAM
+#undef PARAM_NULL
 	}
 	~Params()
 	{
-		//delete values;
 	}
 	//JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(Params)
 };
