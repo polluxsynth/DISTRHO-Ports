@@ -1,3 +1,10 @@
+## MiMi-d development branch
+
+The development of the MiMi-d has
+[moved to a new home](https://github.com/polluxsynth/audio-plugins).
+This repository and the dev-mimid branch remain for the sake of history
+and traceability.
+
 # DISTRHO Ports
 
 [![Build Status](https://travis-ci.org/DISTRHO/DISTRHO-Ports.png)](https://travis-ci.org/DISTRHO/DISTRHO-Ports)
